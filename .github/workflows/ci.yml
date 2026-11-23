@@ -1,14 +1,16 @@
-name: Verification du projet
+name: Vérification du projet
+
 on:
   push:
-    branches: [main]
+    branches: [main, genspark/qspicy-refonte]
   pull_request:
     branches: [main]
+
 permissions:
   contents: read
+
 jobs:
   verify:
-    if: hashFiles('a-deux-source.tar.gz') != ''
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -16,11 +18,22 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - name: Extraire les sources
-        run: tar -xzf a-deux-source.tar.gz -C .
+      - name: Vérifier que l'archive source est à jour
+        run: |
+          mkdir -p /tmp/archive
+          tar -xzf a-deux-source.tar.gz -C /tmp/archive
+          cd /tmp/archive
+          fail=0
+          while IFS= read -r file; do
+            if ! cmp -s "$file" "$GITHUB_WORKSPACE/$file"; then
+              echo "::error file=$file::L'archive a-deux-source.tar.gz ne correspond plus au dépôt. Exécuter npm run pack:source."
+              fail=1
+            fi
+          done < <(find . -type f | sed 's|^\./||')
+          exit $fail
       - name: Installer les dépendances
         run: npm ci
-      - name: Tests
+      - name: Tests et cohérence du catalogue
         run: npm test
       - name: Compilation de production
         run: npm run build

@@ -1,0 +1,28 @@
+{
+  "name": "qspicy",
+  "private": true,
+  "version": "3.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "typecheck": "tsc -b",
+    "test": "node --test --experimental-strip-types src/lib/protocol.test.ts src/lib/media.test.ts src/lib/prefs.test.ts src/lib/scene.test.ts && node scripts/sync-catalog.mjs --check",
+    "catalog:sync": "node scripts/sync-catalog.mjs",
+    "catalog:check": "node scripts/sync-catalog.mjs --check",
+    "pack:source": "node scripts/pack-source.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.57.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.10",
+    "@types/react-dom": "^19.1.7",
+    "@vitejs/plugin-react": "^4.7.0",
+    "typescript": "~5.8.3",
+    "vite": "^6.3.5"
+  }
+}

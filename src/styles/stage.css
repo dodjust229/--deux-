@@ -1,0 +1,478 @@
+/* ---------- Scène : bulle réservée au-dessus, personnages en dessous ---------- */
+.stage {
+  display: grid;
+  gap: 2px;
+  width: 100%;
+}
+
+.stage__bubble-zone {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  min-height: 0;
+  padding: 0 4px 6px;
+}
+
+.bubble {
+  position: relative;
+  max-width: min(560px, 94%);
+  padding: 14px 20px;
+  border-radius: 20px;
+  margin-bottom: 6px;
+  background: var(--bubble-bg);
+  color: var(--bubble-ink);
+  font-size: 15px;
+  line-height: 1.45;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.22);
+  animation: bubble-in 0.36s var(--ease) both;
+}
+
+.bubble--me {
+  margin-right: auto;
+  margin-left: 6%;
+  border-bottom-left-radius: 8px;
+}
+
+.bubble--other {
+  margin-left: auto;
+  margin-right: 6%;
+  background: var(--bubble-other-bg);
+  color: var(--bubble-other-ink);
+  border-bottom-right-radius: 8px;
+}
+
+.bubble__tail {
+  position: absolute;
+  bottom: -7px;
+  width: 18px;
+  height: 18px;
+  background: inherit;
+  transform: rotate(45deg);
+  border-radius: 3px;
+}
+
+.bubble--me .bubble__tail {
+  left: 26px;
+}
+
+.bubble--other .bubble__tail {
+  right: 26px;
+}
+
+@keyframes bubble-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.stage__players {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: end;
+  gap: clamp(4px, 2vw, 24px);
+  width: 100%;
+}
+
+.stage__player {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  margin: 0;
+  min-width: 0;
+}
+
+.stage__player.is-ghost {
+  opacity: 0.55;
+}
+
+.stage__caption {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+.stage__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ink-mute);
+}
+
+.stage__dot.is-online {
+  background: #74c69d;
+  box-shadow: 0 0 0 4px rgba(116, 198, 157, 0.16);
+}
+
+.stage__link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding-bottom: 26%;
+  color: var(--copper);
+  opacity: 0.75;
+}
+
+.stage__link-line {
+  display: none;
+}
+
+.stage__link-mark {
+  font-size: 12px;
+}
+
+.stage__empty {
+  display: grid;
+  place-content: center;
+  gap: 6px;
+  width: 120px;
+  max-width: 100%;
+  border: 1px dashed var(--line-strong);
+  border-radius: 90px;
+  color: var(--ink-mute);
+  text-align: center;
+}
+
+.stage__empty span {
+  font-family: var(--font-display);
+  font-size: 40px;
+  line-height: 1;
+}
+
+.stage__empty small {
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.stage--hero .stage__bubble-zone {
+  min-height: 96px;
+}
+
+/* ---------- Personnages ---------- */
+.character {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  max-width: 100%;
+  filter: drop-shadow(0 18px 26px rgba(0, 0, 0, 0.28));
+}
+
+.character__svg {
+  height: 100%;
+  width: auto;
+  max-width: 100%;
+  overflow: visible;
+  animation: char-breathe 6s ease-in-out infinite;
+}
+
+.character.is-mirrored .character__svg {
+  transform: scaleX(-1);
+}
+
+.character__shadow {
+  fill: rgba(0, 0, 0, 0.28);
+}
+
+.character__halo {
+  opacity: 0.25;
+  transition: opacity 0.5s var(--ease);
+}
+
+.character.is-active .character__halo {
+  opacity: 1;
+  animation: halo-pulse 4s ease-in-out infinite;
+}
+
+.character__head,
+.character__body,
+.character__arm--front,
+.character__arm--back {
+  transform-box: view-box;
+  transition: transform 0.5s var(--ease);
+}
+
+.character__head {
+  transform-origin: 100px 170px;
+}
+
+.character__body {
+  transform-origin: 100px 336px;
+}
+
+.character__arm--front {
+  transform-origin: 50px 210px;
+}
+
+.character__arm--back {
+  transform-origin: 150px 212px;
+}
+
+.character__eyes {
+  transform-box: view-box;
+  transform-origin: 100px 120px;
+  animation: char-blink 6.5s infinite;
+}
+
+.character__brow,
+.character__mouth,
+.character__blush,
+.character__eye {
+  transition: transform 0.35s var(--ease), opacity 0.35s var(--ease), display 0.2s;
+}
+
+.character__eye {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.character__blush {
+  opacity: 0.18;
+}
+
+.character__mouth--smile,
+.character__mouth--open {
+  display: none;
+}
+
+/* États */
+.character[data-state="speaking"] .character__mouth--line,
+.character[data-state="amused"] .character__mouth--line,
+.character[data-state="reacting"] .character__mouth--line,
+.character[data-state="celebrating"] .character__mouth--line,
+.character[data-state="surprised"] .character__mouth--line {
+  display: none;
+}
+
+.character[data-state="speaking"] .character__mouth--open,
+.character[data-state="surprised"] .character__mouth--open {
+  display: block;
+}
+
+.character[data-state="amused"] .character__mouth--smile,
+.character[data-state="reacting"] .character__mouth--smile,
+.character[data-state="celebrating"] .character__mouth--smile {
+  display: block;
+}
+
+.character[data-state="speaking"] .character__head {
+  animation: char-talk 1.3s ease-in-out infinite;
+}
+
+.character[data-state="speaking"] .character__arm--front {
+  transform: rotate(26deg);
+}
+
+.character[data-state="listening"] .character__head {
+  transform: rotate(4deg);
+}
+
+.character[data-state="listening"] .character__arm--front {
+  transform: rotate(8deg);
+}
+
+.character[data-state="thinking"] .character__head {
+  transform: rotate(-6deg);
+}
+
+.character[data-state="thinking"] .character__arm--front {
+  transform: rotate(-55deg);
+}
+
+.character[data-state="thinking"] .character__eye {
+  transform: translate(-1.5px, -1.5px);
+}
+
+.character[data-state="amused"] .character__eye {
+  transform: scaleY(0.16);
+}
+
+.character[data-state="amused"] .character__head {
+  transform: rotate(3deg);
+}
+
+.character[data-state="amused"] .character__arm--front {
+  transform: rotate(14deg);
+}
+
+.character[data-state="surprised"] .character__eye {
+  transform: scale(1.25);
+}
+
+.character[data-state="surprised"] .character__head {
+  transform: translateY(-3px) rotate(-2deg);
+}
+
+.character[data-state="surprised"] .character__brow {
+  transform: translateY(-3px);
+}
+
+.character[data-state="shy"] .character__head {
+  transform: rotate(6deg);
+}
+
+.character[data-state="shy"] .character__eye {
+  transform: translateY(2px);
+}
+
+.character[data-state="shy"] .character__blush {
+  opacity: 0.4;
+}
+
+.character[data-state="shy"] .character__arm--front {
+  transform: rotate(-38deg);
+}
+
+.character[data-state="reacting"] .character__head {
+  animation: char-nod 2.8s ease-in-out infinite;
+}
+
+.character[data-state="celebrating"] .character__head {
+  transform: rotate(-2deg);
+}
+
+.character[data-state="celebrating"] .character__arm--front {
+  transform: rotate(32deg);
+}
+
+.character[data-state="celebrating"] .character__arm--back {
+  transform: rotate(-32deg);
+}
+
+.character[data-state="celebrating"] .character__frame {
+  animation: char-cheer 1.8s ease-in-out infinite;
+}
+
+@keyframes char-cheer {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.character[data-state="surprised"] .character__arm--front {
+  transform: rotate(20deg);
+}
+
+.stage__player.is-speaking .character {
+  filter: drop-shadow(0 20px 34px rgba(226, 58, 78, 0.28));
+}
+
+@keyframes char-breathe {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes char-blink {
+  0%,
+  93%,
+  100% {
+    transform: scaleY(1);
+  }
+  95% {
+    transform: scaleY(0.12);
+  }
+  97% {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes char-talk {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  50% {
+    transform: rotate(-2.5deg);
+  }
+}
+
+@keyframes char-nod {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  40% {
+    transform: rotate(3deg);
+  }
+  60% {
+    transform: rotate(1deg);
+  }
+}
+
+@keyframes halo-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+/* Réduction : les postures restent, les mouvements s'arrêtent. */
+:root[data-motion="reduced"] .character__svg,
+:root[data-motion="reduced"] .character__head,
+:root[data-motion="reduced"] .character__eyes,
+:root[data-motion="reduced"] .character__halo {
+  animation: none !important;
+}
+
+@media (max-width: 720px) {
+  .bubble {
+    font-size: 14px;
+    padding: 12px 16px;
+    max-width: 96%;
+  }
+
+  .bubble--me {
+    margin-left: 2%;
+  }
+
+  .bubble--other {
+    margin-right: 2%;
+  }
+
+  .stage__link {
+    padding-bottom: 30%;
+  }
+
+  .stage__caption {
+    font-size: 10px;
+    letter-spacing: 0.04em;
+  }
+}
+
+.character__frame {
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+}
+
+.character.is-mirrored .character__frame {
+  transform: scaleX(-1);
+}
