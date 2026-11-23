@@ -514,7 +514,7 @@
     "category": "audacieux",
     "kind": "free",
     "title": "Le mot de passe",
-    "prompt": "Choisissez chacun un mot qui veut dire « continue » et un mot qui veut dire « doucement ». Écrivez-les, puis découvrez-les ensemble.",
+    "prompt": "Choisissez chacun un mot qui veut dire « continue » et un mot qui veut dire « doucement ». Écrivez-les, puis découvrez-les ensemble. Chacun peut s'arrêter sans se justifier, à tout moment.",
     "level": 4,
     "audience": "partner",
     "visibility": "partagee"
@@ -524,7 +524,7 @@
     "category": "audacieux",
     "kind": "free",
     "title": "La scène",
-    "prompt": "Décris, comme au cinéma, la scène où tu voudrais que tout bascule ce soir : le lieu, la lumière, le premier geste.",
+    "prompt": "Décris, comme au cinéma, la scène où tu voudrais que tout bascule ce soir : le lieu, la lumière, le premier geste. Une envie, pas une promesse : l'autre reste libre de la refuser.",
     "level": 4,
     "audience": "partner",
     "visibility": "partagee"
@@ -544,7 +544,7 @@
     "category": "audacieux",
     "kind": "prediction",
     "title": "Là où tout bascule",
-    "prompt": "Écris où et quand tu aimerais que tout bascule, puis devine le choix de l'autre : ici ce soir, ailleurs dans la maison, ou dans un lieu inattendu.",
+    "prompt": "Écris où et quand tu aimerais que tout bascule, puis devine le choix de l'autre : ici ce soir, ailleurs dans la maison, ou dans un lieu inattendu. Rien de tout cela n'engage l'autre.",
     "level": 4,
     "audience": "partner",
     "visibility": "partagee"
