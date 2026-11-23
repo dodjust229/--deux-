@@ -10,6 +10,7 @@ const PATHS = {
   shield: "M12 3l8 3v6c0 4.5-3.2 8.4-8 9-4.8-.6-8-4.5-8-9V6l8-3zM9 12l2 2 4-4",
   send: "M22 2L11 13M22 2l-7 20-4-9-9-4 20-7",
   check: "M20 6L9 17l-5-5",
+  plus: "M12 5v14M5 12h14",
   skip: "M5 5l9 7-9 7zM19 5v14",
   pause: "M9 5v14M15 5v14",
   play: "M8 5l11 7-11 7z",

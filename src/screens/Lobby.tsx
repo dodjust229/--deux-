@@ -1,5 +1,6 @@
 import { Icon } from "../components/Icon";
 import { InfoTip } from "../components/InfoTip";
+import { CustomQuestions } from "../components/CustomQuestions";
 import type { Lang } from "../lib/i18n";
 import { Stage } from "../components/Stage";
 import type { StagePlayer } from "../components/Stage";
@@ -33,6 +34,15 @@ interface LobbyProps {
   busy: boolean;
   excluded?: Category[];
   lang?: Lang;
+  /** « custom » remplace les ambiances par l'écriture des questions. */
+  kind?: "couple" | "custom";
+  customQuestions?: string[];
+  onCustomQuestions?: (next: string[]) => void;
+  onLaunchCustom?: () => void;
+  customError?: string;
+  isHost?: boolean;
+  onOpenGuide?: () => void;
+  onOpenSettings?: () => void;
 }
 
 export function Lobby({
@@ -51,8 +61,17 @@ export function Lobby({
   onLaunch,
   busy,
   excluded = [],
-  lang = "fr"
+  lang = "fr",
+  kind = "couple",
+  customQuestions = [],
+  onCustomQuestions,
+  onLaunchCustom,
+  customError,
+  isHost = true,
+  onOpenGuide,
+  onOpenSettings
 }: LobbyProps) {
+  const custom = kind === "custom";
   const bothPresent = Boolean(other);
   const wantsAdult = shared.includes("audacieux");
   const blocked = busy || shared.length === 0 || (wantsAdult && !(myConsent && otherConsent));
@@ -64,10 +83,28 @@ export function Lobby({
           <span className="eyebrow">{bothPresent ? "Vous êtes deux" : "Salle privée ouverte"}</span>
           <h1>{bothPresent ? "La scène est prête." : "Plus qu'une personne…"}</h1>
           <p className="muted">
-            {bothPresent
-              ? "Choisissez ensemble les ambiances. Seules les catégories communes seront tirées."
-              : "Envoie ce lien à la personne avec qui tu veux jouer. Elle seule pourra entrer."}
+            {custom
+              ? bothPresent
+                ? "Vos questions remplacent le catalogue. Elles se jouent dans l'ordre écrit."
+                : "Envoie ce lien à la personne avec qui tu veux jouer. Les questions s'écrivent en attendant."
+              : bothPresent
+                ? "Choisissez ensemble les ambiances. Seules les catégories communes seront tirées."
+                : "Envoie ce lien à la personne avec qui tu veux jouer. Elle seule pourra entrer."}
           </p>
+        </div>
+        <div className="lobby__tools">
+          {onOpenGuide && (
+            <button className="icon-button" type="button" data-testid="lobby-guide" onClick={onOpenGuide}
+              aria-label={lang === "en" ? "Open the guide" : "Ouvrir le guide"} title={lang === "en" ? "User guide" : "Guide d'utilisation"}>
+              <Icon name="info" />
+            </button>
+          )}
+          {onOpenSettings && (
+            <button className="icon-button" type="button" data-testid="open-settings" onClick={onOpenSettings}
+              aria-label={lang === "en" ? "Settings" : "Réglages"} title={lang === "en" ? "Settings" : "Réglages"}>
+              <Icon name="settings" />
+            </button>
+          )}
         </div>
         <div className="lobby__invite">
           <span className="lobby__invite-label">
@@ -91,6 +128,19 @@ export function Lobby({
         </p>
       ) : (
         <>
+          {custom ? (
+            <CustomQuestions
+              lang={lang}
+              questions={customQuestions}
+              onChange={onCustomQuestions ?? (() => {})}
+              onLaunch={onLaunchCustom ?? (() => {})}
+              isHost={isHost}
+              partnerHere={bothPresent}
+              busy={busy}
+              serverError={customError}
+            />
+          ) : (
+          <>
           <section className="panel" aria-labelledby="ambiances">
             <div className="panel__head">
               <h2 id="ambiances">
@@ -162,6 +212,8 @@ export function Lobby({
                 : "Lancer la partie"}
             {!blocked && <Icon name="arrow" />}
           </button>
+          </>
+          )}
         </>
       )}
     </main>

@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview --host 0.0.0.0",
     "typecheck": "tsc -b",
-    "test": "node --test --experimental-strip-types src/lib/protocol.test.ts src/lib/media.test.ts src/lib/prefs.test.ts src/lib/scene.test.ts src/lib/guide.test.ts && node scripts/sync-catalog.mjs --check && node scripts/cards.mjs --check",
+    "test": "node --test --experimental-strip-types src/lib/protocol.test.ts src/lib/media.test.ts src/lib/prefs.test.ts src/lib/scene.test.ts src/lib/guide.test.ts src/lib/custom.test.ts && node scripts/sync-catalog.mjs --check && node scripts/cards.mjs --check",
     "catalog:sync": "node scripts/sync-catalog.mjs",
     "catalog:check": "node scripts/sync-catalog.mjs --check",
     "pack:source": "node scripts/pack-source.mjs",

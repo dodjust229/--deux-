@@ -13,6 +13,8 @@ import {
   setPlayerCategories,
   startGame,
   submitAnswer,
+  startCustomGame,
+  getCustomDeck,
   startDuoGame,
   nextDuoInteraction,
   submitDuoAnswer,
@@ -26,6 +28,7 @@ import { applyPreferences, categoriesForIntensity, readPreferences, writePrefere
 import { previewDuoSnapshot, previewSnapshot } from "./lib/preview";
 import { playSound } from "./lib/sound";
 import type { Category, Player, Snapshot } from "./types";
+import { checkQuestions, customMessage, explainCustomError, resolveCustomInteraction } from "./lib/custom";
 import { Wordmark } from "./components/Brand";
 import { Icon } from "./components/Icon";
 import { Settings } from "./components/Settings";
@@ -44,8 +47,9 @@ import { End } from "./screens/End";
 import { DuoLobby, DuoGame, DuoEnd } from "./screens/DuoScreens";
 import type { DuoSnapshot } from "./types";
 
-type Identity = { roomId: string; token: string; nickname: string; avatar: "masculin" | "feminin"; gameMode?: "couple" | "duos" };
-type Entry = { mode: "create" | "join"; code: string; gameMode?: "couple" | "duos" } | null;
+type GameMode = "couple" | "duos" | "custom";
+type Identity = { roomId: string; token: string; nickname: string; avatar: "masculin" | "feminin"; gameMode?: GameMode };
+type Entry = { mode: "create" | "join"; code: string; gameMode?: GameMode } | null;
 type FlowStage = "home" | "mode" | "prefs" | "enter";
 
 const IDENTITY_KEY = "adeux_identity";
@@ -70,7 +74,7 @@ function readIdentity(): Identity | null {
       token: parsed.token,
       nickname: parsed.nickname,
       avatar: parsed.avatar === "feminin" ? "feminin" : "masculin",
-      gameMode: parsed.gameMode === "duos" ? "duos" : "couple"
+      gameMode: parsed.gameMode === "duos" ? "duos" : parsed.gameMode === "custom" ? "custom" : "couple"
     };
   } catch {
     return null;
@@ -106,10 +110,12 @@ export default function App() {
     previewMode && previewMode !== "home" ? (previewDuo ? previewDuoSnapshot(previewMode) : previewSnapshot(previewMode)) : null
   );
   const [entry, setEntry] = useState<Entry>(() => {
-    const room = new URLSearchParams(location.search).get("room");
-    return room ? { mode: "join", code: room } : null;
+    const params = new URLSearchParams(location.search);
+    const room = params.get("room");
+    const mode: GameMode = params.get("mode") === "custom" ? "custom" : "couple";
+    return room ? { mode: "join", code: room, gameMode: mode } : null;
   });
-  const [flowMode, setFlowMode] = useState<"couple" | "duos">("couple");
+  const [flowMode, setFlowMode] = useState<GameMode>("couple");
   const [stage, setStage] = useState<FlowStage>(() =>
     new URLSearchParams(location.search).get("room") ? "enter" : "home"
   );
@@ -121,6 +127,9 @@ export default function App() {
   const [settingsOpen, setSettingsOpen] = useState(() => import.meta.env.DEV && new URLSearchParams(location.search).has("reglages"));
   const [safeOpen, setSafeOpen] = useState(false);
   const [guideOpen, setGuideOpen] = useState(false);
+  const [customQuestions, setCustomQuestions] = useState<string[]>(["", "", "", "", ""]);
+  const [customDeck, setCustomDeck] = useState<string[]>([]);
+  const [customError, setCustomError] = useState("");
   const [copied, setCopied] = useState(false);
 
   const failures = useRef(0);
@@ -211,6 +220,18 @@ export default function App() {
     };
   }, [identity, refresh, previewMode]);
 
+  /* Mode Personnalisé : la séquence appartient à la salle, l'écran ne fait que la relire. */
+  useEffect(() => {
+    if (previewMode || !identity || identity.gameMode !== "custom") return;
+    const status = snapshot?.room.status;
+    if (status !== "playing" && status !== "paused" && status !== "finished") return;
+    let alive = true;
+    getCustomDeck(identity.roomId, identity.token)
+      .then((deck) => { if (alive) setCustomDeck(Array.isArray(deck) ? deck : []); })
+      .catch((caught) => { if (alive) setCustomError(parseError(caught).message); });
+    return () => { alive = false; };
+  }, [identity, snapshot?.room.status, snapshot?.interaction_id, previewMode]);
+
   const run = useCallback(
     async (action: () => Promise<unknown>, after = true) => {
       setBusy(true);
@@ -248,7 +269,10 @@ export default function App() {
     setError("");
     try {
       const result = mode === "create" ? (entry?.gameMode === "duos" ? await createDuoRoom(name, persona) : await createRoom(name, persona)) : await joinRoom(roomId, name, persona);
-      const nextIdentity: Identity = { roomId: result.room_id, token: result.player_token, nickname: name, avatar: persona, gameMode: result.mode ?? entry?.gameMode ?? "couple" };
+      // Le salon Personnalisé utilise la salle à deux du serveur : on garde le mode choisi
+      // à l'écran, sinon un invité retomberait sur le lobby du catalogue.
+      const gameMode: GameMode = entry?.gameMode === "custom" ? "custom" : (result.mode ?? entry?.gameMode ?? "couple");
+      const nextIdentity: Identity = { roomId: result.room_id, token: result.player_token, nickname: name, avatar: persona, gameMode };
       saveIdentity(nextIdentity);
       lastQuestion.current = null;
       previous.current = null;
@@ -262,6 +286,23 @@ export default function App() {
       setBusy(false);
     }
   }
+
+  const launchCustom = () =>
+    run(async () => {
+      if (!identity) return;
+      const check = checkQuestions(customQuestions);
+      if (!check.ok) {
+        setCustomError(customMessage(prefs.language, check.errors[0]));
+        return;
+      }
+      try {
+        await startCustomGame(identity.roomId, identity.token, check.questions);
+        setCustomError("");
+      } catch (caught) {
+        // Refus du serveur : on l'affiche au-dessus du bouton, sans quitter le salon.
+        setCustomError(explainCustomError(prefs.language, parseError(caught).message));
+      }
+    });
 
   const copyInvite = async () => {
     try {
@@ -298,12 +339,16 @@ export default function App() {
     ? { nickname: otherPlayer.nickname, persona: otherPlayer.avatar, online: otherPlayer.online, seat: otherPlayer.seat === 1 || otherPlayer.seat === 3 ? 1 : 2 }
     : null;
 
-  const inviteUrl = useMemo(
-    () => (identity ? `${location.origin}${location.pathname}?room=${identity.roomId}` : ""),
-    [identity]
-  );
+  const inviteUrl = useMemo(() => {
+    if (!identity) return "";
+    const suffix = identity.gameMode === "custom" ? "&mode=custom" : "";
+    return `${location.origin}${location.pathname}?room=${identity.roomId}${suffix}`;
+  }, [identity]);
 
-  const interaction = snapshot?.interaction ?? null;
+  const interaction = useMemo(() => {
+    const custom = identity?.gameMode === "custom" ? resolveCustomInteraction(snapshot?.interaction_id ?? null, customDeck) : null;
+    return custom ?? snapshot?.interaction ?? null;
+  }, [identity?.gameMode, snapshot?.interaction, snapshot?.interaction_id, customDeck]);
   const shared = useMemo(() => identity?.gameMode === "duos" && snapshot ? selected.filter(c => snapshot.players.length === 4 && snapshot.players.every(p => p.selected_categories?.includes(c))) : getSharedCategories(selected, snapshot?.other_categories), [identity?.gameMode, snapshot, selected]);
   const bothConsent = Boolean(snapshot && snapshot.players.length === (identity?.gameMode === "duos" ? 4 : 2) && snapshot.players.every((player) => player.adult_consent));
 
@@ -515,6 +560,8 @@ export default function App() {
             onStart={() => identity && void run(() => startDuoGame(identity.roomId, identity.token))}
             busy={busy}
             onSafe={() => setSafeOpen(true)}
+            onOpenGuide={() => setGuideOpen(true)}
+            lang={prefs.language}
           />
         ) : (
           <Lobby
@@ -532,6 +579,14 @@ export default function App() {
             onToggleConsent={(value) => identity && void run(() => setAdultConsent(identity.roomId, identity.token, value))}
             onLaunch={() => identity && void run(() => startGame(identity.roomId, identity.token, selected))}
             busy={busy}
+            kind={identity.gameMode === "custom" ? "custom" : "couple"}
+            customQuestions={customQuestions}
+            onCustomQuestions={setCustomQuestions}
+            onLaunchCustom={launchCustom}
+            customError={customError}
+            isHost={snapshot.my_seat === 1}
+            onOpenGuide={() => setGuideOpen(true)}
+            onOpenSettings={() => setSettingsOpen(true)}
           />
         )
       ) : snapshot.room.status === "finished" ? (
@@ -559,6 +614,8 @@ export default function App() {
             onPermissions={(permissions) => identity && void run(() => setDuoPermissions(identity.roomId, identity.token, permissions))}
             onLeave={exitRoom}
             onSafe={() => setSafeOpen(true)}
+            onOpenGuide={() => setGuideOpen(true)}
+            lang={prefs.language}
           />
         ) : (
           <Game
@@ -598,7 +655,7 @@ export default function App() {
         <span>Consentement · Respect · Complicité</span>
       </footer>
 
-      <Guide open={guideOpen} lang={prefs.language} onClose={() => setGuideOpen(false)} />
+      <Guide open={guideOpen} lang={prefs.language} reducedMotion={prefs.reducedMotion || systemReduced} onClose={() => setGuideOpen(false)} />
 
       <Safety
         open={safeOpen}

@@ -59,7 +59,8 @@ const FR: GuideSection[] = [
     body: [
       "À Deux : réponses cachées jusqu'à la révélation, validation à deux pour avancer, pause partagée, stickers remplacés par des emojis natifs.",
       "DUOS : chaque réponse choisit sa visibilité (moi, mon duo, les quatre). Le salon commun n'est ouvert que si les quatre l'autorisent. Le duo opposé ne voit jamais vos échanges privés.",
-      "Les autres salons n'ont pas encore de fonctionnalités : ne les ouvre pas, ils n'existent pas."
+      "Personnalisé : vous écrivez vos questions (5 à 24) et vous les jouez dans l'ordre choisi, sinon tout fonctionne comme À Deux.",
+      "Anonyme, Côte à Côte et Vocal restent verrouillés : leur moteur et leur confidentialité ne sont pas terminés, les ouvrir promettrait ce qui n'existe pas."
     ]
   },
   {
@@ -75,8 +76,9 @@ const FR: GuideSection[] = [
     id: "personnalisation",
     title: "Utiliser les options de personnalisation",
     body: [
-      "La personnalisation se limite aujourd'hui à ce qui est proposé : catégories, intensité, exclusions, langue, thème, sons et animations.",
-      "Écrire ses propres questions n'est pas disponible : le jeu ne peut pas encore les intégrer à une salle. Le mode Personnalisé reste donc fermé."
+      "Préférences : catégories, intensité, exclusions, langue, thème, sons et animations, enregistrés sur ton appareil.",
+      "Salon Personnalisé : tu écris entre 5 et 24 questions, elles se jouent dans l'ordre de ta liste, avec les mêmes réponses cachées, la même révélation et le même bouton Passer.",
+      "Ce salon n'ouvre jamais le palier 18+ : une question libre ne peut pas être retirée en cours de partie si un accord change, le 18+ reste donc au catalogue."
     ]
   },
   {
@@ -155,7 +157,8 @@ const EN: GuideSection[] = [
     body: [
       "À Deux: answers stay hidden until the reveal, both must confirm to move on, the pause is shared, stickers are replaced by native emojis.",
       "DUOS: each answer chooses who sees it (me, my duo, all four). The shared room opens only if all four allow it. The opposite duo never sees your private exchanges.",
-      "The other rooms have no features yet: do not open them, they do not exist."
+      "Custom: you write your own questions (5 to 24) and play them in the order you choose; everything else works like À Deux.",
+      "Anonymous, Side by side and Voice stay locked: their engine and their privacy are unfinished, opening them would promise what does not exist."
     ]
   },
   {
@@ -171,8 +174,9 @@ const EN: GuideSection[] = [
     id: "personnalisation",
     title: "Personalisation options",
     body: [
-      "Personalisation is limited to what is offered today: categories, intensity, exclusions, language, theme, sound and motion.",
-      "Writing your own questions is not available: the game cannot yet add them to a room. The Custom mode therefore stays closed."
+      "Preferences: categories, intensity, exclusions, language, theme, sound and motion, stored on your device.",
+      "Custom room: you write 5 to 24 questions, played in the order of your list, with the same hidden answers, the same reveal and the same Pass button.",
+      "That room never opens the 18+ tier: a free-text question cannot be withdrawn mid-game if a consent changes, so 18+ stays in the catalogue."
     ]
   },
   {
@@ -196,28 +200,32 @@ const EN: GuideSection[] = [
 
 export const GUIDE: Record<Lang, GuideSection[]> = { fr: FR, en: EN };
 
-export type TipId = "mode" | "intensity" | "categories" | "prefs" | "invite" | "lobby" | "safe" | "levels";
+export type TipId = "mode" | "intensity" | "categories" | "prefs" | "invite" | "lobby" | "safe" | "levels" | "custom" | "duos";
 
 const TIPS_FR: Record<TipId, { title: string; body: string }> = {
-  mode: { title: "Quel salon ?", body: "À Deux et DUOS sont jouables. Les autres salons sont verrouillés : leur moteur n'existe pas encore." },
+  mode: { title: "Quel salon ?", body: "À Deux, DUOS et Personnalisé sont jouables. Anonyme, Côte à Côte et Vocal sont verrouillés : leur moteur n'est pas terminé." },
   intensity: { title: "À quoi sert l'intensité ?", body: "Elle choisit les ambiances proposées par défaut. Very Hot inclut les cartes 18+, toujours soumises à l'accord des deux." },
   categories: { title: "Catégories", body: "Seules les catégories choisies par tout le monde sont tirées. Une catégorie exclue dans tes préférences reste fermée." },
   prefs: { title: "Tes préférences", body: "Elles restent sur cet appareil et ne changent rien pour l'autre personne." },
   invite: { title: "Invitation", body: "Le lien contient l'identifiant de la salle. Sans lui, personne ne peut entrer ; une salle pleine refuse les autres." },
   lobby: { title: "Salle d'attente", body: "La partie démarre quand tout le monde est là, qu'une catégorie est commune et que les accords 18+ nécessaires sont donnés." },
   safe: { title: "SAFE", body: "Pause pour les deux, sortie immédiate ou sortie avec blocage mémorisé sur cet appareil." },
-  levels: { title: "Niveaux", body: "Le niveau indique l'audace de la carte. Un changement de niveau s'annonce par un écran sombre, sans interrompre la partie." }
+  levels: { title: "Niveaux", body: "Le niveau indique l'audace de la carte. Un changement de niveau s'annonce par un écran sombre, sans interrompre la partie." },
+  custom: { title: "Tes questions", body: "Entre 5 et 24 questions, jouées dans l'ordre affiché. Le serveur vérifie la longueur et les doublons au lancement. Pas de palier 18+ ici." },
+  duos: { title: "Salon DUOS", body: "Quatre joueurs, deux duos. Chaque réponse choisit qui la voit ; le salon commun n'ouvre que si les quatre l'autorisent." }
 };
 
 const TIPS_EN: Record<TipId, { title: string; body: string }> = {
-  mode: { title: "Which room?", body: "À Deux and DUOS are playable. Other rooms are locked: their engine does not exist yet." },
+  mode: { title: "Which room?", body: "À Deux, DUOS and Custom are playable. Anonymous, Side by side and Voice are locked: their engine is unfinished." },
   intensity: { title: "What does intensity do?", body: "It picks the default moods. Very Hot includes 18+ cards, always subject to both people's consent." },
   categories: { title: "Categories", body: "Only the categories chosen by everyone are drawn. A category excluded in your preferences stays closed." },
   prefs: { title: "Your preferences", body: "They stay on this device and change nothing for the other person." },
   invite: { title: "Invitation", body: "The link carries the room id. Without it nobody can enter; a full room refuses newcomers." },
   lobby: { title: "Waiting room", body: "The game starts when everyone is here, one category is shared and the required 18+ consents are given." },
   safe: { title: "SAFE", body: "Pause for both, leave immediately, or leave with a block remembered on this device." },
-  levels: { title: "Levels", body: "The level shows how bold the card is. A level change is announced by a dark screen without stopping the game." }
+  levels: { title: "Levels", body: "The level shows how bold the card is. A level change is announced by a dark screen without stopping the game." },
+  custom: { title: "Your questions", body: "5 to 24 questions, played in the order shown. The server checks length and duplicates when the game starts. No 18+ tier here." },
+  duos: { title: "DUOS room", body: "Four players, two duos. Each answer chooses who sees it; the shared room opens only if all four allow it." }
 };
 
 export const TIPS: Record<Lang, Record<TipId, { title: string; body: string }>> = { fr: TIPS_FR, en: TIPS_EN };

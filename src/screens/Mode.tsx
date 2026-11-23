@@ -5,7 +5,7 @@ import { DUOS_ENABLED, VOICE_ENABLED } from "../lib/flags";
 
 interface ModeProps {
   lang: Lang;
-  onSelect: (mode: "couple" | "duos") => void;
+  onSelect: (mode: "couple" | "duos" | "custom") => void;
   onBack: () => void;
 }
 
@@ -15,7 +15,7 @@ export function Mode({ lang, onSelect, onBack }: ModeProps) {
     { id: "couple", title: t("mode.couple"), desc: t("mode.couple.desc"), icon: "heart" as const, available: true },
     { id: "side", title: t("mode.side"), desc: t("mode.side.desc"), icon: "users" as const, available: false },
     { id: "anonymous", title: t("mode.anonymous"), desc: t("mode.anonymous.desc"), icon: "lock" as const, available: false },
-    { id: "custom", title: t("mode.custom"), desc: t("mode.custom.desc"), icon: "sparkles" as const, available: false },
+    { id: "custom", title: t("mode.custom"), desc: t("mode.custom.desc"), icon: "sparkles" as const, available: true },
     { id: "duos", title: t("mode.duos"), desc: t("mode.duos.desc"), icon: "bolt" as const, available: DUOS_ENABLED }
   ];
 
@@ -40,7 +40,7 @@ export function Mode({ lang, onSelect, onBack }: ModeProps) {
               className={`mode-card ${mode.available ? "" : "is-locked"}`}
               data-testid={`mode-${mode.id}`}
               disabled={!mode.available}
-              onClick={() => mode.available && onSelect(mode.id === "duos" ? "duos" : "couple")}
+              onClick={() => mode.available && onSelect(mode.id === "duos" ? "duos" : mode.id === "custom" ? "custom" : "couple")}
             >
               <span className="mode-card__icon"><Icon name={mode.icon} /></span>
               <span className="mode-card__body">

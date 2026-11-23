@@ -1,8 +1,9 @@
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { Icon } from "./Icon";
 import type { Preferences, Theme } from "../lib/prefs";
 import type { Lang } from "../lib/i18n";
 import { translator } from "../lib/i18n";
+import { useFocusTrap } from "../lib/useFocusTrap";
 
 interface SettingsProps {
   open: boolean;
@@ -20,9 +21,9 @@ interface SettingsProps {
   busy: boolean;
 }
 
-const THEMES: { id: Theme; label: string; icon: "moon" | "sun" }[] = [
-  { id: "dark", label: "Sombre", icon: "moon" },
-  { id: "light", label: "Clair", icon: "sun" }
+const THEMES: { id: Theme; icon: "moon" | "sun" }[] = [
+  { id: "dark", icon: "moon" },
+  { id: "light", icon: "sun" }
 ];
 
 /** Réglages : préférences propres à cet appareil, rien n'est partagé avec l'autre joueur. */
@@ -43,16 +44,9 @@ export function Settings({
 }: SettingsProps) {
   const t = translator(lang);
   const closeRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!open) return;
-    closeRef.current?.focus();
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
-    };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [open, onClose]);
+  useFocusTrap(open, { onClose, container: panelRef, initial: closeRef });
 
   if (!open) return null;
 
@@ -60,20 +54,20 @@ export function Settings({
 
   return (
     <div className="sheet" role="dialog" aria-modal="true" aria-labelledby="settings-title">
-      <button className="sheet__backdrop" type="button" aria-label="Fermer les réglages" onClick={onClose} />
-      <div className="sheet__panel">
+      <button className="sheet__backdrop" type="button" aria-label={t("settings.close.dialog")} onClick={onClose} />
+      <div className="sheet__panel" ref={panelRef}>
         <header className="sheet__head">
-          <h2 id="settings-title">Réglages</h2>
-          <button ref={closeRef} className="icon-button" type="button" onClick={onClose} aria-label="Fermer">
+          <h2 id="settings-title">{t("settings.title")}</h2>
+          <button ref={closeRef} className="icon-button" type="button" onClick={onClose} aria-label={t("settings.close")}>
             <Icon name="close" />
           </button>
         </header>
 
-        <p className="sheet__note">Ces préférences restent sur cet appareil. L'autre joueur garde les siennes.</p>
+        <p className="sheet__note">{t("settings.note")}</p>
 
         <fieldset className="field">
-          <legend>Apparence</legend>
-          <div className="segmented" role="radiogroup" aria-label="Thème">
+          <legend>{t("settings.appearance")}</legend>
+          <div className="segmented" role="radiogroup" aria-label={t("settings.theme")}>
             {THEMES.map((theme) => (
               <button
                 key={theme.id}
@@ -83,7 +77,7 @@ export function Settings({
                 className={prefs.theme === theme.id ? "is-selected" : ""}
                 onClick={() => update({ theme: theme.id })}
               >
-                <Icon name={theme.icon} size={16} /> {theme.label}
+                <Icon name={theme.icon} size={16} /> {t(theme.id === "dark" ? "settings.dark" : "settings.light")}
               </button>
             ))}
           </div>
@@ -91,8 +85,8 @@ export function Settings({
 
         <div className="switch-row">
           <div>
-            <strong>Réduire les animations</strong>
-            <p>Les personnages restent visibles, les mouvements sont figés.</p>
+            <strong>{t("settings.reduce")}</strong>
+            <p>{t("settings.reduce.sub")}</p>
           </div>
           <label className="switch">
             <input
@@ -101,25 +95,25 @@ export function Settings({
               onChange={(event) => update({ reducedMotion: event.target.checked })}
             />
             <span aria-hidden="true" />
-            <span className="visually-hidden">Réduire les animations</span>
+            <span className="visually-hidden">{t("settings.reduce.on")}</span>
           </label>
         </div>
 
         <div className="switch-row">
           <div>
-            <strong>Sons</strong>
-            <p>Un signal discret à l'envoi et à la révélation.</p>
+            <strong>{t("settings.sound")}</strong>
+            <p>{t("settings.sound.sub")}</p>
           </div>
           <label className="switch">
             <input type="checkbox" checked={prefs.sound} onChange={(event) => update({ sound: event.target.checked })} />
             <span aria-hidden="true" />
-            <span className="visually-hidden">Activer les sons</span>
+            <span className="visually-hidden">{t("settings.sound.on")}</span>
           </label>
         </div>
 
         <label className={`volume ${prefs.sound ? "" : "is-muted"}`}>
           <span>
-            <Icon name="sound" size={16} /> Volume
+            <Icon name="sound" size={16} /> {t("settings.volume")}
           </span>
           <input
             type="range"
@@ -141,16 +135,16 @@ export function Settings({
           )}
           {playing && onTogglePause && (
             <button className="secondary full" type="button" disabled={busy} onClick={onTogglePause}>
-              <Icon name={paused ? "play" : "pause"} /> {paused ? "Reprendre la partie" : "Mettre en pause"}
+              <Icon name={paused ? "play" : "pause"} /> {paused ? t("settings.resume") : t("settings.pause")}
             </button>
           )}
           {adultEnabled && onLeaveAdult && (
             <button className="secondary full" type="button" disabled={busy} onClick={onLeaveAdult}>
-              <Icon name="lock" /> Quitter le mode 18+
+              <Icon name="lock" /> {t("settings.adult.off")}
             </button>
           )}
           <button className="secondary full danger" type="button" disabled={busy} onClick={onLeaveRoom}>
-            <Icon name="log-out" /> Quitter la salle
+            <Icon name="log-out" /> {t("settings.leave")}
           </button>
         </div>
       </div>
