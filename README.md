@@ -4,8 +4,10 @@ Application React + Vite + Supabase pour deux personnes : des questions, des con
 des défis facultatifs, mis en scène par deux personnages illustrés (Tao et Naya) qui écoutent,
 réfléchissent et prennent la parole.
 
-En ligne : https://a-deux-jeu.onrender.com — identité officielle QSPICY (logo et illustration
-du propriétaire), 43 cartes réécrites avec niveau et audience, confidences privées.
+En ligne : https://dodjust229.github.io/--deux-/ (version finale vérifiée) et
+https://a-deux-jeu.onrender.com (service Render, à redéployer). Identité officielle QSPICY
+(logo et illustration du propriétaire), 43 cartes réécrites avec niveau et audience,
+confidences privées.
 
 Réservé aux adultes de 18 ans et plus. Gratuit, sans compte, sans installation pour les joueurs.
 
