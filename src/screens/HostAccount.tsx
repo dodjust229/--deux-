@@ -37,9 +37,10 @@ export function HostAccount({ onComplete, onBack }: HostAccountProps) {
 
   useEffect(() => {
     if (!supabase) return;
-    void supabase.auth.getUser().then(({ data }) => setUser(data.user));
+    void supabase.auth.getUser().then(({ data }) => { setUser(data.user); if (data.user) setStep("link"); });
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
+      if (session?.user) setStep("link");
     });
     return () => listener.subscription.unsubscribe();
   }, []);
