@@ -105,7 +105,7 @@ export function DuoLobby({ snap, inviteUrl, copied, onCopy, selected, shared, on
         <p className="muted small">{snap.players.filter((p) => p.adult_consent).length}/4 ont donné leur accord.</p>
         <label className="duo-toggle">
           <input type="checkbox" checked={perm.cross_participation} onChange={(e) => onPermissions({ ...perm, cross_participation: e.target.checked, share_answers: e.target.checked ? perm.share_answers : false })} />
-          <span>J'autorise les interactions dans l'espace commun.</span>
+          <span>J'autorise les interactions dans l'espace commun (désactivé par défaut).</span>
         </label>
         <label className="duo-toggle">
           <input type="checkbox" checked={perm.receive_media} onChange={(e) => onPermissions({ ...perm, receive_media: e.target.checked })} />
