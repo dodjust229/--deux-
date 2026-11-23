@@ -44,7 +44,7 @@ Deno.serve(async (req: Request) => {
   if (paymentError || !payment) return json(404, { error: "Paiement introuvable pour ce compte." });
 
   const apiBase = environment === "live" ? "https://api.fedapay.com/v1" : "https://sandbox-api.fedapay.com/v1";
-  const response = await fetch(`${apiBase}/transactions/${encodeURIComponent(transactionId)}`, {
+  const response = await fetch(`${apiBase}/transactions/${encodeURIComponent(transactionId)}?include=currency`, {
     headers: { Authorization: `Bearer ${fedapayKey}`, "Content-Type": "application/json" },
   });
   if (!response.ok) return json(502, { error: "FedaPay ne répond pas à la vérification." });
