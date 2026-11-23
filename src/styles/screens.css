@@ -1833,3 +1833,14 @@
     font-size: 24px;
   }
 }
+
+/* Ajustements fins : écrans compacts (320–380 px). */
+@media (max-width: 380px) {
+  .duo-page { gap: 14px; padding-top: 18px; padding-bottom: 28px; }
+  .duo-hosts { gap: 6px; padding: 8px; }
+  .duo-hosts .character { width: 68px; height: 68px; flex: 0 0 68px; }
+  .duo-hosts p { min-width: 0; }
+  .duo-hosts small { overflow-wrap: anywhere; }
+  .duo-tabs button { min-width: 0; max-width: 100%; white-space: normal; }
+  .duo-chat-send .primary { width: 100%; }
+}
