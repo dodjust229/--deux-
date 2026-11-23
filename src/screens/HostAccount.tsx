@@ -13,8 +13,7 @@ interface HostAccountProps {
 function normalizeBeninPhone(value: string) {
   const digits = value.replace(/[^0-9]/g, "");
   if (digits.startsWith("229")) return `+${digits}`;
-  if (digits.length === 10 && digits.startsWith("01")) return `+229${digits.slice(2)}`;
-  if (digits.length === 8) return `+229${digits}`;
+  if (digits.length === 10 || digits.length === 8) return `+229${digits}`;
   return value.trim();
 }
 
@@ -58,7 +57,7 @@ export function HostAccount({ onComplete, onBack }: HostAccountProps) {
     try {
       if (method === "phone") {
         const normalized = normalizeBeninPhone(phone);
-        if (!/^\+229[0-9]{8}$/.test(normalized)) throw new Error("Entre un numéro béninois valide, avec ou sans +229.");
+        if (!/^\+229[0-9]{8,10}$/.test(normalized)) throw new Error("Entre un numéro béninois valide, avec ou sans +229.");
         setPhone(normalized);
         const { error: authError } = await supabase.auth.signInWithOtp({ phone: normalized });
         if (authError) throw authError;
@@ -99,7 +98,7 @@ export function HostAccount({ onComplete, onBack }: HostAccountProps) {
     try {
       if (missing === "phone") {
         const normalized = normalizeBeninPhone(phone);
-        if (!/^\+229[0-9]{8}$/.test(normalized)) throw new Error("Entre un numéro béninois valide, avec ou sans +229.");
+        if (!/^\+229[0-9]{8,10}$/.test(normalized)) throw new Error("Entre un numéro béninois valide, avec ou sans +229.");
         const { error: updateError } = await supabase.auth.updateUser({ phone: normalized });
         if (updateError) throw updateError;
         setPendingValue(normalized);
