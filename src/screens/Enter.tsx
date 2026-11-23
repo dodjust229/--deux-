@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Character, PERSONA_NAME, PERSONA_TRAIT, type Persona } from "../components/Character";
 import { Icon } from "../components/Icon";
-import { Wordmark } from "../components/Brand";
+import { translator, type Lang } from "../lib/i18n";
 
 interface EnterProps {
   mode: "create" | "join";
@@ -10,12 +10,14 @@ interface EnterProps {
   error: string;
   onBack: () => void;
   onSubmit: (input: { nickname: string; persona: Persona; code: string }) => void;
+  lang: Lang;
   duoMode?: boolean;
 }
 
 const PERSONAS: Persona[] = ["masculin", "feminin"];
 
-export function Enter({ mode, initialCode, busy, error, onBack, onSubmit, duoMode = false }: EnterProps) {
+export function Enter({ mode, initialCode, busy, error, onBack, onSubmit, lang, duoMode = false }: EnterProps) {
+  const t = translator(lang);
   const [nickname, setNickname] = useState("");
   const [persona, setPersona] = useState<Persona>("masculin");
   const [code, setCode] = useState(initialCode);
@@ -23,21 +25,16 @@ export function Enter({ mode, initialCode, busy, error, onBack, onSubmit, duoMod
   return (
     <main className="enter page">
       <button className="back-link" type="button" onClick={onBack}>
-        <Icon name="arrow" size={16} className="flip" /> Retour
+        <Icon name="arrow" size={16} className="flip" /> {t("back")}
       </button>
 
       <div className="enter__card">
-        <Wordmark size={58} />
-        <h1>{mode === "create" ? (duoMode ? "Ouvrir votre salon DUOS" : "Ouvrir votre salle") : "Rejoindre la conversation"}</h1>
-        <p className="muted">
-          {mode === "create"
-            ? "Choisis ton prénom de jeu et le personnage que tu incarnes. Un lien privé sera créé pour les trois autres joueurs."
-            : "Colle le lien reçu, choisis ton personnage et entre dans la salle."}
-        </p>
+        <h1>{mode === "create" ? t("enter.create.title") : t("enter.join.title")}</h1>
+        <p className="muted">{mode === "create" ? t("enter.create.sub") : t("enter.join.sub")}</p>
 
         {mode === "join" && (
           <label className="field">
-            <span>Lien ou identifiant de la salle</span>
+            <span>{t("enter.code")}</span>
             <input
               className="input"
               data-testid="room-code"
@@ -51,7 +48,7 @@ export function Enter({ mode, initialCode, busy, error, onBack, onSubmit, duoMod
         )}
 
         <label className="field">
-          <span>Ton prénom de jeu</span>
+          <span>{t("enter.nickname")}</span>
           <input
             className="input"
             data-testid="nickname"
@@ -64,7 +61,7 @@ export function Enter({ mode, initialCode, busy, error, onBack, onSubmit, duoMod
         </label>
 
         <fieldset className="personas">
-          <legend>Ton personnage</legend>
+          <legend>{t("enter.persona")}</legend>
           <div className="personas__grid" role="radiogroup" aria-label="Personnage">
             {PERSONAS.map((value) => (
               <button
@@ -97,13 +94,10 @@ export function Enter({ mode, initialCode, busy, error, onBack, onSubmit, duoMod
           disabled={busy}
           onClick={() => onSubmit({ nickname, persona, code })}
         >
-          {busy ? "Connexion…" : mode === "create" ? (duoMode ? "Créer le salon à quatre" : "Créer la salle") : "Entrer dans la salle"}
+          {busy ? t("enter.busy") : mode === "create" ? t("enter.submit.create") : t("enter.submit.join")}
           {!busy && <Icon name="arrow" />}
         </button>
-        <p className="enter__note">
-          Ton prénom, ton personnage et tes réponses restent liés à cette salle temporaire. Aucun compte
-          n'est créé.
-        </p>
+        <p className="enter__note">{t("enter.note")}</p>
       </div>
     </main>
   );

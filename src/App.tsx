@@ -21,16 +21,19 @@ import {
 } from "./api";
 import { extractRoomId, getSharedCategories, parseError } from "./lib/protocol";
 import { deriveScene } from "./lib/scene";
-import { applyPreferences, readPreferences, writePreferences, type Preferences } from "./lib/prefs";
+import { applyPreferences, categoriesForIntensity, readPreferences, writePreferences, type Preferences } from "./lib/prefs";
 import { previewSnapshot } from "./lib/preview";
 import { playSound } from "./lib/sound";
 import type { Category, Player, Snapshot } from "./types";
 import { Wordmark } from "./components/Brand";
 import { Icon } from "./components/Icon";
 import { Settings } from "./components/Settings";
+import { Safety } from "./components/Safety";
 import { Stage } from "./components/Stage";
 import type { StagePlayer } from "./components/Stage";
 import { Home } from "./screens/Home";
+import { Mode } from "./screens/Mode";
+import { Preferences as PreferencesScreen } from "./screens/Preferences";
 import { Enter } from "./screens/Enter";
 import { Lobby } from "./screens/Lobby";
 import { Game } from "./screens/Game";
@@ -40,6 +43,7 @@ import type { DuoSnapshot } from "./types";
 
 type Identity = { roomId: string; token: string; nickname: string; avatar: "masculin" | "feminin"; gameMode?: "couple" | "duos" };
 type Entry = { mode: "create" | "join"; code: string; gameMode?: "couple" | "duos" } | null;
+type FlowStage = "home" | "mode" | "prefs" | "enter";
 
 const IDENTITY_KEY = "adeux_identity";
 const IDENTITY_COOKIE = "qspicy_session";
@@ -99,12 +103,16 @@ export default function App() {
     const room = new URLSearchParams(location.search).get("room");
     return room ? { mode: "join", code: room } : null;
   });
-  const [selected, setSelected] = useState<Category[]>(["decouverte", "complicite", "profondeur", "seduction"]);
+  const [stage, setStage] = useState<FlowStage>(() =>
+    new URLSearchParams(location.search).get("room") ? "enter" : "home"
+  );
+  const [selected, setSelected] = useState<Category[]>(() => categoriesForIntensity(prefs.intensity, prefs.exclusions));
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [offline, setOffline] = useState(false);
   const [busy, setBusy] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(() => import.meta.env.DEV && new URLSearchParams(location.search).has("reglages"));
+  const [safeOpen, setSafeOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
   const failures = useRef(0);
@@ -412,34 +420,55 @@ export default function App() {
           </div>
         </main>
       ) : !identity ? (
-        entry ? (
+        stage === "home" ? (
+          <Home
+            lang={prefs.language}
+            onEnter={() => {
+              setError("");
+              setStage("mode");
+            }}
+            onInvite={() => {
+              const room = new URLSearchParams(location.search).get("room") ?? "";
+              setEntry({ mode: "join", code: room, gameMode: "couple" });
+              setError("");
+              setStage("enter");
+            }}
+          />
+        ) : stage === "mode" ? (
+          <Mode
+            lang={prefs.language}
+            onSelect={() => {
+              setError("");
+              setStage("prefs");
+            }}
+            onBack={() => setStage("home")}
+          />
+        ) : stage === "prefs" ? (
+          <PreferencesScreen
+            lang={prefs.language}
+            prefs={prefs}
+            onChange={setPrefs}
+            onContinue={() => {
+              setSelected(categoriesForIntensity(prefs.intensity, prefs.exclusions));
+              setEntry({ mode: "create", code: "", gameMode: "couple" });
+              setError("");
+              setStage("enter");
+            }}
+            onBack={() => setStage("mode")}
+          />
+        ) : (
           <Enter
-            mode={entry.mode}
-            duoMode={entry.gameMode === "duos"}
-            initialCode={entry.code}
+            mode={entry?.mode ?? "create"}
+            duoMode={entry?.gameMode === "duos"}
+            initialCode={entry?.code ?? ""}
+            lang={prefs.language}
             busy={busy}
             error={error}
             onBack={() => {
-              setEntry(null);
               setError("");
+              setStage(entry?.mode === "join" ? "home" : "prefs");
             }}
             onSubmit={enter}
-          />
-        ) : (
-          <Home
-            onCreate={() => {
-              setEntry({ mode: "create", code: "", gameMode: "couple" });
-              setError("");
-            }}
-            onCreateDuo={() => {
-              setEntry({ mode: "create", code: "", gameMode: "duos" });
-              setError("");
-            }}
-            onJoin={() => {
-              const room = new URLSearchParams(location.search).get("room") ?? "";
-              setEntry({ mode: "join", code: room });
-              setError("");
-            }}
           />
         )
       ) : !snapshot || !scene ? (
@@ -518,6 +547,8 @@ export default function App() {
             onPass={pass}
             onNext={() => identity && void run(() => nextInteraction(identity.roomId, identity.token))}
             onResume={() => identity && void run(() => setPause(identity.roomId, identity.token, false))}
+            onSafe={() => setSafeOpen(true)}
+            lang={prefs.language}
           />
         )
       ) : (
@@ -536,6 +567,33 @@ export default function App() {
         <span>QSPICY · un espace pour se parler vraiment</span>
         <span>Consentement · Respect · Complicité</span>
       </footer>
+
+      <Safety
+        open={safeOpen}
+        lang={prefs.language}
+        onClose={() => setSafeOpen(false)}
+        onPause={() => {
+          setSafeOpen(false);
+          if (identity && snapshot) void run(() => setPause(identity.roomId, identity.token, true));
+        }}
+        onQuit={() => {
+          setSafeOpen(false);
+          void exitRoom();
+        }}
+        onBlock={() => {
+          setSafeOpen(false);
+          try {
+            const key = "qspicy.bloques";
+            const blocked: string[] = JSON.parse(window.localStorage.getItem(key) ?? "[]");
+            if (otherPlayer?.id && !blocked.includes(otherPlayer.id)) {
+              window.localStorage.setItem(key, JSON.stringify([...blocked, otherPlayer.id]));
+            }
+          } catch {
+            /* stockage indisponible : le blocage reste valable pour cette session */
+          }
+          void exitRoom();
+        }}
+      />
 
       <Settings
         open={settingsOpen}

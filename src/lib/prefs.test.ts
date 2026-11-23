@@ -4,6 +4,7 @@ import {
   DEFAULT_PREFERENCES,
   LEGACY_REDUCED_KEY,
   PREFS_KEY,
+  categoriesForIntensity,
   clampVolume,
   readPreferences,
   sanitizePreferences,
@@ -31,11 +32,16 @@ test("préférences : ancien réglage de réduction des animations repris", () =
 
 test("préférences : JSON corrompu ou valeurs invalides ne cassent rien", () => {
   assert.deepEqual(readPreferences(memoryStorage({ [PREFS_KEY]: "{oups" })), DEFAULT_PREFERENCES);
-  const sanitized = sanitizePreferences({ theme: "neon", reducedMotion: "oui", sound: 1, volume: 4 });
+  const sanitized = sanitizePreferences({ theme: "neon", reducedMotion: "oui", sound: 1, volume: 4, language: "de", intensity: "extreme", exclusions: ["seduction", "inconnue"] });
   assert.equal(sanitized.theme, "dark");
   assert.equal(sanitized.reducedMotion, false);
   assert.equal(sanitized.sound, false);
   assert.equal(sanitized.volume, 1);
+  assert.equal(sanitized.language, "fr");
+  assert.equal(sanitized.intensity, "hot");
+  assert.deepEqual(sanitized.exclusions, ["seduction"]);
+  assert.deepEqual(categoriesForIntensity("soft"), ["decouverte", "complicite"]);
+  assert.deepEqual(categoriesForIntensity("veryHot", ["audacieux"]), ["decouverte", "complicite", "profondeur", "seduction"]);
   assert.equal(clampVolume(-2), 0);
   assert.equal(clampVolume("0.42"), 0.42);
 });
