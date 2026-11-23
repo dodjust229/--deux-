@@ -20,7 +20,7 @@ create table if not exists public.host_payments (
 create table if not exists public.host_subscriptions (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users(id) on delete cascade,
-  payment_id uuid not null unique references public.host_payments(id) on delete restrict,
+  payment_id uuid not null unique references public.host_payments(id) on delete cascade,
   status text not null default 'active' check (status in ('active','expired','revoked')),
   starts_at timestamptz not null default now(),
   expires_at timestamptz not null,
