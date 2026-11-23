@@ -46,6 +46,8 @@ npm run pack:source
 - `docs/MODELE_CARTE.md` — modèle de carte, audiences DUOS, niveaux, visibilité et consentement ;
 - `docs/RAPPORT_VALIDATION_PILOTE_V11.md` — contrôles et modifications du pilote v1.1 ;
 - `content/pilot/` — catalogue pilote (30 cartes) en JSON et CSV de relecture ;
+- `supabase/README.md` — ordre des migrations, recette locale obligatoire ;
+- `docs/QSPICY_DUOS_LIFECYCLE.md` — cycle de vie DUOS : pause, révocation, revanche ;
 - `INSTALLATION.md`, `TESTS_A_DEUX.md` — installation et vérification manuelle.
 
 ## Stack

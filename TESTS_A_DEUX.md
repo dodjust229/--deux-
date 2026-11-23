@@ -45,3 +45,23 @@ Le scénario SQL de sécurité et de parcours reste dans `supabase/tests/scenari
 19. ☐ SAFE est accessible dans le lobby et pendant une partie DUOS : quitter fonctionne, bloquer
     ajoute les joueurs et la salle à la liste locale puis quitte ; pause n'apparaît qu'en partie.
     Depuis le même appareil, rejoindre à nouveau une salle bloquée est refusé.
+
+20. ☐ DUOS · pause et reprise : un joueur met la partie en pause depuis SAFE ; les quatre voient
+    « Partie en pause » ; n'importe lequel clique « Reprendre la partie » et la question réapparaît
+    avec les réponses déjà écrites.
+
+21. ☐ DUOS · révocation en cours de partie : pendant une question, un joueur décoche « J'autorise
+    l'espace commun » dans « Mes autorisations ». Immédiatement, l'onglet « Tous ensemble » se ferme
+    chez tout le monde et les messages de groupe disparaissent. Il recoche : l'espace revient (les
+    anciens messages réapparaissent, ils n'ont pas été supprimés).
+
+22. ☐ DUOS · médias : un joueur décoche « J'accepte de recevoir des emojis et des messages ».
+    Un sticker envoyé par son partenaire de duo est refusé ; un message texte passe encore.
+
+23. ☐ DUOS · revanche : à la fin de la partie, chacun clique « Rejouer à quatre ». Le bouton affiche
+    le nombre de votes (1/4 … 3/4) et reste inactif pour qui a déjà voté. Au quatrième accord, le
+    salon revient à l'écran de préparation avec le même lien, réponses et messages effacés, et le
+    consentement 18+ à redonner.
+
+24. ☐ DUOS · mode deux joueurs : ouvrir un lien de salon DUOS avec le parcours à deux joueurs doit
+    afficher « Ce salon est un salon DUOS » et ne jamais installer un joueur dans la salle.
