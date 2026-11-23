@@ -84,7 +84,9 @@ Deno.serve(async (req: Request) => {
   }
 
   if (status === "approved" && eventName === "transaction.approved") {
-    if (payment.status === "approved") return response(200, { received: true, duplicate: true });
+    const { data: alreadyActivated } = await admin.from("host_subscriptions")
+      .select("id").eq("payment_id", payment.id).maybeSingle();
+    if (alreadyActivated) return response(200, { received: true, duplicate: true });
 
     const now = new Date();
     const expires = new Date(now.getTime() + 15 * 24 * 60 * 60 * 1000);
