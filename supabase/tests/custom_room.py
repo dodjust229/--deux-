@@ -11,18 +11,30 @@ import subprocess
 import sys
 
 DB = os.environ.get("TEST_DB", "qspicy_test")
-# Prérequis : base PostgreSQL jetable avec 01→10 appliqués (voir README, « Activer le salon Personnalisé »).
+# Prérequis : base PostgreSQL jetable préparée par supabase/tests/run_postgres.sh.
+# PGHOST/PGPORT/PGUSER/PGPASSWORD permettent aussi l'exécution dans un service CI conteneurisé.
 results = []
+
+
+def psql_base() -> list[str]:
+    common = ["psql", "-q", "-X", "-A", "-t", "-v", "ON_ERROR_STOP=1"]
+    if os.environ.get("PGHOST"):
+        return common + [
+            "-h", os.environ["PGHOST"],
+            "-p", os.environ.get("PGPORT", "5432"),
+            "-U", os.environ.get("PGUSER", "postgres"),
+        ]
+    return ["sudo", "-u", "postgres"] + common
 
 
 def sql(statement: str) -> str:
     proc = subprocess.run(
-        ["sudo", "-u", "postgres", "psql", "-q", "-X", "-A", "-t", "-d", DB, "-c", statement],
+        psql_base() + ["-d", DB, "-c", statement],
         capture_output=True, text=True,
     )
-    err = proc.stderr or ""
-    if "ERROR:" in err:
-        raise RuntimeError(err.strip().splitlines()[0])
+    if proc.returncode != 0:
+        detail = (proc.stderr or proc.stdout or "Échec de psql").strip()
+        raise RuntimeError(detail.splitlines()[0])
     return (proc.stdout or "").strip()
 
 
