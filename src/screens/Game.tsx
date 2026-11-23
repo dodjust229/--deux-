@@ -1,12 +1,16 @@
+import { useEffect, useRef, useState } from "react";
 import { Icon } from "../components/Icon";
 import { Stage } from "../components/Stage";
 import type { StagePlayer } from "../components/Stage";
 import { Composer } from "../components/Composer";
+import { Atmosphere } from "../components/Atmosphere";
+import { LevelCurtain } from "../components/LevelCurtain";
 import { MediaView } from "../components/MediaContent";
 import type { Scene } from "../lib/scene";
 import { decodePrediction } from "../lib/protocol";
 import { PRIVATE_STORAGE_PREFIX, parseContent } from "../lib/media";
 import { audienceLabels, categoryLabels, kindLabels, levelLabels } from "../content";
+import type { Lang } from "../lib/i18n";
 import type { Answer, Interaction, Snapshot } from "../types";
 
 interface GameProps {
@@ -24,6 +28,8 @@ interface GameProps {
   onPass: () => void;
   onNext: () => void;
   onResume: () => void;
+  onSafe: () => void;
+  lang: Lang;
 }
 
 function AnswerBody({
@@ -92,8 +98,22 @@ export function Game({
   onSubmit,
   onPass,
   onNext,
-  onResume
+  onResume,
+  onSafe,
+  lang
 }: GameProps) {
+  const [curtain, setCurtain] = useState<1 | 2 | 3 | 4 | null>(null);
+  const lastLevel = useRef<number | null>(null);
+
+  useEffect(() => {
+    const previous = lastLevel.current;
+    lastLevel.current = interaction.level;
+    if (previous === null || previous === interaction.level) return;
+    setCurtain(interaction.level);
+    if (document.documentElement.dataset.motion !== "reduced") navigator.vibrate?.(28);
+    const timer = window.setTimeout(() => setCurtain(null), 1800);
+    return () => window.clearTimeout(timer);
+  }, [interaction.id, interaction.level]);
   const nameOf = (id: string) => snap.players.find((player) => player.id === id)?.nickname ?? "Joueur";
   const position = snap.room.current_index + 1;
   const progress = Math.min(100, Math.round((position / Math.max(1, snap.room.total)) * 100));
@@ -102,6 +122,8 @@ export function Game({
 
   return (
     <main className="game">
+      <Atmosphere />
+      {curtain && <LevelCurtain level={curtain} lang={lang} />}
       <header className="game__bar">
         <div className="game__progress" aria-label={`Question ${position} sur ${snap.room.total}`}>
           <span className="game__progress-track">
@@ -111,14 +133,19 @@ export function Game({
             {position} / {snap.room.total}
           </span>
         </div>
-        <button className="icon-button" type="button" onClick={onOpenSettings} aria-label="Réglages et pause">
-          <Icon name="settings" />
-        </button>
+        <div className="game__bar-actions">
+          <button className="safe-button" type="button" onClick={onSafe}>
+            SAFE
+          </button>
+          <button className="icon-button" type="button" onClick={onOpenSettings} aria-label="Réglages et pause">
+            <Icon name="settings" />
+          </button>
+        </div>
       </header>
 
       <Stage scene={scene} me={me} other={other} size={215} />
 
-      <section className="prompt" aria-labelledby="prompt-title">
+      <section className="prompt" key={interaction.id} aria-labelledby="prompt-title">
         <div className="prompt__meta">
           <span className={`tag tag--${interaction.category}`}>{categoryLabels[interaction.category]}</span>
           <span className="tag tag--ghost">{kindLabels[interaction.kind]}</span>

@@ -28,8 +28,8 @@ export const levelLabels: Record<number, string> = {
 export const levelNames: Record<number, string> = {
   1: "Ça commence à piquer",
   2: "La tension monte",
-  3: "Confidences",
-  4: "Sans filtre"
+  3: "On se lâche",
+  4: "Ce qu'on n'avoue jamais"
 };
 
 export const audienceLabels: Record<Interaction["audience"], string> = {

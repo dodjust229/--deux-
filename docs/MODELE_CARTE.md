@@ -94,8 +94,8 @@ publier la réponse d'un autre, ni changer ses préférences à sa place.
 |---|---|---|
 | 1 | Ça commence à piquer | 1 à 2 |
 | 2 | La tension monte | 2 à 3 |
-| 3 | Mode QSPICY / Anonymous | 3 à 4 |
-| 4 | Les questions qui font screenshot | 4 à 5 |
+| 3 | On se lâche | 3 à 4 |
+| 4 | Ce qu'on n'avoue jamais | 4 à 5 |
 
 - le niveau de départ est choisi par les joueurs, pas imposé ;
 - la progression suit l'ordre des niveaux mais reste non linéaire : retour en arrière, saut

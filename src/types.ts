@@ -8,7 +8,7 @@ export interface Interaction {
   level: 1 | 2 | 3 | 4; audience: Audience; visibility: Visibility;
 }
 export interface Player { id: string; seat: Seat; duo_no?: 1 | 2; cross_participation?: boolean; receive_media?: boolean; nickname: string; avatar: "masculin" | "feminin"; online: boolean; adult_consent: boolean; selected_categories?: Category[]; }
-export interface Answer { player_id: string; answer: string; passed: boolean; }
+export interface Answer { player_id: string; answer: string; passed: boolean; visibility?: "private" | "duo" | "group"; }
 export interface Snapshot {
   room: { id: string; mode?: "couple" | "duos"; status: "waiting" | "playing" | "paused" | "finished"; current_index: number; total: number; adult_enabled: boolean };
   players: Player[]; my_categories?: Category[]; other_categories?: Category[]; my_player_id: string; my_seat: Seat; my_consent: boolean;
