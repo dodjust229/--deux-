@@ -165,7 +165,7 @@ end $$;
 
 create or replace function public.join_room(p_room_id uuid, p_nickname text, p_avatar text)
 returns jsonb language plpgsql security definer set search_path = public, extensions, pg_temp as $$
-declare r public.rooms; v_token text; v_player uuid; v_seat int; v_absent public.players;
+declare r public.rooms; v_token text; v_player uuid; v_seat int;
 begin
   if char_length(trim(coalesce(p_nickname,''))) not between 2 and 20 then raise exception 'Pseudo : 2 à 20 caractères.'; end if;
   if p_avatar not in ('masculin','feminin') then raise exception 'Avatar invalide.'; end if;
@@ -177,13 +177,9 @@ begin
   select s into v_seat from generate_series(1,2) s
    where not exists (select 1 from public.players where room_id=p_room_id and seat=s and status='active') order by s limit 1;
   if v_seat is null then
-    -- salle pleine : reprise possible uniquement si un joueur est absent depuis plus de 120 s
-    select * into v_absent from public.players where room_id=p_room_id and status='active' and last_seen < now()-interval '120 seconds' order by last_seen limit 1;
-    if v_absent.id is null then raise exception 'E_ROOM_FULL: Cette salle est déjà complète.'; end if;
-    update public.players set status='replaced' where id=v_absent.id;
-    delete from public.answers where room_id=p_room_id and player_id=v_absent.id and interaction_id=r.interaction_ids[r.current_index+1]
-      and (select count(*) from public.answers a where a.room_id=p_room_id and a.interaction_id=r.interaction_ids[r.current_index+1]) < 2;
-    v_seat := v_absent.seat;
+    -- Salle pleine : plus aucune prise de contrôle automatique d'une place, même après une absence.
+    -- La reconnexion passe uniquement par le jeton de session conservé par le joueur (voir _player_for).
+    raise exception 'E_ROOM_FULL: Cette salle est déjà complète.';
   end if;
   v_token := encode(gen_random_bytes(32),'hex');
   insert into public.players(room_id,seat,nickname,avatar,token_hash) values (p_room_id,v_seat,trim(p_nickname),p_avatar,encode(digest(v_token,'sha256'),'hex')) returning id into v_player;
