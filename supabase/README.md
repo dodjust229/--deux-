@@ -13,7 +13,7 @@ dans l'éditeur SQL du projet `xqvxorvvjmwzpcqmqnqv` ou via `psql`.
 | `06_duo_schema.sql` | schéma DUOS complet versionné : `rooms.mode`, `players.duo_no`, tables `duo_*`, RLS, 8 RPC, droits `anon` | rend le mode DUOS reproductible |
 | `07_security_fixes.sql` | médias désactivés par défaut, réponses DUOS masquées avant révélation, cloisonnement des modes | sécurité et consentement |
 | `08_duo_lifecycle.sql` | première version du redémarrage DUOS | remplacée par `09` |
-| `09_duo_replay.sql` | revanche DUOS : vote des quatre joueurs, `players.replay_vote` | remplace `restart_duo_game` |
+| `09_duo_replay.sql` | revanche DUOS : vote des quatre joueurs, `players.replay_vote` | remplace `restart_duo_game` |\n| `10_host_billing.sql` | paiements hôtes et accès prépayés de 15 jours, RLS en lecture seule côté client | service_role uniquement pour les écritures |\n| `11_host_creation_gate.sql` | exige un compte hôte vérifié et un accès actif pour créer une salle | à appliquer après le déploiement du nouveau front-end |
 
 ## Installation neuve
 
@@ -57,3 +57,4 @@ révocation des autorisations en cours de partie (espace commun, médias), avanc
 cloisonnement des modes, revanche à quatre accords, parcours deux joueurs.
 
 **Jamais sur la base de production** : la recette crée des salles et écrit des réponses.
+\n\n## Comptes hôtes et paiements\n\nVoir [`PAYMENTS_SETUP.md`](../PAYMENTS_SETUP.md) pour la configuration Auth (OTP SMS/e-mail), les secrets FedaPay, les webhooks sandbox et l’ordre de déploiement. Ne pas appliquer `11_host_creation_gate.sql` avant que le nouveau front-end soit en ligne.\n
