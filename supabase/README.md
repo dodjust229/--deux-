@@ -13,7 +13,7 @@ dans l'éditeur SQL du projet `xqvxorvvjmwzpcqmqnqv` ou via `psql`.
 | `06_duo_schema.sql` | schéma DUOS complet versionné : `rooms.mode`, `players.duo_no`, tables `duo_*`, RLS, 8 RPC, droits `anon` | rend le mode DUOS reproductible |
 | `07_security_fixes.sql` | médias désactivés par défaut, réponses DUOS masquées avant révélation, cloisonnement des modes | sécurité et consentement |
 | `08_duo_lifecycle.sql` | première version du redémarrage DUOS | remplacée par `09` |
-| `09_duo_replay.sql` | revanche DUOS : vote des quatre joueurs, `players.replay_vote` | remplace `restart_duo_game` |\n| `10_host_billing.sql` | paiements hôtes et accès prépayés de 15 jours, RLS en lecture seule côté client | service_role uniquement pour les écritures |\n| `11_host_creation_gate.sql` | exige un compte hôte vérifié et un accès actif pour créer une salle | à appliquer après le déploiement du nouveau front-end |
+| `09_duo_replay.sql` | revanche DUOS : vote des quatre joueurs, `players.replay_vote` | remplace `restart_duo_game` |\n| `10_host_billing.sql` | paiements hôtes et accès prépayés de 15 jours, RLS en lecture seule côté client | service_role uniquement pour les écritures |\n| `11_host_creation_gate.sql` | exige un compte hôte vérifié et un accès actif pour créer une salle | à appliquer après le déploiement du nouveau front-end |\n| `12_host_payment_cleanup.sql` | permet la suppression complète d’un compte et de son historique de paiement | correctif de cascade FK |
 
 ## Installation neuve
 
