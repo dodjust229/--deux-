@@ -1,4 +1,5 @@
 import { Icon } from "../components/Icon";
+import { InfoTip } from "../components/InfoTip";
 import { translator, type Lang } from "../lib/i18n";
 import { DUOS_ENABLED, VOICE_ENABLED } from "../lib/flags";
 
@@ -25,7 +26,9 @@ export function Mode({ lang, onSelect, onBack }: ModeProps) {
       </button>
       <header className="flow__head">
         <span className="eyebrow">QSPICY</span>
-        <h1>{t("mode.title")}</h1>
+        <h1>
+          {t("mode.title")} <InfoTip tip="mode" lang={lang} />
+        </h1>
         <p className="muted">{t("mode.sub")}</p>
       </header>
 

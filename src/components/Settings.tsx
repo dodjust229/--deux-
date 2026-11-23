@@ -1,6 +1,8 @@
 import { useEffect, useRef } from "react";
 import { Icon } from "./Icon";
 import type { Preferences, Theme } from "../lib/prefs";
+import type { Lang } from "../lib/i18n";
+import { translator } from "../lib/i18n";
 
 interface SettingsProps {
   open: boolean;
@@ -13,6 +15,8 @@ interface SettingsProps {
   adultEnabled: boolean;
   onLeaveAdult?: () => void;
   onLeaveRoom: () => void;
+  onOpenGuide?: () => void;
+  lang?: Lang;
   busy: boolean;
 }
 
@@ -33,8 +37,11 @@ export function Settings({
   adultEnabled,
   onLeaveAdult,
   onLeaveRoom,
+  onOpenGuide,
+  lang = "fr",
   busy
 }: SettingsProps) {
+  const t = translator(lang);
   const closeRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -127,6 +134,11 @@ export function Settings({
         </label>
 
         <div className="sheet__actions">
+          {onOpenGuide && (
+            <button className="secondary full" type="button" onClick={onOpenGuide}>
+              <Icon name="info" /> {t("settings.guide")}
+            </button>
+          )}
           {playing && onTogglePause && (
             <button className="secondary full" type="button" disabled={busy} onClick={onTogglePause}>
               <Icon name={paused ? "play" : "pause"} /> {paused ? "Reprendre la partie" : "Mettre en pause"}

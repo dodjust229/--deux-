@@ -1,5 +1,6 @@
 import { Icon } from "../components/Icon";
-import { Atmosphere } from "../components/Atmosphere";
+import { InfoTip } from "../components/InfoTip";
+import type { Lang } from "../lib/i18n";
 import { Stage } from "../components/Stage";
 import type { StagePlayer } from "../components/Stage";
 import type { Scene } from "../lib/scene";
@@ -31,6 +32,7 @@ interface LobbyProps {
   onLaunch: () => void;
   busy: boolean;
   excluded?: Category[];
+  lang?: Lang;
 }
 
 export function Lobby({
@@ -48,7 +50,8 @@ export function Lobby({
   onToggleConsent,
   onLaunch,
   busy,
-  excluded = []
+  excluded = [],
+  lang = "fr"
 }: LobbyProps) {
   const bothPresent = Boolean(other);
   const wantsAdult = shared.includes("audacieux");
@@ -56,7 +59,6 @@ export function Lobby({
 
   return (
     <main className="lobby page">
-      <Atmosphere />
       <header className="lobby__head">
         <div>
           <span className="eyebrow">{bothPresent ? "Vous êtes deux" : "Salle privée ouverte"}</span>
@@ -68,7 +70,9 @@ export function Lobby({
           </p>
         </div>
         <div className="lobby__invite">
-          <span className="lobby__invite-label">Lien d'invitation</span>
+          <span className="lobby__invite-label">
+            Lien d'invitation <InfoTip tip="invite" lang={lang} />
+          </span>
           <div className="lobby__invite-row">
             <code data-testid="invite-url">{inviteUrl}</code>
             <button type="button" className="secondary" onClick={onCopy}>
@@ -89,7 +93,9 @@ export function Lobby({
         <>
           <section className="panel" aria-labelledby="ambiances">
             <div className="panel__head">
-              <h2 id="ambiances">Vos ambiances</h2>
+              <h2 id="ambiances">
+                Vos ambiances <InfoTip tip="categories" lang={lang} />
+              </h2>
               <span className="muted small">
                 {shared.length > 0
                   ? `En commun : ${shared.map((category) => categoryLabels[category]).join(" · ")}`

@@ -95,6 +95,8 @@ const DICT = {
     "settings.sound.sub": "Un signal discret à l'envoi et à la révélation.",
     "settings.volume": "Volume",
     "settings.close": "Fermer",
+    "settings.guide": "Guide d'utilisation",
+    "settings.guide.open": "Ouvrir le guide",
     "level.transition": "Niveau {n}",
     "offline": "Reconnexion… la partie est conservée."
   },
@@ -191,6 +193,8 @@ const DICT = {
     "settings.sound.sub": "A discreet cue on send and reveal.",
     "settings.volume": "Volume",
     "settings.close": "Close",
+    "settings.guide": "User guide",
+    "settings.guide.open": "Open the guide",
     "level.transition": "Level {n}",
     "offline": "Reconnecting… the game is kept."
   }

@@ -30,6 +30,7 @@ import { Wordmark } from "./components/Brand";
 import { Icon } from "./components/Icon";
 import { Settings } from "./components/Settings";
 import { Safety } from "./components/Safety";
+import { Guide } from "./components/Guide";
 import { Stage } from "./components/Stage";
 import { SalonAmbiance } from "./components/SalonAmbiance";
 import type { StagePlayer } from "./components/Stage";
@@ -119,6 +120,7 @@ export default function App() {
   const [busy, setBusy] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(() => import.meta.env.DEV && new URLSearchParams(location.search).has("reglages"));
   const [safeOpen, setSafeOpen] = useState(false);
+  const [guideOpen, setGuideOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
   const failures = useRef(0);
@@ -575,6 +577,7 @@ export default function App() {
             onNext={() => identity && void run(() => nextInteraction(identity.roomId, identity.token))}
             onResume={() => identity && void run(() => setPause(identity.roomId, identity.token, false))}
             onSafe={() => setSafeOpen(true)}
+            onOpenGuide={() => setGuideOpen(true)}
             lang={prefs.language}
           />
         )
@@ -594,6 +597,8 @@ export default function App() {
         <span>QSPICY · un espace pour se parler vraiment</span>
         <span>Consentement · Respect · Complicité</span>
       </footer>
+
+      <Guide open={guideOpen} lang={prefs.language} onClose={() => setGuideOpen(false)} />
 
       <Safety
         open={safeOpen}
@@ -647,6 +652,8 @@ export default function App() {
         adultEnabled={Boolean(snapshot?.room.adult_enabled)}
         onLeaveAdult={() => identity && void run(() => setAdultConsent(identity.roomId, identity.token, false))}
         onLeaveRoom={exitRoom}
+        onOpenGuide={() => { setSettingsOpen(false); setGuideOpen(true); }}
+        lang={prefs.language}
         busy={busy}
       />
     </div>

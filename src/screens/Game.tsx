@@ -3,7 +3,7 @@ import { Icon } from "../components/Icon";
 import { Stage } from "../components/Stage";
 import type { StagePlayer } from "../components/Stage";
 import { Composer } from "../components/Composer";
-import { Atmosphere } from "../components/Atmosphere";
+import { InfoTip } from "../components/InfoTip";
 import { LevelCurtain } from "../components/LevelCurtain";
 import { MediaView } from "../components/MediaContent";
 import type { Scene } from "../lib/scene";
@@ -29,6 +29,7 @@ interface GameProps {
   onNext: () => void;
   onResume: () => void;
   onSafe: () => void;
+  onOpenGuide: () => void;
   lang: Lang;
 }
 
@@ -100,6 +101,7 @@ export function Game({
   onNext,
   onResume,
   onSafe,
+  onOpenGuide,
   lang
 }: GameProps) {
   const [curtain, setCurtain] = useState<1 | 2 | 3 | 4 | null>(null);
@@ -122,7 +124,6 @@ export function Game({
 
   return (
     <main className="game">
-      <Atmosphere />
       {curtain && <LevelCurtain level={curtain} lang={lang} />}
       <header className="game__bar">
         <div className="game__progress" aria-label={`Question ${position} sur ${snap.room.total}`}>
@@ -137,7 +138,10 @@ export function Game({
           <button className="safe-button" type="button" onClick={onSafe}>
             SAFE
           </button>
-          <button className="icon-button" type="button" onClick={onOpenSettings} aria-label="Réglages et pause">
+          <button className="icon-button" type="button" data-testid="open-guide" onClick={onOpenGuide} aria-label="Guide d'utilisation">
+            <Icon name="info" />
+          </button>
+          <button className="icon-button" type="button" data-testid="open-settings" onClick={onOpenSettings} aria-label="Réglages et pause">
             <Icon name="settings" />
           </button>
         </div>
@@ -149,7 +153,9 @@ export function Game({
         <div className="prompt__meta">
           <span className={`tag tag--${interaction.category}`}>{categoryLabels[interaction.category]}</span>
           <span className="tag tag--ghost">{kindLabels[interaction.kind]}</span>
-          <span className="tag tag--level">{levelLabels[interaction.level]}</span>
+          <span className="tag tag--level">
+            {levelLabels[interaction.level]} <InfoTip tip="levels" lang={lang} />
+          </span>
         </div>
         <h1 id="prompt-title">{interaction.title}</h1>
         <p className="prompt__text">{interaction.prompt}</p>

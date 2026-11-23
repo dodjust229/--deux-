@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Character } from "../components/Character";
-import { Atmosphere } from "../components/Atmosphere";
 import { Icon } from "../components/Icon";
 import { categoryLabels, categoryDescriptions, levelLabels, kindLabels, audienceLabels } from "../content";
 import type { Category, DuoPermissions, DuoSnapshot, Interaction } from "../types";
@@ -34,7 +33,6 @@ export function DuoLobby({ snap, inviteUrl, copied, onCopy, selected, shared, on
 
   return (
     <main className="duo-page page">
-      <Atmosphere variant="duos" />
       <header className="duo-head">
         <div>
           <span className="eyebrow">QSPICY · DUOS</span>
@@ -151,7 +149,6 @@ export function DuoGame({ snap, interaction, busy, onSubmit, onPass, onNext, onS
 
   return (
     <main className="duo-page page">
-      <Atmosphere variant="duos" />
       <header className="duo-head">
         <div>
           <span className="eyebrow">DUOS · {snap.my_duo_no === 1 ? "DUO A" : "DUO B"}</span>
@@ -292,7 +289,6 @@ export function DuoEnd({ snap, busy, onReplay, onLeave }: { snap: DuoSnapshot; b
   const mine = snap.replay?.mine ?? false;
   return (
     <main className="duo-page page">
-      <Atmosphere variant="duos" />
       <span className="eyebrow">Fin de la partie DUOS</span>
       <h1>Quatre personnes, un moment à vous.</h1>
       <p className="muted">Les espaces privés sont restés séparés. Les réponses partagées ne sont visibles que selon les autorisations de chacun.</p>
