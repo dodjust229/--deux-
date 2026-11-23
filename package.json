@@ -13,7 +13,8 @@
     "catalog:check": "node scripts/sync-catalog.mjs --check",
     "pack:source": "node scripts/pack-source.mjs",
     "cards:csv": "node scripts/cards.mjs --csv",
-    "cards:check": "node scripts/cards.mjs --check"
+    "cards:check": "node scripts/cards.mjs --check",
+    "build:pages": "tsc -b && vite build --base=/--deux-/"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.0",

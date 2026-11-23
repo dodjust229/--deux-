@@ -22,7 +22,12 @@ export type Content =
   | { kind: "text"; text: string }
   | { kind: "sticker"; id: StickerId }
   | { kind: "gif"; url: string }
+  | { kind: "private" }
   | { kind: "invalid"; raw: string };
+
+/** Réponse gardée sur l'appareil : seule cette marque part vers le serveur. */
+export const PRIVATE_ANSWER = "qs1:privee:";
+export const PRIVATE_STORAGE_PREFIX = "qspicy.privee.";
 
 const GIF_HOSTS = ["media.giphy.com", "i.giphy.com", "media.tenor.com", "c.tenor.com", "i.imgur.com"];
 const GIF_EXTENSIONS = [".gif", ".webp", ".png", ".jpg", ".jpeg", ".avif"];
@@ -74,6 +79,7 @@ export function parseContent(raw: string | null | undefined): Content {
     const url = normalizeGifUrl(payload);
     return url ? { kind: "gif", url } : { kind: "invalid", raw: value };
   }
+  if (type === "privee") return { kind: "private" };
   return { kind: "invalid", raw: value };
 }
 
@@ -93,6 +99,8 @@ export function describeContent(content: Content): string {
       return `Sticker « ${stickerLabel(content.id)} »`;
     case "gif":
       return "GIF animé";
+    case "private":
+      return "Confidence gardée pour soi";
     case "invalid":
       return "Média indisponible";
   }

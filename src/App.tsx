@@ -367,7 +367,7 @@ export default function App() {
       ) && (
         <header className="topbar">
           <button className="topbar__brand" type="button" onClick={() => { if (!identity) { setEntry(null); setError(""); } }}>
-            <Wordmark size={22} />
+            <Wordmark size={38} />
           </button>
           <div className="topbar__right">
             <span className="topbar__private">

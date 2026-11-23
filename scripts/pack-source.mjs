@@ -7,8 +7,8 @@ const archive = "a-deux-source.tar.gz";
 const include = [
   "index.html", "package.json", "package-lock.json", "tsconfig.json", "tsconfig.app.json",
   "tsconfig.node.json", "vite.config.ts", "netlify.toml", ".nvmrc", ".gitignore", ".env.example",
-  "src", "supabase", "scripts", "README.md", "INSTALLATION.md", "TESTS_A_DEUX.md",
-  "AUDIT_ETAT.md", "JOURNAL_DECISIONS.md"
+  "src", "public", "supabase", "scripts", "README.md", "INSTALLATION.md", "TESTS_A_DEUX.md",
+  "AUDIT_ETAT.md", "JOURNAL_DECISIONS.md", "docs"
 ].filter((p) => fs.existsSync(p));
 
 if (fs.existsSync(archive)) fs.rmSync(archive);

@@ -26,7 +26,7 @@ export function Enter({ mode, initialCode, busy, error, onBack, onSubmit }: Ente
       </button>
 
       <div className="enter__card">
-        <Wordmark size={26} />
+        <Wordmark size={58} />
         <h1>{mode === "create" ? "Ouvrir votre salle" : "Rejoindre la conversation"}</h1>
         <p className="muted">
           {mode === "create"

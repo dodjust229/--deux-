@@ -21,8 +21,8 @@
 
 .home__logo.wordmark {
   display: flex;
-  margin: 16px 0 18px;
-  font-size: clamp(46px, 8.4vw, 82px) !important;
+  margin: 18px 0 20px;
+  height: clamp(120px, 17vw, 190px) !important;
 }
 
 .home__lead {
@@ -48,21 +48,35 @@
   color: var(--ink-mute);
 }
 
-.home__scene {
+.home__visual {
   position: relative;
-  display: grid;
-  place-items: center;
-  isolation: isolate;
+  margin: 0;
+  justify-self: end;
+  width: min(100%, 460px);
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(240, 192, 106, 0.18);
 }
 
-.home__glow {
+.home__visual img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1310 / 1400;
+  object-fit: cover;
+}
+
+.home__visual figcaption {
   position: absolute;
-  inset: 12% 8% 4%;
-  z-index: -1;
-  background:
-    radial-gradient(closest-side, rgba(226, 58, 78, 0.22), transparent 70%),
-    radial-gradient(closest-side at 70% 70%, rgba(210, 144, 85, 0.18), transparent 72%);
-  filter: blur(26px);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 28px 18px 12px;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #f4e3cd;
+  background: linear-gradient(to top, rgba(18, 12, 11, 0.85), transparent);
 }
 
 .home__strip {
@@ -489,6 +503,22 @@
   color: var(--pepper);
 }
 
+.tag--level {
+  background: rgba(240, 192, 106, 0.14);
+  color: var(--gold);
+}
+
+.prompt__audience {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
 .prompt h1 {
   font-size: clamp(24px, 3.6vw, 34px);
   margin: 12px 0 8px;
@@ -862,12 +892,34 @@
 }
 
 .gif__fallback,
-.content-fallback {
+.content-fallback,
+.content-private {
   display: flex;
   align-items: center;
   gap: 8px;
   font-size: 13px;
   color: var(--ink-soft);
+}
+
+.private-note {
+  border-left: 2px solid var(--gold);
+  padding: 6px 0 6px 12px;
+}
+
+.private-note > span {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 4px;
+}
+
+.private-note p {
+  font-size: 14.5px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 .gif__caption {

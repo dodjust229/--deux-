@@ -122,6 +122,13 @@ export function MediaView({ content, compact = false }: MediaViewProps) {
   if (content.kind === "gif") {
     return <GifFrame url={content.url} compact={compact} />;
   }
+  if (content.kind === "private") {
+    return (
+      <p className="content-private">
+        <Icon name="lock" size={14} /> Confidence gardée pour soi.
+      </p>
+    );
+  }
   return (
     <p className="content-fallback" role="status">
       <Icon name="image" size={16} /> Ce média n'a pas pu être affiché.

@@ -18,6 +18,28 @@ export const categoryDescriptions: Record<string, string> = {
   audacieux: "Défis osés, toujours facultatifs."
 };
 
+export const levelLabels: Record<number, string> = {
+  1: "Niveau 1",
+  2: "Niveau 2",
+  3: "Niveau 3",
+  4: "Niveau 4"
+};
+
+export const levelNames: Record<number, string> = {
+  1: "Ça commence à piquer",
+  2: "La tension monte",
+  3: "Confidences",
+  4: "Sans filtre"
+};
+
+export const audienceLabels: Record<Interaction["audience"], string> = {
+  partner: "Pour vous deux",
+  own_duo: "Pour votre duo",
+  other_duo: "Pour l'autre duo",
+  all_players: "Pour les quatre",
+  individual_choice: "À toi de choisir qui l'entend"
+};
+
 export const kindLabels: Record<Interaction["kind"], string> = {
   free: "Question ouverte",
   secret: "Choix secret",

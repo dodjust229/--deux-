@@ -5,8 +5,8 @@ import { Composer } from "../components/Composer";
 import { MediaView } from "../components/MediaContent";
 import type { Scene } from "../lib/scene";
 import { decodePrediction } from "../lib/protocol";
-import { parseContent } from "../lib/media";
-import { categoryLabels, kindLabels } from "../content";
+import { PRIVATE_STORAGE_PREFIX, parseContent } from "../lib/media";
+import { audienceLabels, categoryLabels, kindLabels, levelLabels } from "../content";
 import type { Answer, Interaction, Snapshot } from "../types";
 
 interface GameProps {
@@ -26,8 +26,38 @@ interface GameProps {
   onResume: () => void;
 }
 
-function AnswerBody({ answer, kind }: { answer: Answer; kind: Interaction["kind"] }) {
+function AnswerBody({
+  answer,
+  kind,
+  interaction,
+  isMe,
+  roomId
+}: {
+  answer: Answer;
+  kind: Interaction["kind"];
+  interaction: Interaction;
+  isMe: boolean;
+  roomId: string;
+}) {
   if (answer.passed) return <p className="muted">A choisi de passer, sans justification.</p>;
+  const content = parseContent(answer.answer);
+  if (content.kind === "private") {
+    if (!isMe) return <p className="content-private">Confidence gardée pour soi.</p>;
+    let mine = "";
+    try {
+      mine = window.localStorage.getItem(`${PRIVATE_STORAGE_PREFIX}${roomId}.${interaction.id}`) ?? "";
+    } catch {
+      mine = "";
+    }
+    return mine ? (
+      <div className="private-note">
+        <span>Visible par toi seulement</span>
+        <p>{mine}</p>
+      </div>
+    ) : (
+      <p className="content-private">Confidence gardée pour soi.</p>
+    );
+  }
   if (kind === "prediction") {
     const prediction = decodePrediction(answer.answer);
     if (prediction) {
@@ -45,7 +75,7 @@ function AnswerBody({ answer, kind }: { answer: Answer; kind: Interaction["kind"
       );
     }
   }
-  return <MediaView content={parseContent(answer.answer)} />;
+  return <MediaView content={content} />;
 }
 
 export function Game({
@@ -92,9 +122,14 @@ export function Game({
         <div className="prompt__meta">
           <span className={`tag tag--${interaction.category}`}>{categoryLabels[interaction.category]}</span>
           <span className="tag tag--ghost">{kindLabels[interaction.kind]}</span>
+          <span className="tag tag--level">{levelLabels[interaction.level]}</span>
         </div>
         <h1 id="prompt-title">{interaction.title}</h1>
         <p className="prompt__text">{interaction.prompt}</p>
+        <p className="prompt__audience">
+          <Icon name="users" size={13} /> {audienceLabels[interaction.audience]}
+          {interaction.visibility === "privee" && " · réponse gardée pour toi"}
+        </p>
 
         {crossAnswer && (
           <blockquote className="prompt__cross">
@@ -119,7 +154,13 @@ export function Game({
             {snap.answers.map((answer) => (
               <article key={answer.player_id} className="reveal__card">
                 <header>{nameOf(answer.player_id)}</header>
-                <AnswerBody answer={answer} kind={interaction.kind} />
+                <AnswerBody
+                  answer={answer}
+                  kind={interaction.kind}
+                  interaction={interaction}
+                  isMe={answer.player_id === snap.my_player_id}
+                  roomId={snap.room.id}
+                />
               </article>
             ))}
           </div>

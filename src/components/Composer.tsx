@@ -3,6 +3,8 @@ import { Icon } from "./Icon";
 import { MediaComposerPreview, Sticker } from "./MediaContent";
 import {
   MAX_ANSWER_LENGTH,
+  PRIVATE_ANSWER,
+  PRIVATE_STORAGE_PREFIX,
   STICKERS,
   encodeGif,
   encodeSticker,
@@ -35,9 +37,10 @@ export function Composer({ interaction, busy, alreadyAnswered, canSend, hint, on
   const [gifError, setGifError] = useState("");
 
   const options = interaction.options ?? [];
+  const isPrivate = interaction.visibility === "privee";
   const isSecret = interaction.kind === "secret";
   const isPrediction = interaction.kind === "prediction";
-  const mediaAllowed = MEDIA_KINDS.has(interaction.kind);
+  const mediaAllowed = MEDIA_KINDS.has(interaction.kind) && !isPrivate;
   const locked = alreadyAnswered || busy;
 
   // Nouvelle interaction : on repart d'un compositeur vide (aucun reste de la question précédente).
@@ -66,6 +69,17 @@ export function Composer({ interaction, busy, alreadyAnswered, canSend, hint, on
   };
 
   const send = () => {
+    if (isPrivate) {
+      // La confidence ne quitte pas l'appareil : seule une marque part pour que la partie avance.
+      const room = new URLSearchParams(location.search).get("room") ?? "local";
+      try {
+        window.localStorage.setItem(`${PRIVATE_STORAGE_PREFIX}${room}.${interaction.id}`, text.trim());
+      } catch {
+        /* stockage plein : la confidence reste seulement en mémoire */
+      }
+      onSubmit(PRIVATE_ANSWER);
+      return;
+    }
     const value = payload();
     if (value) onSubmit(value);
   };
@@ -121,7 +135,21 @@ export function Composer({ interaction, busy, alreadyAnswered, canSend, hint, on
 
       {!isSecret && (
         <>
-          {media ? (
+          {isPrivate ? (
+            <label className="composer__field">
+              <span className="composer__sublabel">
+                <Icon name="lock" size={13} /> Visible par toi seule ou toi seul
+              </span>
+              <textarea
+                data-testid="answer"
+                value={text}
+                onChange={(event) => setText(event.target.value.slice(0, MAX_ANSWER_LENGTH))}
+                disabled={locked}
+                rows={4}
+                placeholder="Personne ne lira ceci. Ni l'autre joueur, ni nous : le texte reste sur ton appareil."
+              />
+            </label>
+          ) : media ? (
             <MediaComposerPreview content={media} onRemove={() => setMedia(null)} />
           ) : (
             <label className="composer__field">
@@ -226,8 +254,22 @@ export function Composer({ interaction, busy, alreadyAnswered, canSend, hint, on
         <button type="button" className="secondary" onClick={onPass} disabled={locked}>
           <Icon name="skip" size={16} /> Passer
         </button>
-        <button type="button" className="primary" data-testid="send" onClick={send} disabled={!canSend || busy || !payload()}>
-          Envoyer <Icon name="send" size={16} />
+        <button
+          type="button"
+          className="primary"
+          data-testid="send"
+          onClick={send}
+          disabled={!canSend || busy || (isPrivate ? text.trim().length === 0 : !payload())}
+        >
+          {isPrivate ? (
+            <>
+              <Icon name="lock" size={16} /> Garder pour moi
+            </>
+          ) : (
+            <>
+              Envoyer <Icon name="send" size={16} />
+            </>
+          )}
         </button>
       </div>
       <p className="composer__hint" role="status">{hint}</p>

@@ -1,14 +1,6 @@
 import { Wordmark } from "../components/Brand";
 import { Icon } from "../components/Icon";
-import { Stage } from "../components/Stage";
-import type { Scene } from "../lib/scene";
-
-const DEMO_SCENE: Scene = {
-  speaker: 1,
-  bubble: "J'ai une question qui va te faire sourire…",
-  bubbleSeat: 1,
-  states: { 1: "speaking", 2: "listening" }
-};
+import { asset } from "../lib/assets";
 
 interface HomeProps {
   onCreate: () => void;
@@ -20,11 +12,12 @@ export function Home({ onCreate, onJoin }: HomeProps) {
     <main className="home">
       <section className="home__hero">
         <div className="home__copy">
-          <span className="eyebrow">Jeu de complicité · à deux</span>
-          <Wordmark as="h1" size={64} className="home__logo" />
+          <span className="eyebrow">Jeu de conversation · 18 ans et plus</span>
+          <Wordmark as="h1" size={200} className="home__logo" />
           <p className="home__lead">
-            Deux personnages, une seule conversation. Des questions qui font rire, des confidences qui
-            rapprochent, et quelques défis que l'on peut toujours refuser.
+            Deux personnes, une conversation qui ose. Des questions qui font rire, des confidences qui
+            rapprochent, des défis qu'on peut toujours refuser — et deux personnages qui les mettent en
+            scène.
           </p>
           <div className="home__actions">
             <button className="primary" type="button" data-testid="create-room" onClick={onCreate}>
@@ -35,20 +28,20 @@ export function Home({ onCreate, onJoin }: HomeProps) {
             </button>
           </div>
           <p className="home__age">
-            <Icon name="shield" size={15} /> Réservé aux 18 ans et plus · Gratuit · Sans compte
+            <Icon name="shield" size={15} /> Gratuit · Sans compte · Chacun peut passer ou s'arrêter
           </p>
         </div>
 
-        <div className="home__scene" aria-hidden="true">
-          <span className="home__glow" />
-          <Stage
-            variant="hero"
-            scene={DEMO_SCENE}
-            me={{ nickname: "Tao", persona: "masculin", online: true, seat: 1 }}
-            other={{ nickname: "Naya", persona: "feminin", online: true, seat: 2 }}
-            size={252}
+        <figure className="home__visual">
+          <img
+            src={asset("brand/accueil-qspicy.webp")}
+            alt="Deux adultes dans une chambre, lumière chaude et cœur de néon"
+            width={1310}
+            height={1400}
+            decoding="async"
           />
-        </div>
+          <figcaption>Un espace privé, pour deux.</figcaption>
+        </figure>
       </section>
 
       <section className="home__strip">
@@ -58,14 +51,14 @@ export function Home({ onCreate, onJoin }: HomeProps) {
           <p>Vous créez une salle, vous partagez un lien. Personne d'autre n'entre.</p>
         </article>
         <article>
-          <span className="home__strip-icon"><Icon name="users" /></span>
-          <h3>Deux personnages</h3>
-          <p>Tao et Naya incarnent la conversation : ils écoutent, réagissent, prennent la parole.</p>
+          <span className="home__strip-icon"><Icon name="bolt" /></span>
+          <h3>Quatre niveaux d'audace</h3>
+          <p>De la première taquinerie aux questions sans filtre, chacun choisit jusqu'où aller.</p>
         </article>
         <article>
           <span className="home__strip-icon"><Icon name="shield" /></span>
           <h3>Chacun ses limites</h3>
-          <p>Passer une question ne coûte rien, et quitter la partie reste toujours possible.</p>
+          <p>Passer ne coûte rien, une confidence peut rester privée, et quitter reste toujours possible.</p>
         </article>
       </section>
     </main>

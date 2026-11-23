@@ -1,6 +1,11 @@
 export type Category = "decouverte" | "complicite" | "profondeur" | "seduction" | "audacieux";
 export type InteractionKind = "free" | "secret" | "prediction" | "challenge" | "cross";
-export interface Interaction { id: string; category: Category; kind: InteractionKind; title: string; prompt: string; options?: string[]; }
+export type Audience = "partner" | "own_duo" | "other_duo" | "all_players" | "individual_choice";
+export type Visibility = "partagee" | "anonyme" | "privee";
+export interface Interaction {
+  id: string; category: Category; kind: InteractionKind; title: string; prompt: string; options?: string[];
+  level: 1 | 2 | 3 | 4; audience: Audience; visibility: Visibility;
+}
 export interface Player { id: string; seat: 1 | 2; nickname: string; avatar: "masculin" | "feminin"; online: boolean; adult_consent: boolean; selected_categories?: Category[]; }
 export interface Answer { player_id: string; answer: string; passed: boolean; }
 export interface Snapshot {

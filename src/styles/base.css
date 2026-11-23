@@ -4,11 +4,13 @@
   --font-display: "Fraunces", "Iowan Old Style", Georgia, serif;
   --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
 
-  --pepper: #e23a4e;
+  --pepper: #e33b4e;
   --pepper-deep: #a5202f;
   --bordeaux: #5c1526;
-  --copper: #d29055;
+  --copper: #d9a05b;
   --amber: #e8b473;
+  --gold: #f0c06a;
+  --gold-deep: #b9822f;
 
   --radius-lg: 26px;
   --radius: 18px;
@@ -22,8 +24,8 @@
   color-scheme: dark;
   --bg: #120f0e;
   --bg-2: #191312;
-  --bg-glow-1: rgba(120, 26, 44, 0.5);
-  --bg-glow-2: rgba(210, 144, 85, 0.14);
+  --bg-glow-1: rgba(120, 26, 44, 0.55);
+  --bg-glow-2: rgba(240, 192, 106, 0.12);
   --ink: #f7ede3;
   --ink-soft: #d3c3b8;
   --ink-mute: #9d8d84;
@@ -241,14 +243,14 @@ code {
 }
 
 .primary {
-  background: linear-gradient(135deg, #f05266 0%, var(--pepper) 45%, var(--pepper-deep) 100%);
-  color: #fff6ef;
-  box-shadow: 0 14px 32px rgba(226, 58, 78, 0.28);
+  background: linear-gradient(135deg, #f7d492 0%, var(--gold) 42%, var(--gold-deep) 100%);
+  color: #2b1a0c;
+  box-shadow: 0 14px 32px rgba(240, 192, 106, 0.24);
 }
 
 .primary:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 18px 38px rgba(226, 58, 78, 0.36);
+  box-shadow: 0 18px 38px rgba(240, 192, 106, 0.32);
 }
 
 .secondary {
@@ -357,24 +359,15 @@ textarea {
 .wordmark {
   display: inline-flex;
   align-items: center;
-  gap: 0.04em;
-  font-family: var(--font-display);
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  color: var(--ink);
+  justify-content: flex-start;
   line-height: 1;
-  white-space: nowrap;
 }
 
-.wordmark-text {
-  display: inline-block;
-}
-
-.pepper.wordmark-y {
-  height: 1.18em;
+.wordmark__logo {
+  height: 100%;
   width: auto;
-  margin: 0 0 -0.12em 0.04em;
-  overflow: visible;
+  border-radius: 22%;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(240, 192, 106, 0.16);
 }
 
 .pepper-body {

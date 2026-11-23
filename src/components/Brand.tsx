@@ -1,6 +1,8 @@
+import { asset } from "../lib/assets";
+
 /**
- * QSPICY — le Y final est un long piment rouge.
- * Aucune image externe : le logo est vectoriel et reste net à toutes les tailles.
+ * QSPICY — le logo officiel fourni par le propriétaire, jamais redessiné.
+ * L'image est servie depuis /brand (convertie en WebP, fond bordeaux conservé).
  */
 export function Pepper({ className = "" }: { className?: string }) {
   return (
@@ -25,19 +27,23 @@ export function Pepper({ className = "" }: { className?: string }) {
 
 interface WordmarkProps {
   className?: string;
-  /** Taille du texte en px ; le piment suit proportionnellement. */
+  /** Hauteur du logo en px. */
   size?: number;
   as?: "span" | "h1";
 }
 
-export function Wordmark({ className = "", size = 30, as = "span" }: WordmarkProps) {
+export function Wordmark({ className = "", size = 40, as = "span" }: WordmarkProps) {
   const Tag = as;
   return (
-    <Tag className={`wordmark ${className}`} style={{ fontSize: `${size}px` }} aria-label="QSPICY">
-      <span aria-hidden="true" className="wordmark-text">
-        QSPIC
-      </span>
-      <Pepper className="wordmark-y" />
+    <Tag className={`wordmark ${className}`} style={{ height: `${size}px` }}>
+      <img
+        className="wordmark__logo"
+        src={asset("brand/logo-qspicy.webp")}
+        alt="QSPICY"
+        width={size}
+        height={size}
+        decoding="async"
+      />
     </Tag>
   );
 }
