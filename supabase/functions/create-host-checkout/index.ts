@@ -101,6 +101,7 @@ Deno.serve(async (req: Request) => {
         currency: { iso: "XOF" },
         callback_url: "https://a-deux-jeu.onrender.com/?payment=return",
         customer,
+        include: "currency,customer",
       }),
     });
     const created = await createResponse.json();
