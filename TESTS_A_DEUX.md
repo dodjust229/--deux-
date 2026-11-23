@@ -37,3 +37,7 @@ npm run build   # compilation de production
 
 Le scénario SQL de sécurité et de parcours reste dans `supabase/tests/scenario.sql`
 (PostgreSQL ≥ 15), à exécuter sur une base de test.
+
+18. ☐ Consentement DUOS : à la création, l'espace commun est désactivé pour chacun des quatre.
+    Un seul accord ne suffit pas ; l'espace s'ouvre uniquement après les quatre accords. Le retrait
+    d'un seul accord referme immédiatement l'espace commun et bloque messages/réponses de groupe.
