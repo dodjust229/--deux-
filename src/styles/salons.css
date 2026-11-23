@@ -1,0 +1,440 @@
+/* ==========================================================================
+   QSPICY — ambiances animées des six salons, évolutives selon le palier (1 à 4).
+   Palette : bordeaux, noir cerise, rouge vin, brun très sombre, or vieilli.
+   Performance : transform et opacity uniquement. Réduction des animations :
+   déjà gérée globalement dans base.css (prefers-reduced-motion et data-motion).
+   ========================================================================== */
+
+.salon {
+  --wine: 122, 27, 45;
+  --cherry: 26, 5, 9;
+  --gold: 200, 164, 92;
+  --brown: 31, 20, 16;
+
+  /* Palier 1 : lampe unique, or et brun, très lent */
+  --glow: 0.2;
+  --gold-o: 0.5;
+  --wine-o: 0.25;
+  --lamp-a: 0.45;
+  --lamp-b: 0;
+  --gap: 70;
+  --amp: 10;
+  --eq: 0.3;
+  --veil: 0.55;
+  --link: 0;
+  --lens: 0;
+  --rings: 1;
+  --blobs: 1;
+  --dur: 28s;
+
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  transition: opacity 1.4s var(--ease);
+}
+
+/* Palier 2 : une seconde lumière apparaît, le bordeaux s'installe */
+.salon[data-level="2"] {
+  --glow: 0.3;
+  --gold-o: 0.4;
+  --wine-o: 0.5;
+  --lamp-a: 0.55;
+  --lamp-b: 0.4;
+  --gap: 46;
+  --amp: 18;
+  --eq: 0.5;
+  --veil: 0.9;
+  --link: 0.12;
+  --lens: 0.1;
+  --rings: 2;
+  --blobs: 2;
+  --dur: 24s;
+}
+
+/* Palier 3 : le rouge vin domine, les motifs deviennent expressifs */
+.salon[data-level="3"] {
+  --glow: 0.42;
+  --gold-o: 0.3;
+  --wine-o: 0.75;
+  --lamp-a: 0.65;
+  --lamp-b: 0.6;
+  --gap: 22;
+  --amp: 30;
+  --eq: 0.75;
+  --veil: 1.3;
+  --link: 0.3;
+  --lens: 0.2;
+  --rings: 3;
+  --blobs: 3;
+  --dur: 20s;
+}
+
+/* Palier 4 : noir cerise profond, lumière chaude, pulsation lente */
+.salon[data-level="4"] {
+  --glow: 0.56;
+  --gold-o: 0.22;
+  --wine-o: 1;
+  --lamp-a: 0.8;
+  --lamp-b: 0.8;
+  --gap: 6;
+  --amp: 44;
+  --eq: 1;
+  --veil: 1.8;
+  --link: 0.5;
+  --lens: 0.34;
+  --rings: 3;
+  --blobs: 3;
+  --dur: 17s;
+}
+
+/* ---------- Couches communes ---------- */
+.salon__glow {
+  position: absolute;
+  inset: -10%;
+  opacity: var(--glow);
+  transition: opacity 2.4s var(--ease);
+}
+
+.salon__glow::before,
+.salon__glow::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transition: opacity 2.4s var(--ease);
+}
+
+.salon__glow::before {
+  background: radial-gradient(60% 45% at 50% 105%, rgba(var(--gold), 0.6), transparent 70%);
+  opacity: var(--gold-o);
+}
+
+.salon__glow::after {
+  background: radial-gradient(70% 55% at 50% -5%, rgba(var(--wine), 0.85), transparent 72%);
+  opacity: var(--wine-o);
+}
+
+.salon[data-level="4"] .salon__glow {
+  animation: salon-beat 5.8s ease-in-out infinite;
+}
+
+.salon__lamp {
+  position: absolute;
+  width: 70vmax;
+  height: 70vmax;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(var(--gold), 0.22), transparent 62%);
+  transition: opacity 2.4s var(--ease);
+  animation: salon-lamp var(--dur) ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+.salon__lamp--a {
+  left: -30vmax;
+  top: -14vmax;
+  opacity: var(--lamp-a);
+}
+
+.salon__lamp--b {
+  right: -34vmax;
+  bottom: -20vmax;
+  opacity: var(--lamp-b);
+  animation-delay: -9s;
+}
+
+.salon__vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 90% at 50% 45%, transparent 45%, rgba(var(--cherry), 0.78));
+}
+
+/* Éclosion lumineuse à chaque changement de palier (l'élément est recréé via key) */
+.salon__swell {
+  position: absolute;
+  left: 50%;
+  top: 48%;
+  width: 90vmax;
+  height: 90vmax;
+  margin: -45vmax 0 0 -45vmax;
+  border-radius: 50%;
+  opacity: 0;
+  background: radial-gradient(circle, rgba(var(--gold), 0.26), rgba(var(--wine), 0.22) 40%, transparent 66%);
+  animation: salon-swell 2.8s var(--ease) both;
+}
+
+.salon__motif {
+  position: absolute;
+  inset: 0;
+  opacity: 0.9;
+  transition: opacity 1.4s var(--ease);
+}
+
+.salon__svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.salon__svg * {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* ---------- Suspension : attente de l'autre, puis pause ---------- */
+.salon[data-state="waiting"] .salon__glow {
+  opacity: calc(var(--glow) * 0.55);
+}
+
+.salon[data-state="waiting"] .salon__motif {
+  opacity: 0.55;
+}
+
+.salon[data-state="paused"] {
+  opacity: 0.4;
+}
+
+.salon[data-state="paused"] *,
+.salon[data-state="paused"] *::before,
+.salon[data-state="paused"] *::after {
+  animation-play-state: paused !important;
+}
+
+/* ---------- 1. Salon à deux : deux halos qui se rapprochent ---------- */
+.m-ring {
+  fill: none;
+  stroke: rgba(var(--gold), 0.24);
+  stroke-width: 1.2;
+}
+
+.m-a,
+.m-b {
+  transition: transform 2.8s var(--ease);
+}
+
+.m-a {
+  transform: translateX(calc(var(--gap) * -1px));
+}
+
+.m-b {
+  transform: translateX(calc(var(--gap) * 1px));
+}
+
+.m-lens {
+  fill: rgba(var(--gold), var(--lens));
+  transition: fill 2.4s var(--ease);
+}
+
+.salon[data-level="4"] .m-lens {
+  animation: salon-pulse 4.8s ease-in-out infinite;
+}
+
+/* ---------- 2. Duos : deux paires qui finissent par orbiter ensemble ---------- */
+.m-orbit {
+  fill: none;
+  stroke: rgba(var(--gold), calc(0.08 + var(--link) * 0.5));
+  stroke-width: 1;
+  transition: stroke 2.4s var(--ease);
+}
+
+.m-dot {
+  fill: rgba(var(--wine), 0.6);
+  stroke: rgba(var(--gold), 0.45);
+  stroke-width: 1;
+}
+
+.salon__svg .m-pa,
+.salon__svg .m-pb {
+  transform-box: view-box;
+  transform-origin: 200px 200px;
+  animation: salon-orbit calc(var(--dur) * 2.4) linear infinite;
+}
+
+.salon__svg .m-pb {
+  animation-direction: var(--dir-b, reverse);
+}
+
+.salon[data-level="3"] .m-pb,
+.salon[data-level="4"] .m-pb {
+  --dir-b: normal;
+}
+
+/* ---------- 3. Côte à côte : deux ondes qui se synchronisent ---------- */
+.m-w {
+  fill: none;
+  stroke: rgba(var(--gold), 0.3);
+  stroke-width: 1.4;
+  animation: salon-wave var(--dur) linear infinite;
+}
+
+.m-wb {
+  animation-duration: calc(var(--dur) * var(--drift, 1.35));
+}
+
+.salon[data-level="3"] .m-wb,
+.salon[data-level="4"] .m-wb {
+  --drift: 1;
+}
+
+.m-wrap-a,
+.m-wrap-b {
+  transition: transform 2.8s var(--ease);
+}
+
+.m-wrap-a {
+  transform: translateY(calc(var(--gap) * -1px));
+}
+
+.m-wrap-b {
+  transform: translateY(calc(var(--gap) * 1px));
+}
+
+/* ---------- 4. Anonyme : un voile qui s'ouvre palier après palier ---------- */
+.m-veil {
+  position: absolute;
+  inset: -80%;
+  background: radial-gradient(circle at 50% 50%, transparent 0, transparent 14%, rgba(var(--cherry), 0.9) 46%);
+  transform: scale(var(--veil));
+  transition: transform 3.2s var(--ease);
+}
+
+.m-shade {
+  fill: rgba(var(--cherry), 0.55);
+  animation: salon-drift calc(var(--dur) * 0.9) ease-in-out infinite alternate;
+}
+
+.m-s2 {
+  animation-delay: -7s;
+  animation-direction: alternate-reverse;
+}
+
+/* ---------- 5. Personnalisé : formes fluides, imprévisibilité maîtrisée ---------- */
+.m-blob {
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  width: 34vmin;
+  height: 34vmin;
+  margin: -17vmin 0 0 -17vmin;
+  background: radial-gradient(circle at 35% 35%, rgba(var(--gold), 0.3), rgba(var(--wine), 0.28) 60%, transparent 72%);
+  opacity: 0.7;
+  animation: salon-blob calc(var(--dur) * 0.6) ease-in-out infinite;
+  transition: opacity 2.4s var(--ease);
+}
+
+.m-blob:nth-child(2) {
+  width: 26vmin;
+  height: 26vmin;
+  margin: -13vmin 0 0 -13vmin;
+  opacity: calc(clamp(0, var(--blobs) - 1, 1) * 0.6);
+  animation-delay: -6s;
+  animation-direction: reverse;
+}
+
+.m-blob:nth-child(3) {
+  width: 20vmin;
+  height: 20vmin;
+  margin: -10vmin 0 0 -10vmin;
+  opacity: calc(clamp(0, var(--blobs) - 2, 1) * 0.5);
+  animation-delay: -11s;
+}
+
+/* ---------- 6. Vocal : microphone, ondes et pulsations ---------- */
+.m-rg2 {
+  opacity: clamp(0, var(--rings) - 1, 1);
+}
+
+.m-rg3 {
+  opacity: clamp(0, var(--rings) - 2, 1);
+}
+
+.m-rg {
+  transition: opacity 2.4s var(--ease);
+}
+
+.m-vring {
+  fill: none;
+  stroke: rgba(var(--gold), 0.3);
+  stroke-width: 1.2;
+  opacity: 0;
+  animation: salon-ring 5.4s ease-out infinite;
+}
+
+.m-rg2 .m-vring {
+  animation-delay: -1.8s;
+}
+
+.m-rg3 .m-vring {
+  animation-delay: -3.6s;
+}
+
+.m-mic rect,
+.m-mic path {
+  fill: none;
+  stroke: rgba(var(--gold), 0.38);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+}
+
+.m-eq rect {
+  fill: rgba(var(--gold), 0.3);
+  transform-origin: center bottom;
+  animation: salon-eq 2.2s ease-in-out infinite alternate;
+}
+
+.m-eq rect:nth-child(2n) { animation-delay: -0.7s; }
+.m-eq rect:nth-child(3n) { animation-delay: -1.3s; }
+.m-eq rect:nth-child(5n) { animation-delay: -1.9s; }
+
+/* ---------- Mouvements ---------- */
+@keyframes salon-lamp {
+  to { transform: translate3d(6vmax, 5vmax, 0) scale(1.08); }
+}
+
+@keyframes salon-beat {
+  50% { opacity: calc(var(--glow) * 1.18); }
+}
+
+@keyframes salon-swell {
+  0% { opacity: 0; transform: scale(0.5); }
+  35% { opacity: 1; }
+  100% { opacity: 0; transform: scale(1.15); }
+}
+
+@keyframes salon-pulse {
+  50% { transform: scale(1.12); }
+}
+
+@keyframes salon-orbit {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes salon-wave {
+  to { transform: translateX(-200px); }
+}
+
+@keyframes salon-drift {
+  to { transform: translate(40px, -24px); }
+}
+
+@keyframes salon-blob {
+  0%, 100% {
+    border-radius: 60% 40% 55% 45% / 50% 60% 40% 50%;
+    transform: translate(0, 0) rotate(0deg);
+  }
+  50% {
+    border-radius: 40% 60% 45% 55% / 60% 40% 60% 40%;
+    transform: translate(calc(var(--amp) * 1px), calc(var(--amp) * -0.6px)) rotate(40deg);
+  }
+}
+
+@keyframes salon-ring {
+  0% { opacity: 0.9; transform: scale(0.5); }
+  100% { opacity: 0; transform: scale(2.4); }
+}
+
+@keyframes salon-eq {
+  from { transform: scaleY(0.15); }
+  to { transform: scaleY(var(--eq)); }
+}

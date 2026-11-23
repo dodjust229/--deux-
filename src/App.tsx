@@ -31,6 +31,7 @@ import { Icon } from "./components/Icon";
 import { Settings } from "./components/Settings";
 import { Safety } from "./components/Safety";
 import { Stage } from "./components/Stage";
+import { SalonAmbiance } from "./components/SalonAmbiance";
 import type { StagePlayer } from "./components/Stage";
 import { Home } from "./screens/Home";
 import { Mode } from "./screens/Mode";
@@ -386,6 +387,14 @@ export default function App() {
 
   return (
     <div className="app">
+      {/* Fond animé du salon : monté à la racine. Dans un écran animé (.game, .duo-page),
+          le transform de page-in crée un bloc conteneur et rogne le calque fixed. */}
+      <SalonAmbiance
+        salon={identity?.gameMode === "duos" ? "duos" : "couple"}
+        level={(snapshot?.interaction?.level ?? 1) as 1 | 2 | 3 | 4}
+        paused={snapshot?.room.status === "paused"}
+        waiting={Boolean(snapshot?.my_answer && !snapshot?.revealed)}
+      />
       {!(
         identity &&
         snapshot &&
