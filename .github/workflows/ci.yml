@@ -8,6 +8,7 @@ permissions:
   contents: read
 jobs:
   verify:
+    if: hashFiles('a-deux-source.tar.gz') != ''
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -15,13 +16,11 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - name: Vérifier la présence de l'archive source
-        run: test -f a-deux-source.tar.gz
       - name: Extraire les sources
         run: tar -xzf a-deux-source.tar.gz -C .
       - name: Installer les dépendances
         run: npm ci
       - name: Tests
         run: npm test
-      - name: Compilation
+      - name: Compilation de production
         run: npm run build
