@@ -24,6 +24,9 @@ dans l'éditeur SQL du projet `xqvxorvvjmwzpcqmqnqv` ou via `psql`.
 06_duo_schema.sql
 07_security_fixes.sql
 09_duo_replay.sql
+10_host_billing.sql
+11_host_creation_gate.sql
+12_host_payment_cleanup.sql
 ```
 
 `04` et `05` ne sont plus nécessaires sur une base neuve : leur intention est reprise par `06`.
