@@ -1,8 +1,8 @@
 # QSPICY — modèle de carte et règles de jeu
 
-> Document de cadrage issu du cahier de référence du 23 novembre 2026.
-> Il fixe le format des cartes avant l'écriture du catalogue complet. Aucune migration
-> Supabase n'est appliquée : la section 7 décrit ce qu'il faudra faire, et rien de plus.
+> Document de cadrage issu du cahier de référence du 23 novembre 2026, mis à jour en **v1.1**
+> (audiences DUOS, format CONFIDENCE, règles de visibilité).
+> Aucune migration Supabase n'est appliquée : la section 8 décrit ce qu'il faudra faire.
 
 ## 1. Champs d'une carte
 
@@ -10,7 +10,8 @@
 |---|---|---|---|
 | `id` | texte | `qsp-l<1-4>-<ques\|defi\|surp\|scen>-<nn>` | Identifiant stable, trié par niveau |
 | `text` | texte | 20 à 260 caractères | La carte elle-même, telle qu'elle s'affiche |
-| `type` | énum | voir §2 | Format d'interaction |
+| `type` | énum | 10 formats (§2) | Format d'interaction |
+| `audience` | énum | 5 audiences (§3) | Qui reçoit la carte |
 | `level` | entier | 1 à 4 | Étape officielle |
 | `category` | énum | 13 catégories éditoriales | Classement de contenu |
 | `context` | énum | `tous`, `rencontre`, `decouverte`, `couple`, `intimite` | À qui la carte s'adresse |
@@ -18,7 +19,7 @@
 | `intensity` | entier | 1 à 5 | Audace réelle de la carte |
 | `emoji` | texte | un emoji | Repère visuel discret |
 | `duration` | énum | `courte`, `moyenne`, `longue` | Temps de réponse attendu |
-| `visibility` | énum | `partagee`, `anonyme`, `privee` | Qui voit la réponse |
+| `visibility` | énum | `partagee`, `anonyme`, `privee` | Comment la réponse est montrée |
 | `skip_allowed` | booléen | toujours `true` | Droit de passer, non négociable |
 | `consent_note` | texte | 10 à 220 caractères | Rappel de consentement propre à la carte |
 
@@ -26,26 +27,68 @@ Catégories : `seduction`, `humour`, `premieres-impressions`, `confiance`, `conf
 `desirs`, `preferences-intimes`, `fantasmes`, `experiences`, `sexualite-communication`,
 `redecouverte`, `scenarios`, `limites-defis`.
 
+`audience` a été ajouté en v1.1 : sans lui, le texte d'une carte devient ambigu dès que
+quatre joueurs sont en jeu (partenaire ? duo ? les deux duos ?). C'est le seul champ nouveau.
+
 ## 2. Formats et comportement à l'écran
 
 | `type` | Libellé | Ce que fait l'application |
 |---|---|---|
-| `QUESTION` | Question | Chacun répond librement, les deux réponses se révèlent ensemble |
-| `PRISE_DE_POSITION` | Prise de position | Réponse courte et assumée, sans débat obligatoire |
-| `ACTION_GESTE` | Action / geste | Consigne à réaliser hors écran, puis récit court ; jamais de preuve exigée |
+| `QUESTION` | Question | Chacun répond librement, les réponses se révèlent ensemble |
+| `PRISE_DE_POSITION` | Prise de position | Choix assumé entre deux options, sans débat obligatoire |
+| `ACTION_GESTE` | Action / geste | Consigne à faire hors écran, puis récit court ; jamais de preuve exigée |
 | `POSTURE` | Posture | Consigne corporelle très légère, à faire seul·e, puis ressenti décrit |
 | `DESCRIPTION` | Description | Réponse contrainte (trois mots, une image, une scène) |
 | `SCENARIO` | Scénario | Récit guidé, avec un cadre explicite (lieu, durée, limite) |
 | `PROVOCATION` | Provocation | Question ou défi frontal mais jamais humiliant |
 | `DUEL_MIROIR` | Duel / miroir | Même consigne pour les deux, comparaison sans score ni gagnant |
-| `SURPRISE` | Carte surprise | Interrompt la séquence ; peut être refusée comme n'importe quelle carte |
+| `SURPRISE` | Carte surprise | Interrompt la séquence ; se refuse comme n'importe quelle carte |
+| `CONFIDENCE` | Confidence | Le joueur confie un fait, un souvenir ou une limite ; jamais de preuve, jamais d'obligation |
+
+`CONFIDENCE` est le dixième format, ajouté en v1.1 : les cartes 15 et 16 demandaient une
+confidence et étaient classées « geste » et « posture ». Une confidence n'est ni un geste
+ni une posture, et son traitement de visibilité est différent.
 
 Règle transverse : aucun format n'exige une preuve, une photo, un contact physique ou une
 réponse explicite. Une consigne se raconte, elle ne se prouve pas.
 
-## 3. Niveaux
+## 3. Audiences
 
-Les quatre étapes du cahier, avec leur intensité de référence :
+| `audience` | Qui reçoit la carte | Où elle se joue |
+|---|---|---|
+| `partner` | la personne avec qui je suis en duo (mon/ma partenaire) | duo, duos |
+| `own_duo` | les deux membres de mon duo, moi compris | duo, duos |
+| `other_duo` | le duo opposé | duos uniquement |
+| `all_players` | les quatre joueurs | duos uniquement |
+| `individual_choice` | l'audience que je choisis au moment d'envoyer (partenaire, mon duo, tout le monde) | duo, duos, personnalisé |
+
+Règles vérifiées automatiquement :
+
+- `other_duo` et `all_players` sont réservés au mode `duos` : une carte qui parle à « l'autre
+  duo » n'a aucun sens à deux ;
+- le mode `personnalise` n'accepte que les audiences intimes (`partner`, `own_duo`,
+  `individual_choice`) ;
+- le texte d'une carte ne doit pas contredire son audience : une carte `other_duo` dit
+  « l'autre duo », une carte `all_players` dit « vous quatre », une carte `partner` parle à
+  une seule personne.
+
+## 4. Mécaniques DUOS
+
+Quatre joueurs, deux duos fixes, trois espaces : le salon collectif, le salon privé du duo A,
+le salon privé du duo B. Aucun score, aucun classement, aucun gagnant.
+
+| Mécanique | Espaces | Cartes concernées |
+|---|---|---|
+| Entre nous | salon privé du duo | `own_duo`, `partner` |
+| Face à face | salon collectif | `other_duo` |
+| Qui connaît son partenaire ? | duo puis collectif | `partner` avec révélation croisée |
+| Défi croisé | collectif | `other_duo`, `all_players` |
+
+Une interaction croisée (réponse montrée à l'autre duo ou aux quatre) exige l'autorisation
+individuelle de chaque personne concernée au moment de la révélation : personne ne peut
+publier la réponse d'un autre, ni changer ses préférences à sa place.
+
+## 5. Niveaux
 
 | Niveau | Nom | `intensity` attendue |
 |---|---|---|
@@ -54,73 +97,66 @@ Les quatre étapes du cahier, avec leur intensité de référence :
 | 3 | Mode QSPICY / Anonymous | 3 à 4 |
 | 4 | Les questions qui font screenshot | 4 à 5 |
 
-Règles de partie :
-
-- le niveau de départ est choisi par les deux joueurs au lancement, pas imposé ;
-- la progression suit l'ordre des niveaux mais reste non linéaire : chacun peut demander à
-  revenir en arrière, sauter une carte ou arrêter ;
-- les cartes des niveaux 3 et 4 ne sont tirées que si les deux joueurs ont choisi ce niveau
-  (même logique que le mode 18+ actuel, étendue) ;
+- le niveau de départ est choisi par les joueurs, pas imposé ;
+- la progression suit l'ordre des niveaux mais reste non linéaire : retour en arrière, saut
+  de carte et arrêt sont toujours possibles ;
+- les cartes des niveaux 3 et 4 ne sont tirées que si les joueurs ont choisi ce niveau ;
 - aucune carte n'est verrouillée derrière une autre : le refus n'a jamais de coût.
 
-## 4. Visibilité et Anonymous
+## 6. Visibilité, Anonymous et consentement
 
-| `visibility` | Ce que voit l'autre | Ce que dit l'application |
+| `visibility` | Ce que voit le destinataire | Ce que dit l'application |
 |---|---|---|
 | `partagee` | la réponse et son auteur, à la révélation | « Vos réponses apparaîtront ensemble » |
 | `anonyme` | la réponse, sans le prénom | « Réponse anonyme : ton prénom n'apparaîtra pas. L'application peut techniquement relier une réponse à un joueur ; elle ne l'affiche jamais. » |
 | `privee` | rien, jamais | « Réponse privée : elle reste pour toi. » |
 
-Anonymous est une mécanique transversale : une carte peut être anonyme à n'importe quel
-niveau, et l'écran doit dire clairement qui voit quoi **avant** la saisie. Ne jamais promettre
-un anonymat absolu.
+- `anonyme` n'est autorisé que devant un groupe (`all_players`, `other_duo`) ou à audience
+  choisie : on n'est pas anonyme devant la personne avec qui on joue.
+- `privee` n'est autorisé qu'avec une audience intime, et la réponse ne part jamais vers
+  l'autre joueur.
+- `skip_allowed` reste `true` partout ; une carte qui exige de répondre est un défaut.
+- Chaque carte porte une `consent_note` concrète : ce qui est attendu, ce qui ne l'est pas,
+  et le droit de s'arrêter.
+- Aucune image intime, aucun déshabillage, aucun acte imposé ; ne jamais promettre qu'une
+  capture d'écran est impossible.
 
-## 5. Consentement
+## 7. Le pilote livré (v1.1)
 
-- `skip_allowed` reste `true` partout. Une carte qui exige de répondre est un défaut de conception.
-- Chaque carte porte une `consent_note` concrète : ce qui est attendu, ce qui ne l'est pas, et
-  le droit de s'arrêter.
-- Passer, changer de niveau, quitter : sans justification, sans pénalité, sans effet sur la suite.
-- Une permission générale ne vaut pas consentement permanent : la note de carte le rappelle à
-  chaque fois que le contenu est intime.
-- Aucune image intime, aucun déshabillage, aucun acte imposé, aucune capture d'écran promise
-  comme impossible.
+`content/pilot/qspicy-pilot.json` (intégration) et `content/pilot/qspicy-pilot.csv`
+(relecture) : 30 cartes originales.
 
-## 6. Le pilote livré
+| Famille | Nombre |
+|---|---|
+| Questions | 10 |
+| Défis | 8 |
+| Cartes surprises | 6 |
+| Scénarios | 6 |
 
-`content/pilot/qspicy-pilot.json` (intégration) et `content/pilot/qspicy-pilot.csv` (relecture)
-contiennent 30 cartes originales :
+Niveaux : 1 = 7, 2 = 9, 3 = 7, 4 = 7. Formats : 10 sur 10 représentés.
+Audiences : `partner` 15, `own_duo` 7, `other_duo` 3, `all_players` 3,
+`individual_choice` 2. Trois cartes anonymes, une privée.
 
-| Famille | Nombre | Exemples de formats |
-|---|---|---|
-| Questions | 10 | question, prise de position, description, duel/miroir |
-| Défis | 8 | action/geste, posture, provocation |
-| Cartes surprises | 6 | surprise |
-| Scénarios | 6 | scénario |
-| **Total** | **30** | |
-
-Répartition : niveau 1 = 7, niveau 2 = 9, niveau 3 = 7, niveau 4 = 7. Les neuf formats sont
-représentés au moins une fois. Trois cartes sont anonymes, une est privée.
-
-Vérification automatique :
+Vérification :
 
 ```bash
-npm run cards:check   # schéma, doublons, bandes d'intensité, comptages, CSV synchronisé
+npm run cards:check   # schéma, doublons, bandes d'intensité, audiences, formats, CSV
 npm run cards:csv     # régénère le CSV depuis le JSON
 ```
 
-## 7. Intégration future (non appliquée)
+## 8. Intégration future (non appliquée)
 
-Le catalogue actuel (`catalog.id/category/kind/options`) ne connaît pas les niveaux. Quand le
-pilote sera validé, l'intégration demandera :
+Quand le pilote sera validé, l'intégration demandera :
 
 1. une migration additive : `alter table public.catalog add column level int not null default 1`
-   (réversible, aucune donnée supprimée) ;
+   et `add column audience text not null default 'partner'` (réversible, aucune donnée perdue) ;
 2. `start_game` qui accepte le niveau de départ et filtre les cartes ;
 3. `get_room_snapshot` qui masque l'auteur d'une réponse `anonyme` et n'envoie jamais une
-   réponse `privee` à l'autre joueur ;
+   réponse `privee` à un autre joueur ;
 4. la correspondance `type` → `kind` existant pour l'affichage, sans casser les 43 cartes
-   actuelles ni les parties en cours.
+   actuelles ni les parties en cours ;
+5. le modèle de salle à quatre places et trois espaces, nécessaire aux audiences
+   `other_duo` et `all_players` — phase séparée, spécifiée avant d'être codée.
 
-Ces points ne sont pas exécutés : ils feront l'objet d'un fichier SQL versionné, soumis à
-autorisation avant application.
+Rien de tout cela n'est exécuté : ces points feront l'objet d'un fichier SQL versionné,
+soumis à autorisation avant application.

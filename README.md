@@ -38,7 +38,8 @@ npm run pack:source
 - `docs/GENSPARK_AUDIT_INITIAL.md` — état du code avant refonte ;
 - `docs/GENSPARK_TEST_REPORT.md` — tests exécutés et résultats ;
 - `docs/GENSPARK_HANDOFF.md` — lancement, mise en ligne, limites ;
-- `docs/MODELE_CARTE.md` — modèle de carte, niveaux, visibilité et consentement ;
+- `docs/MODELE_CARTE.md` — modèle de carte, audiences DUOS, niveaux, visibilité et consentement ;
+- `docs/RAPPORT_VALIDATION_PILOTE_V11.md` — contrôles et modifications du pilote v1.1 ;
 - `content/pilot/` — catalogue pilote (30 cartes) en JSON et CSV de relecture ;
 - `INSTALLATION.md`, `TESTS_A_DEUX.md` — installation et vérification manuelle.
 

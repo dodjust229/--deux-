@@ -7,10 +7,16 @@ const JSON_PATH = "content/pilot/qspicy-pilot.json";
 const CSV_PATH = "content/pilot/qspicy-pilot.csv";
 
 const FIELDS = [
-  "id", "text", "type", "level", "category", "context", "modes",
+  "id", "text", "type", "audience", "level", "category", "context", "modes",
   "intensity", "emoji", "duration", "visibility", "skip_allowed", "consent_note"
 ];
-const TYPES = ["QUESTION", "PRISE_DE_POSITION", "ACTION_GESTE", "POSTURE", "DESCRIPTION", "SCENARIO", "PROVOCATION", "DUEL_MIROIR", "SURPRISE"];
+const TYPES = [
+  "QUESTION", "PRISE_DE_POSITION", "ACTION_GESTE", "POSTURE", "DESCRIPTION",
+  "SCENARIO", "PROVOCATION", "DUEL_MIROIR", "SURPRISE", "CONFIDENCE"
+];
+const AUDIENCES = ["partner", "own_duo", "other_duo", "all_players", "individual_choice"];
+const INTIMATE_AUDIENCES = ["partner", "own_duo", "individual_choice"];
+const GROUP_AUDIENCES = ["other_duo", "all_players"];
 const CATEGORIES = [
   "seduction", "humour", "premieres-impressions", "confiance", "confidences", "desirs",
   "preferences-intimes", "fantasmes", "experiences", "sexualite-communication",
@@ -44,6 +50,7 @@ const texts = new Set();
 const familyCount = {};
 const levelCount = {};
 const typeCount = {};
+const audienceCount = {};
 
 cards.forEach((card, index) => {
   const label = card?.id || `#${index + 1}`;
@@ -68,8 +75,11 @@ cards.forEach((card, index) => {
     texts.add(normalize(card.text));
   }
 
-  if (!TYPES.includes(card?.type)) fail(`${label} : type inconnu « ${card?.type} »`);
+  if (!TYPES.includes(card?.type)) fail(`${label} : format inconnu « ${card?.type} »`);
   else typeCount[card.type] = (typeCount[card.type] ?? 0) + 1;
+
+  if (!AUDIENCES.includes(card?.audience)) fail(`${label} : audience inconnue « ${card?.audience} »`);
+  else audienceCount[card.audience] = (audienceCount[card.audience] ?? 0) + 1;
 
   if (!Number.isInteger(card?.level) || card.level < 1 || card.level > 4) fail(`${label} : level doit valoir 1 à 4`);
   else levelCount[card.level] = (levelCount[card.level] ?? 0) + 1;
@@ -81,6 +91,12 @@ cards.forEach((card, index) => {
   else {
     for (const mode of card.modes) if (!MODES.includes(mode)) fail(`${label} : mode inconnu « ${mode} »`);
     if (new Set(card.modes).size !== card.modes.length) fail(`${label} : mode en double`);
+    if (GROUP_AUDIENCES.includes(card.audience) && !(card.modes.length === 1 && card.modes[0] === "duos")) {
+      fail(`${label} : une carte adressée à ${card.audience} doit être jouée en mode duos uniquement`);
+    }
+    if (card.modes.includes("personnalise") && GROUP_AUDIENCES.includes(card.audience)) {
+      fail(`${label} : le mode personnalisé n'est pas disponible pour l'audience ${card.audience}`);
+    }
   }
 
   if (!Number.isInteger(card?.intensity) || card.intensity < 1 || card.intensity > 5) {
@@ -97,6 +113,13 @@ cards.forEach((card, index) => {
   }
   if (!DURATIONS.includes(card?.duration)) fail(`${label} : durée inconnue « ${card?.duration} »`);
   if (!VISIBILITIES.includes(card?.visibility)) fail(`${label} : visibilité inconnue « ${card?.visibility} »`);
+
+  if (card.visibility === "anonyme" && !["all_players", "other_duo", "individual_choice"].includes(card.audience)) {
+    fail(`${label} : une réponse anonyme n'a de sens que devant un groupe ou à audience choisie`);
+  }
+  if (card.visibility === "privee" && !INTIMATE_AUDIENCES.includes(card.audience)) {
+    fail(`${label} : une réponse privée ne s'adresse qu'à soi ou à son partenaire`);
+  }
   if (card?.skip_allowed !== true) fail(`${label} : skip_allowed doit rester true (charte de consentement)`);
   if (typeof card?.consent_note !== "string" || card.consent_note.trim().length < 10 || card.consent_note.length > 220) {
     fail(`${label} : note de consentement attendue entre 10 et 220 caractères`);
@@ -111,6 +134,9 @@ for (const level of [1, 2, 3, 4]) {
 }
 for (const type of TYPES) {
   if (!typeCount[type]) fail(`format ${type} : aucun exemple dans le pilote`);
+}
+for (const audience of AUDIENCES) {
+  if ((audienceCount[audience] ?? 0) < 2) fail(`audience ${audience} : ${audienceCount[audience] ?? 0} carte(s), au moins 2 attendues`);
 }
 
 const escapeCsv = (value) => {
@@ -135,8 +161,8 @@ if (process.argv.includes("--check")) {
   fs.mkdirSync(path.dirname(CSV_PATH), { recursive: true });
   fs.writeFileSync(CSV_PATH, csv);
   console.log(`✓ ${CSV_PATH} écrit (${cards.length} cartes).`);
-  console.log(
-    `  familles : ${Object.entries(familyCount).map(([k, v]) => `${k}=${v}`).join(" · ")}`
-  );
-  console.log(`  niveaux : ${Object.entries(levelCount).map(([k, v]) => `L${k}=${v}`).join(" · ")}`);
+  console.log(`  familles : ${Object.entries(familyCount).map(([k, v]) => `${k}=${v}`).join(" · ")}`);
+  console.log(`  niveaux  : ${Object.entries(levelCount).map(([k, v]) => `L${k}=${v}`).join(" · ")}`);
+  console.log(`  audiences: ${Object.entries(audienceCount).map(([k, v]) => `${k}=${v}`).join(" · ")}`);
+  console.log(`  formats  : ${Object.keys(typeCount).length}/10 représentés`);
 }
