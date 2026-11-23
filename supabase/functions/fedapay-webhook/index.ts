@@ -69,7 +69,7 @@ Deno.serve(async (req: Request) => {
   const apiBase = environment === "live"
     ? "https://api.fedapay.com/v1"
     : "https://sandbox-api.fedapay.com/v1";
-  const verifyResponse = await fetch(`${apiBase}/transactions/${encodeURIComponent(transactionId)}`, {
+  const verifyResponse = await fetch(`${apiBase}/transactions/${encodeURIComponent(transactionId)}?include=currency`, {
     headers: { Authorization: `Bearer ${fedapayKey}`, "Content-Type": "application/json" },
   });
   if (!verifyResponse.ok) return response(502, { error: "Unable to verify transaction with FedaPay" });
