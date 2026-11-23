@@ -152,7 +152,7 @@ export function Lobby({
                   : "Aucune catégorie commune pour l'instant"}
               </span>
             </div>
-            <div className="chips" role="group" aria-label="Catégories de la partie">
+            <div className="chips" role="group" aria-label={lang === "en" ? "Game categories" : "Catégories de la partie"}>
               {CATEGORIES.map((category) => {
                 const on = selected.includes(category);
                 const refused = excluded.includes(category);

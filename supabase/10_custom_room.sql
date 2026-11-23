@@ -30,6 +30,11 @@ begin
   select * into r from public.rooms where id=p_room_id for update;
   if r.mode = 'duos' then raise exception 'E_MODE: Le mode Personnalisé est un salon à deux.'; end if;
   if r.status <> 'waiting' then raise exception 'E_STATE: La partie a déjà commencé.'; end if;
+  -- Seul l'hôte (celui qui a créé la salle, siège 1) écrit et lance la séquence :
+  -- un second joueur ne peut ni lancer, ni remplacer les questions en appelant la RPC directement.
+  if me.seat <> 1 then
+    raise exception 'E_HOST: Seul l’hôte de la salle peut lancer la partie personnalisée.';
+  end if;
   if (select count(*) from public.players where room_id=p_room_id and status='active') <> 2 then
     raise exception 'E_STATE: Deux joueurs doivent être présents.';
   end if;

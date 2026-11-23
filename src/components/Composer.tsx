@@ -11,11 +11,12 @@ interface ComposerProps {
   hint: string;
   onSubmit: (payload: string) => void;
   onPass: () => void;
+  lang?: "fr" | "en";
 }
 
 const EMOJIS = ["❤️", "😏", "🔥", "🌙", "😅", "🤫", "✨", "🫦"];
 
-export function Composer({ interaction, busy, alreadyAnswered, canSend, hint, onSubmit, onPass }: ComposerProps) {
+export function Composer({ interaction, busy, alreadyAnswered, canSend, hint, onSubmit, onPass, lang = "fr" }: ComposerProps) {
   const [text, setText] = useState("");
   const [guess, setGuess] = useState("");
 
@@ -70,7 +71,7 @@ export function Composer({ interaction, busy, alreadyAnswered, canSend, hint, on
   return (
     <div className="composer">
       {isSecret ? (
-        <div className="options" role="radiogroup" aria-label="Choisis une option">
+        <div className="options" role="radiogroup" aria-label={lang === "en" ? "Choose one option" : "Choisis une option"}>
           {options.map((option) => (
             <button
               key={option}
@@ -129,7 +130,7 @@ export function Composer({ interaction, busy, alreadyAnswered, canSend, hint, on
           </label>
 
           {!isPrivate && (
-            <div className="emoji-row" role="group" aria-label="Insérer un emoji">
+            <div className="emoji-row" role="group" aria-label={lang === "en" ? "Insert an emoji" : "Insérer un emoji"}>
               {EMOJIS.map((emoji) => (
                 <button key={emoji} type="button" className="emoji" disabled={locked} onClick={() => addEmoji(emoji)}>
                   {emoji}

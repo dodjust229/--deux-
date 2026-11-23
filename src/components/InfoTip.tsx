@@ -48,7 +48,7 @@ export function InfoTip({ tip, lang, className = "" }: InfoTipProps) {
         <span className="info__panel" id={id} role="status">
           <strong>{content.title}</strong>
           <span>{content.body}</span>
-          <button type="button" className="info__close" onClick={() => setOpen(false)} aria-label="Fermer">
+          <button type="button" className="info__close" onClick={() => setOpen(false)} aria-label={lang === "en" ? "Close" : "Fermer"}>
             <Icon name="close" size={12} />
           </button>
         </span>

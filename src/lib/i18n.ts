@@ -218,6 +218,9 @@ const DICT = {
 
 export type MessageKey = keyof (typeof DICT)["fr"];
 
+/** Clés réellement définies dans les deux langues (le test de parité s'appuie dessus). */
+export const messageKeys = Object.keys(DICT.fr) as MessageKey[];
+
 export function translate(lang: Lang, key: MessageKey, vars?: Record<string, string | number>): string {
   const table = DICT[lang] ?? DICT.fr;
   let value: string = table[key] ?? DICT.fr[key] ?? key;

@@ -126,7 +126,7 @@ export function Game({
     <main className="game">
       {curtain && <LevelCurtain level={curtain} lang={lang} />}
       <header className="game__bar">
-        <div className="game__progress" aria-label={`Question ${position} sur ${snap.room.total}`}>
+        <div className="game__progress" aria-label={lang === "en" ? `Question ${position} of ${snap.room.total}` : `Question ${position} sur ${snap.room.total}`}>
           <span className="game__progress-track">
             <span className="game__progress-fill" style={{ width: `${progress}%` }} />
           </span>
@@ -138,10 +138,10 @@ export function Game({
           <button className="safe-button" type="button" onClick={onSafe}>
             SAFE
           </button>
-          <button className="icon-button" type="button" data-testid="open-guide" onClick={onOpenGuide} aria-label="Guide d'utilisation">
+          <button className="icon-button" type="button" data-testid="open-guide" onClick={onOpenGuide} aria-label={lang === "en" ? "Open the guide" : "Guide d'utilisation"}>
             <Icon name="info" />
           </button>
-          <button className="icon-button" type="button" data-testid="open-settings" onClick={onOpenSettings} aria-label="Réglages et pause">
+          <button className="icon-button" type="button" data-testid="open-settings" onClick={onOpenSettings} aria-label={lang === "en" ? "Settings and pause" : "Réglages et pause"}>
             <Icon name="settings" />
           </button>
         </div>
@@ -217,6 +217,7 @@ export function Game({
           canSend={canSend}
           hint={hint}
           onSubmit={onSubmit}
+          lang={lang}
           onPass={onPass}
         />
       )}

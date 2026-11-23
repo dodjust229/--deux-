@@ -17,7 +17,8 @@ const FR: GuideSection[] = [
     body: [
       "À Deux : deux personnes, une salle privée. C'est le mode complet aujourd'hui.",
       "DUOS : quatre personnes, deux duos fixes et trois espaces (tous ensemble, mon duo, l'autre duo). Les quatre doivent être présents pour démarrer.",
-      "Côte à Côte, Anonyme et Personnalisé sont visibles mais verrouillés : leur moteur n'est pas encore disponible. Ils resteront fermés tant qu'ils ne seront pas réellement jouables."
+      "Anonyme et Côte à Côte sont visibles mais verrouillés : leur moteur n'est pas encore disponible. Personnalisé, lui, est jouable : voir la rubrique des options.",
+      "Personnalisé s'active sur un serveur dès que sa migration est appliquée : sans elle, le bouton de lancement refuse la partie au lieu de la simuler."
     ]
   },
   {
@@ -87,7 +88,7 @@ const FR: GuideSection[] = [
     body: [
       "Tu peux passer n'importe quelle question, sans justification et sans conséquence sur la suite.",
       "Le bouton SAFE est toujours accessible pendant une partie : pause pour les deux, sortie immédiate, ou sortie avec blocage mémorisé sur ton appareil.",
-      "Le consentement 18+ est personnel et révocable : le retirer ferme immédiatement les cartes Audacieux."
+      "Le consentement 18+ est personnel et révocable : le retirer ferme immédiatement les cartes Audacieux. Il faut l'accord des deux joueurs en Couple, des quatre en DUOS."
     ]
   },
   {
@@ -115,7 +116,8 @@ const EN: GuideSection[] = [
     body: [
       "À Deux: two people, one private room. It is the complete mode today.",
       "DUOS: four people, two fixed duos and three spaces (everyone together, my duo, the other duo). All four must be present to start.",
-      "Side by Side, Anonymous and Custom are visible but locked: their engine is not available yet. They stay closed until they are genuinely playable."
+      "Anonymous and Side by Side are visible but locked: their engine is not available yet. Custom is playable: see the options section.",
+      "Custom turns on for a server once its migration is applied: without it the start button refuses the game instead of faking it."
     ]
   },
   {
@@ -140,7 +142,7 @@ const EN: GuideSection[] = [
     body: [
       "Cards follow four steps: 1 It starts to tingle, 2 The tension rises, 3 We let go, 4 What we never confess.",
       "The intensity chosen in your preferences sets the default moods: Soft (discovery and banter), Hot (confessions and flirting), Very Hot (everything, including 18+ cards).",
-      "18+ cards only appear when the Audacieux category is chosen and both people have agreed."
+      "18+ cards only appear when the Audacieux category is chosen and everyone in the room has agreed: two players in À Deux, four in DUOS."
     ]
   },
   {
@@ -204,7 +206,7 @@ export type TipId = "mode" | "intensity" | "categories" | "prefs" | "invite" | "
 
 const TIPS_FR: Record<TipId, { title: string; body: string }> = {
   mode: { title: "Quel salon ?", body: "À Deux, DUOS et Personnalisé sont jouables. Anonyme, Côte à Côte et Vocal sont verrouillés : leur moteur n'est pas terminé." },
-  intensity: { title: "À quoi sert l'intensité ?", body: "Elle choisit les ambiances proposées par défaut. Very Hot inclut les cartes 18+, toujours soumises à l'accord des deux." },
+  intensity: { title: "À quoi sert l'intensité ?", body: "Elle choisit les ambiances proposées par défaut. Very Hot inclut les cartes 18+, toujours soumises à l'accord de tous les joueurs du salon : deux en Couple, quatre en DUOS." },
   categories: { title: "Catégories", body: "Seules les catégories choisies par tout le monde sont tirées. Une catégorie exclue dans tes préférences reste fermée." },
   prefs: { title: "Tes préférences", body: "Elles restent sur cet appareil et ne changent rien pour l'autre personne." },
   invite: { title: "Invitation", body: "Le lien contient l'identifiant de la salle. Sans lui, personne ne peut entrer ; une salle pleine refuse les autres." },
@@ -217,7 +219,7 @@ const TIPS_FR: Record<TipId, { title: string; body: string }> = {
 
 const TIPS_EN: Record<TipId, { title: string; body: string }> = {
   mode: { title: "Which room?", body: "À Deux, DUOS and Custom are playable. Anonymous, Side by side and Voice are locked: their engine is unfinished." },
-  intensity: { title: "What does intensity do?", body: "It picks the default moods. Very Hot includes 18+ cards, always subject to both people's consent." },
+  intensity: { title: "What does intensity do?", body: "It picks the default moods. Very Hot includes 18+ cards, always subject to everyone in the room: two players in Couple, four in DUOS." },
   categories: { title: "Categories", body: "Only the categories chosen by everyone are drawn. A category excluded in your preferences stays closed." },
   prefs: { title: "Your preferences", body: "They stay on this device and change nothing for the other person." },
   invite: { title: "Invitation", body: "The link carries the room id. Without it nobody can enter; a full room refuses newcomers." },
