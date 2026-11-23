@@ -1,0 +1,8 @@
+[build]
+  command = "tar -xzf a-deux-source.tar.gz -C . && npm ci --no-audit --no-fund && npm run build"
+  publish = "dist"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

@@ -1,0 +1,23 @@
+import test from "node:test"; import assert from "node:assert/strict";
+import { parseError, encodePrediction, decodePrediction, extractRoomId, speakerSeat, getSharedCategories } from "./protocol.ts";
+test("erreurs serveur fatales vs transitoires", () => {
+  assert.equal(parseError(new Error("E_REPLACED: Ta place a été reprise.")).fatal, true);
+  assert.equal(parseError(new Error("E_ROOM_FULL: Salle complète.")).fatal, false);
+  assert.equal(parseError(new TypeError("Failed to fetch")).network, true);
+  assert.equal(parseError(new Error("Pseudo : 2 à 20 caractères.")).code, null);
+});
+test("prédiction : aller-retour et entrée invalide", () => {
+  assert.deepEqual(decodePrediction(encodePrediction(" a ", "b ")), { own: "a", guess: "b" });
+  assert.equal(decodePrediction("texte libre"), null);
+});
+test("identifiant de salle extrait d'un lien", () => {
+  assert.equal(extractRoomId("https://x.app/?room=0F8B3C3E-1111-4222-8333-444455556666"), "0f8b3c3e-1111-4222-8333-444455556666");
+  assert.equal(extractRoomId("bidon"), null);
+});
+test("orateur", () => { assert.equal(speakerSeat("cross", 3, false), 1); assert.equal(speakerSeat("cross", 3, true), 2); assert.equal(speakerSeat("free", 1, false), 2); });
+
+test("catégories communes : intersection stricte des deux choix", () => {
+  assert.deepEqual(getSharedCategories(["decouverte", "audacieux"], ["decouverte", "profondeur"]), ["decouverte"]);
+  assert.deepEqual(getSharedCategories(["decouverte"], ["profondeur"]), []);
+  assert.deepEqual(getSharedCategories(["decouverte"], null), []);
+});
