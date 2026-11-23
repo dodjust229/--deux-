@@ -2,7 +2,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { isConfigured } from "./supabase";
 import {
   createRoom,
-  getSnapshot,
+  createDuoRoom,
+  getSessionSnapshot,
   joinRoom,
   leaveRoom,
   nextInteraction,
@@ -11,7 +12,12 @@ import {
   setPause,
   setPlayerCategories,
   startGame,
-  submitAnswer
+  submitAnswer,
+  startDuoGame,
+  nextDuoInteraction,
+  submitDuoAnswer,
+  setDuoPermissions,
+  sendDuoMessage
 } from "./api";
 import { extractRoomId, getSharedCategories, parseError } from "./lib/protocol";
 import { deriveScene } from "./lib/scene";
@@ -29,9 +35,11 @@ import { Enter } from "./screens/Enter";
 import { Lobby } from "./screens/Lobby";
 import { Game } from "./screens/Game";
 import { End } from "./screens/End";
+import { DuoLobby, DuoGame, DuoEnd } from "./screens/DuoScreens";
+import type { DuoSnapshot } from "./types";
 
-type Identity = { roomId: string; token: string; nickname: string; avatar: "masculin" | "feminin" };
-type Entry = { mode: "create" | "join"; code: string } | null;
+type Identity = { roomId: string; token: string; nickname: string; avatar: "masculin" | "feminin"; gameMode?: "couple" | "duos" };
+type Entry = { mode: "create" | "join"; code: string; gameMode?: "couple" | "duos" } | null;
 
 const IDENTITY_KEY = "adeux_identity";
 const IDENTITY_COOKIE = "qspicy_session";
@@ -54,7 +62,8 @@ function readIdentity(): Identity | null {
       roomId: parsed.roomId,
       token: parsed.token,
       nickname: parsed.nickname,
-      avatar: parsed.avatar === "feminin" ? "feminin" : "masculin"
+      avatar: parsed.avatar === "feminin" ? "feminin" : "masculin",
+      gameMode: parsed.gameMode === "duos" ? "duos" : "couple"
     };
   } catch {
     return null;
@@ -81,7 +90,7 @@ export default function App() {
   const [systemReduced, setSystemReduced] = useState(false);
   const previewMode = import.meta.env.DEV ? new URLSearchParams(location.search).get("apercu") : null;
   const [identity, setIdentity] = useState<Identity | null>(() =>
-    previewMode && previewMode !== "home" ? { roomId: "demo", token: "demo", nickname: "Tao", avatar: "masculin" } : readIdentity()
+    previewMode && previewMode !== "home" ? { roomId: "demo", token: "demo", nickname: "Tao", avatar: "masculin", gameMode: "couple" } : readIdentity()
   );
   const [snapshot, setSnapshot] = useState<Snapshot | null>(() =>
     previewMode && previewMode !== "home" ? previewSnapshot(previewMode) : null
@@ -133,7 +142,7 @@ export default function App() {
     if (!identity || inFlight.current) return;
     inFlight.current = true;
     try {
-      const data = await getSnapshot(identity.roomId, identity.token);
+      const data = await getSessionSnapshot(identity.roomId, identity.token, identity.gameMode);
       failures.current = 0;
       setOffline(false);
       setSnapshot(data);
@@ -218,8 +227,8 @@ export default function App() {
     setBusy(true);
     setError("");
     try {
-      const result = mode === "create" ? await createRoom(name, persona) : await joinRoom(roomId, name, persona);
-      const nextIdentity: Identity = { roomId: result.room_id, token: result.player_token, nickname: name, avatar: persona };
+      const result = mode === "create" ? (entry?.gameMode === "duos" ? await createDuoRoom(name, persona) : await createRoom(name, persona)) : await joinRoom(roomId, name, persona);
+      const nextIdentity: Identity = { roomId: result.room_id, token: result.player_token, nickname: name, avatar: persona, gameMode: result.mode ?? entry?.gameMode ?? "couple" };
       saveIdentity(nextIdentity);
       lastQuestion.current = null;
       previous.current = null;
@@ -257,16 +266,16 @@ export default function App() {
 
   /* ---------- Données dérivées ---------- */
   const mePlayer: Player | undefined = snapshot?.players.find((player) => player.id === snapshot.my_player_id);
-  const otherPlayer: Player | null = snapshot?.players.find((player) => player.id !== snapshot?.my_player_id) ?? null;
+  const otherPlayer: Player | null = snapshot?.players.find((player) => player.id !== snapshot?.my_player_id && (identity?.gameMode !== "duos" || player.duo_no === mePlayer?.duo_no)) ?? null;
 
   const me: StagePlayer = {
     nickname: mePlayer?.nickname ?? identity?.nickname ?? "Toi",
     persona: mePlayer?.avatar ?? identity?.avatar ?? "masculin",
     online: mePlayer?.online ?? true,
-    seat: (snapshot?.my_seat ?? 1) as 1 | 2
+    seat: snapshot?.my_seat === 2 || snapshot?.my_seat === 4 ? 2 : 1
   };
   const other: StagePlayer | null = otherPlayer
-    ? { nickname: otherPlayer.nickname, persona: otherPlayer.avatar, online: otherPlayer.online, seat: otherPlayer.seat }
+    ? { nickname: otherPlayer.nickname, persona: otherPlayer.avatar, online: otherPlayer.online, seat: otherPlayer.seat === 1 || otherPlayer.seat === 3 ? 1 : 2 }
     : null;
 
   const inviteUrl = useMemo(
@@ -275,8 +284,8 @@ export default function App() {
   );
 
   const interaction = snapshot?.interaction ?? null;
-  const shared = useMemo(() => getSharedCategories(selected, snapshot?.other_categories), [selected, snapshot?.other_categories]);
-  const bothConsent = Boolean(snapshot && snapshot.players.length === 2 && snapshot.players.every((player) => player.adult_consent));
+  const shared = useMemo(() => identity?.gameMode === "duos" && snapshot ? selected.filter(c => snapshot.players.length === 4 && snapshot.players.every(p => p.selected_categories?.includes(c))) : getSharedCategories(selected, snapshot?.other_categories), [identity?.gameMode, snapshot, selected]);
+  const bothConsent = Boolean(snapshot && snapshot.players.length === (identity?.gameMode === "duos" ? 4 : 2) && snapshot.players.every((player) => player.adult_consent));
 
   const scene = useMemo(() => {
     if (!snapshot) return null;
@@ -284,7 +293,7 @@ export default function App() {
     const kind = interaction?.kind ?? null;
     const firstDone =
       kind === "cross"
-        ? snapshot.my_seat === 1
+        ? (snapshot.my_seat === 1 || snapshot.my_seat === 3)
           ? snapshot.my_answer != null
           : snapshot.other_submitted || !snapshot.first_player_present
         : false;
@@ -292,7 +301,7 @@ export default function App() {
       status,
       kind,
       index: snapshot.room.current_index,
-      mySeat: snapshot.my_seat,
+      mySeat: snapshot.my_seat === 2 || snapshot.my_seat === 4 ? 2 : 1,
       myAnswer: snapshot.my_answer,
       otherSubmitted: snapshot.other_submitted,
       firstDone,
@@ -406,6 +415,7 @@ export default function App() {
         entry ? (
           <Enter
             mode={entry.mode}
+            duoMode={entry.gameMode === "duos"}
             initialCode={entry.code}
             busy={busy}
             error={error}
@@ -418,7 +428,11 @@ export default function App() {
         ) : (
           <Home
             onCreate={() => {
-              setEntry({ mode: "create", code: "" });
+              setEntry({ mode: "create", code: "", gameMode: "couple" });
+              setError("");
+            }}
+            onCreateDuo={() => {
+              setEntry({ mode: "create", code: "", gameMode: "duos" });
               setError("");
             }}
             onJoin={() => {
@@ -435,48 +449,77 @@ export default function App() {
           </p>
         </main>
       ) : snapshot.room.status === "waiting" ? (
-        <Lobby
-          me={me}
-          other={other}
-          otherPlayer={otherPlayer}
-          inviteUrl={inviteUrl}
-          copied={copied}
-          onCopy={copyInvite}
-          selected={selected}
-          shared={shared}
-          onToggleCategory={toggleCategory}
-          myConsent={snapshot.my_consent}
-          otherConsent={Boolean(otherPlayer?.adult_consent)}
-          onToggleConsent={(value) => identity && void run(() => setAdultConsent(identity.roomId, identity.token, value))}
-          onLaunch={() => identity && void run(() => startGame(identity.roomId, identity.token, selected))}
-          busy={busy}
-        />
+        identity.gameMode === "duos" ? (
+          <DuoLobby
+            snap={snapshot as DuoSnapshot}
+            inviteUrl={inviteUrl}
+            copied={copied}
+            onCopy={copyInvite}
+            selected={selected}
+            shared={shared}
+            onToggleCategory={toggleCategory}
+            onToggleConsent={(value) => identity && void run(() => setAdultConsent(identity.roomId, identity.token, value))}
+            onPermissions={(permissions) => identity && void run(() => setDuoPermissions(identity.roomId, identity.token, permissions))}
+            onStart={() => identity && void run(() => startDuoGame(identity.roomId, identity.token))}
+            busy={busy}
+          />
+        ) : (
+          <Lobby
+            me={me}
+            other={other}
+            otherPlayer={otherPlayer}
+            inviteUrl={inviteUrl}
+            copied={copied}
+            onCopy={copyInvite}
+            selected={selected}
+            shared={shared}
+            onToggleCategory={toggleCategory}
+            myConsent={snapshot.my_consent}
+            otherConsent={Boolean(otherPlayer?.adult_consent)}
+            onToggleConsent={(value) => identity && void run(() => setAdultConsent(identity.roomId, identity.token, value))}
+            onLaunch={() => identity && void run(() => startGame(identity.roomId, identity.token, selected))}
+            busy={busy}
+          />
+        )
       ) : snapshot.room.status === "finished" ? (
-        <End
-          snap={snapshot}
-          me={me}
-          other={other}
-          busy={busy}
-          onRestart={() => identity && void run(() => restartGame(identity.roomId, identity.token))}
-          onLeave={exitRoom}
-        />
+        identity.gameMode === "duos" ? (
+          <DuoEnd snap={snapshot as DuoSnapshot} onRestart={() => identity && void run(() => restartGame(identity.roomId, identity.token))} onLeave={exitRoom}/>
+        ) : (
+          <End snap={snapshot} me={me} other={other} busy={busy}
+            onRestart={() => identity && void run(() => restartGame(identity.roomId, identity.token))}
+            onLeave={exitRoom}/>
+        )
       ) : interaction ? (
-        <Game
-          snap={snapshot}
-          interaction={interaction}
-          scene={scene}
-          me={me}
-          other={other}
-          busy={busy}
-          paused={snapshot.room.status === "paused"}
-          hint={hint}
-          canSend={canSend}
-          onOpenSettings={() => setSettingsOpen(true)}
-          onSubmit={submit}
-          onPass={pass}
-          onNext={() => identity && void run(() => nextInteraction(identity.roomId, identity.token))}
-          onResume={() => identity && void run(() => setPause(identity.roomId, identity.token, false))}
-        />
+        identity.gameMode === "duos" ? (
+          <DuoGame
+            snap={snapshot as DuoSnapshot}
+            interaction={interaction}
+            busy={busy}
+            paused={snapshot.room.status === "paused"}
+            onSubmit={(answer, visibility) => identity && void run(() => submitDuoAnswer(identity.roomId, identity.token, interaction.id, answer, false, visibility))}
+            onPass={() => identity && void run(() => submitDuoAnswer(identity.roomId, identity.token, interaction.id, "", true, "private"))}
+            onNext={() => identity && void run(() => nextDuoInteraction(identity.roomId, identity.token))}
+            onSendMessage={(space, body) => identity && void run(() => sendDuoMessage(identity.roomId, identity.token, space, body))}
+            onLeave={exitRoom}
+          />
+        ) : (
+          <Game
+            snap={snapshot}
+            interaction={interaction}
+            scene={scene}
+            me={me}
+            other={other}
+            busy={busy}
+            paused={snapshot.room.status === "paused"}
+            hint={hint}
+            canSend={canSend}
+            onOpenSettings={() => setSettingsOpen(true)}
+            onSubmit={submit}
+            onPass={pass}
+            onNext={() => identity && void run(() => nextInteraction(identity.roomId, identity.token))}
+            onResume={() => identity && void run(() => setPause(identity.roomId, identity.token, false))}
+          />
+        )
       ) : (
         <main className="page loading">
           <Stage

@@ -10,11 +10,12 @@ interface EnterProps {
   error: string;
   onBack: () => void;
   onSubmit: (input: { nickname: string; persona: Persona; code: string }) => void;
+  duoMode?: boolean;
 }
 
 const PERSONAS: Persona[] = ["masculin", "feminin"];
 
-export function Enter({ mode, initialCode, busy, error, onBack, onSubmit }: EnterProps) {
+export function Enter({ mode, initialCode, busy, error, onBack, onSubmit, duoMode = false }: EnterProps) {
   const [nickname, setNickname] = useState("");
   const [persona, setPersona] = useState<Persona>("masculin");
   const [code, setCode] = useState(initialCode);
@@ -27,10 +28,10 @@ export function Enter({ mode, initialCode, busy, error, onBack, onSubmit }: Ente
 
       <div className="enter__card">
         <Wordmark size={58} />
-        <h1>{mode === "create" ? "Ouvrir votre salle" : "Rejoindre la conversation"}</h1>
+        <h1>{mode === "create" ? (duoMode ? "Ouvrir votre salon DUOS" : "Ouvrir votre salle") : "Rejoindre la conversation"}</h1>
         <p className="muted">
           {mode === "create"
-            ? "Choisis ton prénom de jeu et le personnage que tu incarnes. Un lien privé sera créé pour l'autre personne."
+            ? "Choisis ton prénom de jeu et le personnage que tu incarnes. Un lien privé sera créé pour les trois autres joueurs."
             : "Colle le lien reçu, choisis ton personnage et entre dans la salle."}
         </p>
 
@@ -96,7 +97,7 @@ export function Enter({ mode, initialCode, busy, error, onBack, onSubmit }: Ente
           disabled={busy}
           onClick={() => onSubmit({ nickname, persona, code })}
         >
-          {busy ? "Connexion…" : mode === "create" ? "Créer la salle" : "Entrer dans la salle"}
+          {busy ? "Connexion…" : mode === "create" ? (duoMode ? "Créer le salon à quatre" : "Créer la salle") : "Entrer dans la salle"}
           {!busy && <Icon name="arrow" />}
         </button>
         <p className="enter__note">

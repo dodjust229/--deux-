@@ -1,0 +1,59 @@
+import { useState } from "react";
+import { Character } from "../components/Character";
+import { Icon } from "../components/Icon";
+import { categoryLabels, categoryDescriptions, levelLabels, kindLabels, audienceLabels } from "../content";
+import type { Category, DuoSnapshot, Interaction } from "../types";
+
+const CATEGORIES: Category[] = ["decouverte","complicite","profondeur","seduction","audacieux"];
+const duoName = (n: number) => n === 1 ? "Duo A" : "Duo B";
+
+export function DuoLobby({snap,inviteUrl,copied,onCopy,selected,shared,onToggleCategory,onToggleConsent,onStart,onPermissions,busy}:{
+  snap:DuoSnapshot;inviteUrl:string;copied:boolean;onCopy:()=>void;selected:Category[];shared:Category[];
+  onToggleCategory:(c:Category)=>void;onToggleConsent:(v:boolean)=>void;onStart:()=>void;
+  onPermissions:(p:{cross_participation:boolean;receive_media:boolean;share_answers:boolean})=>void;busy:boolean;
+}) {
+  const ready=snap.players.length===4;
+  const adult=shared.includes("audacieux");
+  const blocked=busy||!ready||!shared.length||(adult&&!snap.players.every(p=>p.adult_consent));
+  const perm=snap.permissions;
+  return <main className="duo-page page">
+    <header className="duo-head"><div><span className="eyebrow">QSPICY · DUOS</span><h1>Quatre joueurs. Deux complicités.</h1><p className="muted">Les duos sont fixes : sièges 1–2 et 3–4. Chaque couple garde son espace privé, avec un salon commun lorsque tout le monde l'autorise.</p></div>
+      <div className="duo-invite"><small>Lien à partager aux trois autres</small><code>{inviteUrl}</code><button className="secondary" onClick={onCopy}><Icon name="copy"/> {copied?"Copié":"Copier le lien"}</button></div>
+    </header>
+    <section className="duo-roster">{[1,2,3,4].map(seat=>{const p=snap.players.find(x=>x.seat===seat);return <article className="duo-seat" key={seat}>
+      {p?<><Character persona={p.avatar} name={p.nickname} size={94}/><strong>{p.nickname}</strong><small>{duoName(p.duo_no??(seat<=2?1:2))}</small><span className={p.online?"duo-online":"duo-offline"}>{p.online?"En ligne":"Absent"}</span></>:<><div className="duo-empty">+</div><strong>Place {seat}</strong><small>{duoName(seat<=2?1:2)}</small><span>En attente</span></>}
+    </article>;})}</section>
+    <section className="panel"><h2>Ambiances communes</h2><p className="muted small">Une catégorie doit être choisie par les quatre joueurs.</p><div className="chips">{CATEGORIES.map(c=><button key={c} className={"chip "+(selected.includes(c)?"is-on":"")} aria-pressed={selected.includes(c)} onClick={()=>onToggleCategory(c)} disabled={busy}><strong>{categoryLabels[c]}</strong><small>{categoryDescriptions[c]}</small></button>)}</div><p className="muted small">En commun : {shared.map(c=>categoryLabels[c]).join(" · ")||"aucune catégorie pour le moment"}</p></section>
+    <section className="panel"><h2>Consentement et limites</h2><label className="duo-toggle"><input type="checkbox" checked={snap.my_consent} onChange={e=>onToggleConsent(e.target.checked)}/><span>J'ai 18 ans ou plus et j'accepte la catégorie Audacieux.</span></label><p className="muted small">{snap.players.filter(p=>p.adult_consent).length}/4 ont donné leur accord.</p>
+      <label className="duo-toggle"><input type="checkbox" checked={perm.cross_participation} onChange={e=>onPermissions({...perm,cross_participation:e.target.checked,share_answers:e.target.checked?perm.share_answers:false})}/><span>J'autorise les interactions dans l'espace commun.</span></label>
+      <label className="duo-toggle"><input type="checkbox" checked={perm.receive_media} onChange={e=>onPermissions({...perm,receive_media:e.target.checked})}/><span>J'accepte de recevoir stickers et GIF.</span></label>
+      <label className="duo-toggle"><input type="checkbox" checked={perm.share_answers} onChange={e=>onPermissions({...perm,share_answers:e.target.checked})}/><span>J'autorise le partage de mes réponses (chaque partage reste choisi au moment de répondre).</span></label>
+    </section>
+    <button className="primary full" disabled={blocked} onClick={onStart}>{!ready?"En attente des quatre joueurs":!shared.length?"Choisissez une catégorie commune":adult&&!snap.players.every(p=>p.adult_consent)?"Accord 18+ requis par les quatre":"Lancer la partie DUOS"} <Icon name="arrow"/></button>
+  </main>;
+}
+
+export function DuoGame({snap,interaction,busy,onSubmit,onPass,onNext,onSendMessage,onLeave,paused=false}:{
+  snap:DuoSnapshot;interaction:Interaction;busy:boolean;paused?:boolean;onSubmit:(answer:string,visibility:"private"|"duo"|"group")=>void;
+  onPass:()=>void;onNext:()=>void;onSendMessage:(space:"group"|"duo_a"|"duo_b",body:string)=>void;onLeave:()=>void;
+}) {
+  const [answer,setAnswer]=useState(""); const [visibility,setVisibility]=useState<"private"|"duo"|"group">("private");
+  const [space,setSpace]=useState<"group"|"duo_a"|"duo_b">(snap.my_duo_no===1?"duo_a":"duo_b");
+  const [message,setMessage]=useState("");
+  const ownSpace=snap.my_duo_no===1?"duo_a":"duo_b";
+  const canGroup=snap.players.length===4&&snap.players.every(p=>p.cross_participation===true);
+  const answered=snap.my_answer!==null;
+  const sendMessage=()=>{if(message.trim()){onSendMessage(space,message.trim());setMessage("");}};
+  const name=(id:string)=>snap.players.find(p=>p.id===id)?.nickname??"Joueur";
+  return <main className="duo-page page">
+    <header className="duo-head"><div><span className="eyebrow">DUOS · {snap.my_duo_no===1?"DUO A":"DUO B"}</span><h1>Votre espace à quatre.</h1><p className="muted">Votre duo privé reste séparé. Le groupe commun dépend du consentement de chacun.</p></div><button className="secondary" onClick={onLeave}><Icon name="log-out"/> Quitter</button></header>
+    <section className="duo-roster duo-roster--compact">{snap.players.map(p=><article className="duo-seat" key={p.id}><Character persona={p.avatar} name={p.nickname} size={72}/><strong>{p.nickname}</strong><small>{duoName(p.duo_no??1)}</small></article>)}</section>
+    <section className="duo-question"><div className="prompt__meta"><span className={"tag tag--"+interaction.category}>{categoryLabels[interaction.category]}</span><span className="tag tag--ghost">{kindLabels[interaction.kind]}</span><span className="tag tag--level">{levelLabels[interaction.level]}</span></div><small>Question {snap.room.current_index+1} / {snap.room.total}</small><h2>{interaction.title}</h2><p>{interaction.prompt}</p><small className="muted">Public : {audienceLabels[interaction.audience]}</small></section>
+    {paused ? <section className="panel"><h2>Partie en pause</h2><p className="muted">La partie est en pause. Les réponses et les validations sont suspendues.</p></section> : !snap.revealed ? <section className="panel"><h2>Ta réponse</h2><label className="field"><span>Qui peut la voir ?</span><select value={visibility} onChange={e=>setVisibility(e.target.value as typeof visibility)} disabled={busy}><option value="private">Moi uniquement</option><option value="duo" disabled={!snap.permissions.share_answers}>Mon duo (autorisation de partage requise)</option><option value="group" disabled={!snap.permissions.share_answers||!canGroup}>Les quatre (accord de tous requis)</option></select></label><textarea className="input duo-answer" rows={4} maxLength={2000} value={answer} onChange={e=>setAnswer(e.target.value)} placeholder="Écris ce que tu souhaites partager…" disabled={busy||paused||answered}/><div className="composer__actions"><button className="secondary" onClick={onPass} disabled={busy||answered}>Passer</button><button className="primary" onClick={()=>onSubmit(answer,visibility)} disabled={busy||paused||answered||!answer.trim()}>Envoyer ma réponse <Icon name="send"/></button></div>{answered&&<p className="muted">Réponse enregistrée. Elle reste masquée selon tes réglages de partage.</p>}</section>:<section className="panel"><h2>Réponses visibles</h2><div className="duo-answers">{snap.answers.map(a=><article key={a.player_id}><strong>{name(a.player_id)}</strong><p>{a.passed?"A choisi de passer.":a.answer}</p></article>)}</div><button className="primary full" onClick={onNext} disabled={busy||paused||snap.i_acked}>{snap.i_acked?"En attente des trois autres…":"Question suivante"}</button><p className="muted small">{snap.i_acked?"Les autres doivent aussi valider.":"Chacun valide pour avancer ensemble."}</p></section>}
+    <section className="panel duo-chat"><h2>Les conversations</h2><div className="duo-tabs"><button className={space==="group"?"is-active":""} disabled={!canGroup} onClick={()=>setSpace("group")}>Groupe · 4</button><button className={space===ownSpace?"is-active":""} onClick={()=>setSpace(ownSpace)}>Mon duo · privé</button></div><div className="duo-messages">{snap.messages.filter(m=>m.space===space).map(m=><article key={m.id} className={m.sender_player_id===snap.my_player_id?"mine":""}><small>{name(m.sender_player_id)}</small><p>{m.body}</p></article>)}</div><div className="duo-chat-send"><input className="input" value={message} onChange={e=>setMessage(e.target.value)} maxLength={2000} placeholder="Écrire un message…"/><button className="primary" onClick={sendMessage} disabled={busy||paused||!message.trim()||(space==="group"&&!canGroup)}>Envoyer</button></div></section>
+  </main>;
+}
+
+export function DuoEnd({snap,onLeave,onRestart}:{snap:DuoSnapshot;onLeave:()=>void;onRestart:()=>void}) {
+  return <main className="duo-page page"><span className="eyebrow">Fin de la partie DUOS</span><h1>Quatre personnes, un moment à vous.</h1><p className="muted">Les espaces privés sont restés séparés. Les réponses partagées ne sont visibles que selon les autorisations de chacun.</p><section className="duo-roster">{snap.players.map(p=><article className="duo-seat" key={p.id}><Character persona={p.avatar} name={p.nickname} size={86}/><strong>{p.nickname}</strong><small>{duoName(p.duo_no??1)}</small></article>)}</section>{snap.players.length===4&&<button className="primary full" onClick={onRestart}>Rejouer</button>}<button className="secondary full" onClick={onLeave}>Quitter</button></main>;
+}

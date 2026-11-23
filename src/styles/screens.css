@@ -1325,3 +1325,32 @@
     width: 100%;
   }
 }
+
+/* ================= QSPICY DUOS ================= */
+.duo-page{width:min(100%,980px);margin:0 auto;padding:28px 0 42px;display:flex;flex-direction:column;gap:20px}
+.duo-head{display:flex;justify-content:space-between;align-items:flex-start;gap:22px}
+.duo-head h1{font-size:clamp(28px,4vw,42px);margin:8px 0}
+.duo-invite{display:flex;flex-direction:column;gap:8px;padding:14px;border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);max-width:420px;min-width:260px}
+.duo-invite code{overflow-wrap:anywhere;color:var(--ink-soft)}
+.duo-roster{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.duo-seat{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:12px;border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);text-align:center;min-height:150px}
+.duo-seat small,.duo-seat span{font-size:12px;color:var(--ink-mute)}
+.duo-empty{width:94px;height:94px;border-radius:50%;display:grid;place-items:center;border:1px dashed var(--line-strong);font-size:34px;color:var(--copper)}
+.duo-online{color:#6fc39b!important}.duo-offline{color:var(--ink-mute)}
+.duo-toggle{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px}
+.duo-toggle input{margin-top:5px;accent-color:var(--copper)}
+.duo-question{padding:24px;border:1px solid var(--line-strong);border-radius:var(--radius-lg);background:linear-gradient(135deg,rgba(92,21,38,.32),var(--panel))}
+.duo-question h2{font-size:30px;margin:12px 0}.duo-question p{color:var(--ink-soft);line-height:1.7;margin-top:10px}
+.duo-answer{width:100%;resize:vertical;margin-top:12px;min-height:120px}
+.duo-answers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:14px 0}
+.duo-answers article,.duo-messages article{padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--panel)}
+.duo-answers p{margin-top:6px;white-space:pre-wrap}
+.duo-tabs{display:flex;gap:8px;margin:12px 0}
+.duo-tabs button{padding:9px 14px;border:1px solid var(--line);border-radius:999px}
+.duo-tabs button.is-active{border-color:var(--copper);background:rgba(217,160,91,.12)}
+.duo-messages{display:flex;flex-direction:column;gap:8px;max-height:230px;overflow:auto;padding:4px}
+.duo-messages article{max-width:85%}.duo-messages article.mine{align-self:flex-end;border-color:rgba(217,160,91,.35)}
+.duo-messages small{color:var(--ink-mute)}.duo-messages p{overflow-wrap:anywhere}
+.duo-chat-send{display:flex;gap:8px;margin-top:10px}.duo-chat-send .input{flex:1;min-width:0}
+.duo-roster--compact .duo-seat{min-height:120px}
+@media(max-width:700px){.duo-head{flex-direction:column}.duo-invite{max-width:none;width:100%}.duo-roster{grid-template-columns:repeat(2,minmax(0,1fr))}.duo-answers{grid-template-columns:1fr}.duo-chat-send{flex-direction:column}}
