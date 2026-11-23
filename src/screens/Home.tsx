@@ -11,7 +11,31 @@ interface HomeProps {
 export function Home({ lang, onEnter, onInvite }: HomeProps) {
   const t = translator(lang);
   return (
-    <main className="home">
+    <main className="home home--hero">
+      <picture className="home__bg">
+        <source
+          media="(max-width: 699px)"
+          srcSet={asset("brand/accueil-mobile.webp")}
+          width={1080}
+          height={1440}
+        />
+        <source
+          media="(max-width: 1099px)"
+          srcSet={asset("brand/accueil-tablette.webp")}
+          width={1280}
+          height={960}
+        />
+        <img
+          src={asset("brand/accueil-bureau.webp")}
+          alt=""
+          width={1600}
+          height={900}
+          decoding="async"
+          fetchPriority="high"
+        />
+      </picture>
+      <div className="home__scrim" aria-hidden="true" />
+
       <section className="home__hero">
         <div className="home__copy">
           <span className="eyebrow">{t("home.eyebrow")}</span>
@@ -29,18 +53,9 @@ export function Home({ lang, onEnter, onInvite }: HomeProps) {
             <Icon name="shield" size={15} /> {t("home.age")}
           </p>
         </div>
-
-        <figure className="home__visual">
-          <img
-            src={asset("brand/accueil-qspicy.webp")}
-            alt=""
-            width={1310}
-            height={1400}
-            decoding="async"
-          />
-          <figcaption>{t("home.caption")}</figcaption>
-        </figure>
       </section>
+
+      <p className="home__caption">{t("home.caption")}</p>
     </main>
   );
 }

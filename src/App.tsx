@@ -402,7 +402,7 @@ export default function App() {
         snapshot &&
         (snapshot.room.status === "playing" || snapshot.room.status === "paused")
       ) && (
-        <header className="topbar">
+        <header className={`topbar${!identity && stage === "home" ? " topbar--over" : ""}`}>
           <button className="topbar__brand" type="button" onClick={() => { if (!identity) { setEntry(null); setError(""); } }}>
             <Wordmark size={38} />
           </button>
