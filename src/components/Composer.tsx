@@ -141,7 +141,7 @@ export function Composer({ interaction, busy, alreadyAnswered, canSend, hint, on
       )}
 
       <div className="composer__actions">
-        <button type="button" className="secondary" onClick={onPass} disabled={locked}>
+        <button type="button" className="secondary" data-testid="pass" onClick={onPass} disabled={locked}>
           <Icon name="skip" size={16} /> Passer
         </button>
         <button
