@@ -202,4 +202,56 @@ begin
   raise notice 'DEUX JOUEURS OK';
 end $$;
 
+
+-- =========================================================================
+-- 4. Catalogue 18+ : catégorie audacieux, option scellée, refus d'une option inconnue
+-- =========================================================================
+do $$
+declare r jsonb; r_id uuid; t1 text; t2 text; s jsonb; v_kind text; v_opt text; v_ids text[];
+begin
+  r := public.create_room('Adulte1','feminin'); r_id := (r->>'room_id')::uuid; t1 := r->>'player_token';
+  r := public.join_room(r_id,'Adulte2','masculin'); t2 := r->>'player_token';
+  perform public.set_player_categories(r_id,t1,array['audacieux']::text[]);
+  perform public.set_player_categories(r_id,t2,array['audacieux']::text[]);
+  -- sans les deux accords, le lancement 18+ doit être refusé
+  -- (le consentement est posé hors du bloc : une exception annule les écritures du bloc)
+  perform public.set_adult_consent(r_id,t1,true);
+  begin
+    perform public.start_game(r_id,t1,array['audacieux']::text[]);
+    raise exception 'FAIL lancement 18+ avec un seul accord';
+  exception when others then
+    if sqlerrm not like 'E_CONSENT%' then raise; end if;
+  end;
+  perform public.set_adult_consent(r_id,t2,true);
+  perform public.start_game(r_id,t1,array['audacieux']::text[]);
+
+  select interaction_ids into v_ids from public.rooms where id=r_id;
+  if cardinality(v_ids) <> 10 then raise exception 'FAIL nombre de cartes audacieux: %', cardinality(v_ids); end if;
+  if exists (select 1 from unnest(v_ids) i where not exists (select 1 from public.catalog c where c.id=i)) then
+    raise exception 'FAIL carte absente du catalogue serveur';
+  end if;
+
+  -- avancer jusqu'à une carte « secret » pour vérifier la validation des options
+  loop
+    select public.get_room_snapshot(r_id,t1) into s;
+    select kind into v_kind from public.catalog where id=s->>'interaction_id';
+    exit when v_kind = 'secret';
+    perform public.submit_answer(r_id,t1,'x',false);
+    perform public.submit_answer(r_id,t2,'y',false);
+    perform public.next_interaction(r_id,t1);
+    perform public.next_interaction(r_id,t2);
+    if (s->'room'->>'current_index')::int >= 20 then raise exception 'FAIL aucune carte secret rencontree'; end if;
+  end loop;
+
+  select options->>0 into v_opt from public.catalog where id=s->>'interaction_id';
+  begin
+    perform public.submit_answer(r_id,t1,'option inventee',false);
+    raise exception 'FAIL option inconnue acceptee';
+  exception when others then
+    if sqlerrm not like 'Option invalide%' then raise; end if;
+  end;
+  perform public.submit_answer(r_id,t1,v_opt,false);
+  raise notice 'CATALOGUE 18+ OK';
+end $$;
+
 select 'RECETTE OK' as resultat;
