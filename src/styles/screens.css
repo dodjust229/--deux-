@@ -1844,3 +1844,21 @@
   .duo-tabs button { min-width: 0; max-width: 100%; white-space: normal; }
   .duo-chat-send .primary { width: 100%; }
 }
+
+
+.duo-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 640px) {
+  .duo-head-actions {
+    width: 100%;
+  }
+
+  .duo-head-actions > button {
+    flex: 1 1 120px;
+  }
+}

@@ -41,3 +41,7 @@ Le scénario SQL de sécurité et de parcours reste dans `supabase/tests/scenari
 18. ☐ Consentement DUOS : à la création, l'espace commun est désactivé pour chacun des quatre.
     Un seul accord ne suffit pas ; l'espace s'ouvre uniquement après les quatre accords. Le retrait
     d'un seul accord referme immédiatement l'espace commun et bloque messages/réponses de groupe.
+
+19. ☐ SAFE est accessible dans le lobby et pendant une partie DUOS : quitter fonctionne, bloquer
+    ajoute les joueurs et la salle à la liste locale puis quitte ; pause n'apparaît qu'en partie.
+    Depuis le même appareil, rejoindre à nouveau une salle bloquée est refusé.

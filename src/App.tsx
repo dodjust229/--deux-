@@ -231,6 +231,10 @@ export default function App() {
     if (mode === "join") {
       const id = extractRoomId(code);
       if (!id) return setError("Ce lien ou identifiant de salle est invalide.");
+      try {
+        const blockedRooms: string[] = JSON.parse(window.localStorage.getItem("qspicy.blockedRooms") ?? "[]");
+        if (blockedRooms.includes(id)) return setError("Tu as bloqué cette salle sur cet appareil. Tu ne peux pas la rejoindre à nouveau.");
+      } catch { /* stockage indisponible : la session reste utilisable */ }
       roomId = id;
     }
     setBusy(true);
@@ -493,6 +497,7 @@ export default function App() {
             onPermissions={(permissions) => identity && void run(() => setDuoPermissions(identity.roomId, identity.token, permissions))}
             onStart={() => identity && void run(() => startDuoGame(identity.roomId, identity.token))}
             busy={busy}
+            onSafe={() => setSafeOpen(true)}
           />
         ) : (
           <Lobby
@@ -532,6 +537,7 @@ export default function App() {
             onNext={() => identity && void run(() => nextDuoInteraction(identity.roomId, identity.token))}
             onSendMessage={(space, body) => identity && void run(() => sendDuoMessage(identity.roomId, identity.token, space, body))}
             onLeave={exitRoom}
+            onSafe={() => setSafeOpen(true)}
           />
         ) : (
           <Game
@@ -572,6 +578,7 @@ export default function App() {
 
       <Safety
         open={safeOpen}
+        canPause={snapshot?.room.status === "playing" || snapshot?.room.status === "paused"}
         lang={prefs.language}
         onClose={() => setSafeOpen(false)}
         onPause={() => {
@@ -585,13 +592,22 @@ export default function App() {
         onBlock={() => {
           setSafeOpen(false);
           try {
-            const key = "qspicy.bloques";
-            const blocked: string[] = JSON.parse(window.localStorage.getItem(key) ?? "[]");
-            if (otherPlayer?.id && !blocked.includes(otherPlayer.id)) {
-              window.localStorage.setItem(key, JSON.stringify([...blocked, otherPlayer.id]));
+            const blockedKey = "qspicy.bloques";
+            const blocked: string[] = JSON.parse(window.localStorage.getItem(blockedKey) ?? "[]");
+            const currentSnapshot = snapshot;
+            const targets = currentSnapshot
+              ? currentSnapshot.players.filter((player) => player.id !== currentSnapshot.my_player_id).map((player) => player.id)
+              : (otherPlayer?.id ? [otherPlayer.id] : []);
+            const nextBlocked = [...new Set([...blocked, ...targets])];
+            window.localStorage.setItem(blockedKey, JSON.stringify(nextBlocked));
+
+            const roomsKey = "qspicy.blockedRooms";
+            const blockedRooms: string[] = JSON.parse(window.localStorage.getItem(roomsKey) ?? "[]");
+            if (identity?.roomId && !blockedRooms.includes(identity.roomId)) {
+              window.localStorage.setItem(roomsKey, JSON.stringify([...blockedRooms, identity.roomId]));
             }
           } catch {
-            /* stockage indisponible : le blocage reste valable pour cette session */
+            /* stockage indisponible : le joueur quitte tout de même la salle */
           }
           void exitRoom();
         }}

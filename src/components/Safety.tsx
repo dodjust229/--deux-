@@ -9,10 +9,11 @@ interface SafetyProps {
   onPause: () => void;
   onQuit: () => void;
   onBlock: () => void;
+  canPause?: boolean;
 }
 
 /** Panneau SAFE : arrêter tout de suite, sans justification. */
-export function Safety({ open, lang, onClose, onPause, onQuit, onBlock }: SafetyProps) {
+export function Safety({ open, lang, onClose, onPause, onQuit, onBlock, canPause = true }: SafetyProps) {
   const t = translator(lang);
   const closeRef = useRef<HTMLButtonElement>(null);
 
@@ -40,9 +41,11 @@ export function Safety({ open, lang, onClose, onPause, onQuit, onBlock }: Safety
         </header>
         <p className="sheet__note">{t("safe.sub")}</p>
         <div className="sheet__actions">
-          <button className="secondary full" type="button" onClick={onPause}>
-            <Icon name="pause" /> {t("safe.pause")}
-          </button>
+          {canPause && (
+            <button className="secondary full" type="button" onClick={onPause}>
+              <Icon name="pause" /> {t("safe.pause")}
+            </button>
+          )}
           <button className="secondary full" type="button" onClick={onQuit}>
             <Icon name="log-out" /> {t("safe.quit")}
           </button>

@@ -22,10 +22,10 @@ function Hosts({ note }: { note: string }) {
   );
 }
 
-export function DuoLobby({ snap, inviteUrl, copied, onCopy, selected, shared, onToggleCategory, onToggleConsent, onStart, onPermissions, busy }: {
+export function DuoLobby({ snap, inviteUrl, copied, onCopy, selected, shared, onToggleCategory, onToggleConsent, onStart, onPermissions, busy, onSafe }: {
   snap: DuoSnapshot; inviteUrl: string; copied: boolean; onCopy: () => void; selected: Category[]; shared: Category[];
   onToggleCategory: (c: Category) => void; onToggleConsent: (v: boolean) => void; onStart: () => void;
-  onPermissions: (p: { cross_participation: boolean; receive_media: boolean; share_answers: boolean }) => void; busy: boolean;
+  onPermissions: (p: { cross_participation: boolean; receive_media: boolean; share_answers: boolean }) => void; busy: boolean; onSafe: () => void;
 }) {
   const ready = snap.players.length === 4;
   const adult = shared.includes("audacieux");
@@ -50,6 +50,7 @@ export function DuoLobby({ snap, inviteUrl, copied, onCopy, selected, shared, on
           <button className="secondary" type="button" onClick={onCopy}>
             <Icon name="copy" /> {copied ? "Copié" : "Copier le lien"}
           </button>
+          <button className="safe-button" type="button" data-testid="safe-button" onClick={onSafe}>SAFE</button>
         </div>
       </header>
 
@@ -124,9 +125,9 @@ export function DuoLobby({ snap, inviteUrl, copied, onCopy, selected, shared, on
   );
 }
 
-export function DuoGame({ snap, interaction, busy, onSubmit, onPass, onNext, onSendMessage, onLeave, paused = false }: {
+export function DuoGame({ snap, interaction, busy, onSubmit, onPass, onNext, onSendMessage, onLeave, onSafe, paused = false }: {
   snap: DuoSnapshot; interaction: Interaction; busy: boolean; paused?: boolean; onSubmit: (answer: string, visibility: "private" | "duo" | "group") => void;
-  onPass: () => void; onNext: () => void; onSendMessage: (space: "group" | "duo_a" | "duo_b", body: string) => void; onLeave: () => void;
+  onPass: () => void; onNext: () => void; onSendMessage: (space: "group" | "duo_a" | "duo_b", body: string) => void; onLeave: () => void; onSafe: () => void;
 }) {
   const [answer, setAnswer] = useState("");
   const [visibility, setVisibility] = useState<"private" | "duo" | "group">("private");
@@ -153,9 +154,12 @@ export function DuoGame({ snap, interaction, busy, onSubmit, onPass, onNext, onS
           <h1>Votre espace à quatre.</h1>
           <p className="muted">Votre duo privé reste séparé. Le salon commun dépend du consentement de chacun.</p>
         </div>
-        <button className="secondary" type="button" onClick={onLeave}>
-          <Icon name="log-out" /> Quitter
-        </button>
+        <div className="duo-head-actions">
+          <button className="safe-button" type="button" data-testid="safe-button" onClick={onSafe}>SAFE</button>
+          <button className="secondary" type="button" onClick={onLeave}>
+            <Icon name="log-out" /> Quitter
+          </button>
+        </div>
       </header>
 
       <Hosts note={paused ? "La partie est en pause." : "Ils suivent la conversation."} />
