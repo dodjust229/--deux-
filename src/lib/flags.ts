@@ -1,10 +1,10 @@
 /**
  * Drapeaux de fonctionnalités.
- * DUOS : le socle SQL n'est pas encore installé côté Supabase (les RPC create_duo_room,
- * get_duo_snapshot… ne sont pas déployées). Le code reste dans le dépôt mais l'entrée est
- * masquée tant que la migration n'est pas appliquée et validée.
+ * DUOS : les huit RPC existent côté Supabase (vérifié le 23/11/2026 : create_duo_room,
+ * join_room_any, get_duo_snapshot, start_duo_game, next_duo_interaction, submit_duo_answer,
+ * set_duo_permissions, send_duo_message). Le mode est donc ouvert.
  */
-export const DUOS_ENABLED = false;
+export const DUOS_ENABLED = true;
 
 /** Mode vocal : jamais présenté comme disponible tant qu'il n'existe pas. */
 export const VOICE_ENABLED = false;

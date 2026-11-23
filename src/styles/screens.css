@@ -1750,3 +1750,86 @@
   border-color: var(--gold);
   background: rgba(240, 192, 106, 0.1);
 }
+
+/* ================= DUOS : ambiance, hôtes, responsive ================= */
+.duo-page {
+  position: relative;
+}
+
+.duo-page > *:not(.atmosphere) {
+  position: relative;
+  z-index: 1;
+}
+
+.duo-hosts {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(240, 192, 106, 0.16);
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.012));
+  backdrop-filter: blur(14px);
+}
+
+.duo-hosts .character {
+  margin: 0 -6px;
+}
+
+.duo-hosts strong {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 16px;
+}
+
+.duo-hosts small {
+  display: block;
+  font-size: 12px;
+  color: var(--ink-mute);
+}
+
+.duo-seat.is-empty {
+  border-style: dashed;
+  opacity: 0.7;
+}
+
+.duo-answers article small {
+  display: block;
+  margin-top: 6px;
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.duo-tabs button:disabled {
+  opacity: 0.45;
+}
+
+@media (max-width: 780px) {
+  .duo-roster {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .duo-head {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .duo-invite {
+    max-width: none;
+    min-width: 0;
+  }
+
+  .duo-answers {
+    grid-template-columns: 1fr;
+  }
+
+  .duo-tabs {
+    flex-wrap: wrap;
+  }
+
+  .duo-question h2 {
+    font-size: 24px;
+  }
+}

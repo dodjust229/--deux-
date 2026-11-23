@@ -4,7 +4,7 @@ import { DUOS_ENABLED, VOICE_ENABLED } from "../lib/flags";
 
 interface ModeProps {
   lang: Lang;
-  onSelect: (mode: "couple") => void;
+  onSelect: (mode: "couple" | "duos") => void;
   onBack: () => void;
 }
 
@@ -37,7 +37,7 @@ export function Mode({ lang, onSelect, onBack }: ModeProps) {
               className={`mode-card ${mode.available ? "" : "is-locked"}`}
               data-testid={`mode-${mode.id}`}
               disabled={!mode.available}
-              onClick={() => mode.available && onSelect("couple")}
+              onClick={() => mode.available && onSelect(mode.id === "duos" ? "duos" : "couple")}
             >
               <span className="mode-card__icon"><Icon name={mode.icon} /></span>
               <span className="mode-card__body">

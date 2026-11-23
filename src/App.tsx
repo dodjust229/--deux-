@@ -103,6 +103,7 @@ export default function App() {
     const room = new URLSearchParams(location.search).get("room");
     return room ? { mode: "join", code: room } : null;
   });
+  const [flowMode, setFlowMode] = useState<"couple" | "duos">("couple");
   const [stage, setStage] = useState<FlowStage>(() =>
     new URLSearchParams(location.search).get("room") ? "enter" : "home"
   );
@@ -437,7 +438,8 @@ export default function App() {
         ) : stage === "mode" ? (
           <Mode
             lang={prefs.language}
-            onSelect={() => {
+            onSelect={(mode) => {
+              setFlowMode(mode);
               setError("");
               setStage("prefs");
             }}
@@ -450,7 +452,7 @@ export default function App() {
             onChange={setPrefs}
             onContinue={() => {
               setSelected(categoriesForIntensity(prefs.intensity, prefs.exclusions));
-              setEntry({ mode: "create", code: "", gameMode: "couple" });
+              setEntry({ mode: "create", code: "", gameMode: flowMode });
               setError("");
               setStage("enter");
             }}
@@ -512,7 +514,7 @@ export default function App() {
         )
       ) : snapshot.room.status === "finished" ? (
         identity.gameMode === "duos" ? (
-          <DuoEnd snap={snapshot as DuoSnapshot} onRestart={() => identity && void run(() => restartGame(identity.roomId, identity.token))} onLeave={exitRoom}/>
+          <DuoEnd snap={snapshot as DuoSnapshot} onLeave={exitRoom}/>
         ) : (
           <End snap={snapshot} me={me} other={other} busy={busy}
             onRestart={() => identity && void run(() => restartGame(identity.roomId, identity.token))}
