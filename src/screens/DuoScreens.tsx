@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Character } from "../components/Character";
 import { Atmosphere } from "../components/Atmosphere";
 import { Icon } from "../components/Icon";
 import { categoryLabels, categoryDescriptions, levelLabels, kindLabels, audienceLabels } from "../content";
-import type { Category, DuoSnapshot, Interaction } from "../types";
+import type { Category, DuoPermissions, DuoSnapshot, Interaction } from "../types";
 
 const CATEGORIES: Category[] = ["decouverte", "complicite", "profondeur", "seduction", "audacieux"];
 const duoName = (n: number) => (n === 1 ? "Duo A" : "Duo B");
@@ -125,9 +125,10 @@ export function DuoLobby({ snap, inviteUrl, copied, onCopy, selected, shared, on
   );
 }
 
-export function DuoGame({ snap, interaction, busy, onSubmit, onPass, onNext, onSendMessage, onLeave, onSafe, paused = false }: {
+export function DuoGame({ snap, interaction, busy, onSubmit, onPass, onNext, onSendMessage, onLeave, onSafe, onResume, onPermissions, paused = false }: {
   snap: DuoSnapshot; interaction: Interaction; busy: boolean; paused?: boolean; onSubmit: (answer: string, visibility: "private" | "duo" | "group") => void;
   onPass: () => void; onNext: () => void; onSendMessage: (space: "group" | "duo_a" | "duo_b", body: string) => void; onLeave: () => void; onSafe: () => void;
+  onResume: () => void; onPermissions: (p: DuoPermissions) => void;
 }) {
   const [answer, setAnswer] = useState("");
   const [visibility, setVisibility] = useState<"private" | "duo" | "group">("private");
@@ -142,6 +143,9 @@ export function DuoGame({ snap, interaction, busy, onSubmit, onPass, onNext, onS
       setMessage("");
     }
   };
+  useEffect(() => {
+    if (space === "group" && !canGroup) setSpace(ownSpace);
+  }, [space, canGroup, ownSpace]);
   const name = (id: string) => snap.players.find((p) => p.id === id)?.nickname ?? "Joueur";
   const visibilityLabel: Record<string, string> = { private: "Visible par toi", duo: "Partagée à ton duo", group: "Partagée aux quatre" };
 
@@ -190,6 +194,9 @@ export function DuoGame({ snap, interaction, busy, onSubmit, onPass, onNext, onS
         <section className="panel">
           <h2>Partie en pause</h2>
           <p className="muted">La partie est en pause. Les réponses et les validations sont suspendues.</p>
+          <button className="primary full" type="button" data-testid="duo-resume" onClick={onResume} disabled={busy}>
+            Reprendre la partie <Icon name="play" />
+          </button>
         </section>
       ) : !snap.revealed ? (
         <section className="panel">
@@ -229,6 +236,26 @@ export function DuoGame({ snap, interaction, busy, onSubmit, onPass, onNext, onS
         </section>
       )}
 
+      <details className="panel duo-permissions">
+        <summary>Mes autorisations <small>· effet immédiat</small></summary>
+        <p className="muted small">
+          Chaque autorisation t'appartient. La retirer s'applique tout de suite : l'espace commun se ferme et
+          les réponses déjà partagées aux quatre cessent d'être visibles.
+        </p>
+        <label className="duo-toggle">
+          <input type="checkbox" data-testid="duo-live-cross" checked={snap.permissions.cross_participation} onChange={(e) => onPermissions({ ...snap.permissions, cross_participation: e.target.checked, share_answers: e.target.checked ? snap.permissions.share_answers : false })} />
+          <span>J'autorise l'espace commun et les interactions croisées.</span>
+        </label>
+        <label className="duo-toggle">
+          <input type="checkbox" data-testid="duo-live-media" checked={snap.permissions.receive_media} onChange={(e) => onPermissions({ ...snap.permissions, receive_media: e.target.checked })} />
+          <span>J'accepte de recevoir des emojis et des messages.</span>
+        </label>
+        <label className="duo-toggle">
+          <input type="checkbox" data-testid="duo-live-share" checked={snap.permissions.share_answers} onChange={(e) => onPermissions({ ...snap.permissions, share_answers: e.target.checked })} />
+          <span>J'autorise le partage de mes réponses.</span>
+        </label>
+      </details>
+
       <section className="panel duo-chat">
         <h2>Les trois espaces</h2>
         <div className="duo-tabs">
@@ -260,7 +287,9 @@ export function DuoGame({ snap, interaction, busy, onSubmit, onPass, onNext, onS
   );
 }
 
-export function DuoEnd({ snap, onLeave }: { snap: DuoSnapshot; onLeave: () => void }) {
+export function DuoEnd({ snap, busy, onReplay, onLeave }: { snap: DuoSnapshot; busy: boolean; onReplay: () => void; onLeave: () => void }) {
+  const votes = snap.replay?.votes ?? 0;
+  const mine = snap.replay?.mine ?? false;
   return (
     <main className="duo-page page">
       <Atmosphere variant="duos" />
@@ -275,6 +304,17 @@ export function DuoEnd({ snap, onLeave }: { snap: DuoSnapshot; onLeave: () => vo
             <small>{duoName(p.duo_no ?? 1)}</small>
           </article>
         ))}
+      </section>
+      <section className="panel">
+        <h2>Rejouer</h2>
+        <p className="muted small">
+          La revanche repart dans le même salon, avec le même lien. Il faut l'accord des quatre joueurs.
+          Les réponses et les messages de cette partie seront effacés au redémarrage.
+        </p>
+        <button className="primary full" type="button" data-testid="duo-replay" onClick={onReplay} disabled={busy || mine}>
+          {mine ? `En attente des autres · ${votes}/${snap.replay?.needed ?? 4}` : `Rejouer à quatre · ${votes}/${snap.replay?.needed ?? 4}`} <Icon name="play" />
+        </button>
+        <p className="muted small">{votes}/{snap.replay?.needed ?? 4} ont validé.</p>
       </section>
       <button className="secondary full" type="button" onClick={onLeave}>Quitter</button>
     </main>

@@ -1353,6 +1353,12 @@
 .duo-messages small{color:var(--ink-mute)}.duo-messages p{overflow-wrap:anywhere}
 .duo-chat-send{display:flex;gap:8px;margin-top:10px}.duo-chat-send .input{flex:1;min-width:0}
 .duo-roster--compact .duo-seat{min-height:120px}
+.duo-permissions summary{display:flex;align-items:baseline;gap:6px;cursor:pointer;font-family:var(--font-display);font-size:1.05rem;font-weight:600;color:var(--ink);list-style:none}
+.duo-permissions summary::-webkit-details-marker{display:none}
+.duo-permissions summary::before{content:"▸";color:var(--copper);transition:transform .2s var(--ease)}
+.duo-permissions[open] summary::before{transform:rotate(90deg)}
+.duo-permissions summary small{font-family:var(--font-body);font-weight:400;font-size:.78rem;color:var(--ink-mute);letter-spacing:.02em;text-transform:none}
+.duo-permissions[open] summary{margin-bottom:.5rem}
 @media(max-width:700px){.duo-head{flex-direction:column}.duo-invite{max-width:none;width:100%}.duo-roster{grid-template-columns:repeat(2,minmax(0,1fr))}.duo-answers{grid-template-columns:1fr}.duo-chat-send{flex-direction:column}}
 
 /* ================= Parcours (accueil → mode → préférences → entrée) ================= */
