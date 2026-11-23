@@ -16,7 +16,8 @@ Dans Supabase Dashboard → Authentication → Providers :
 1. Activer Phone.
 2. Configurer un fournisseur SMS compatible (Twilio, Vonage ou MessageBird) et vérifier la livraison réelle au Bénin avant ouverture publique.
 3. Garder Email activé.
-4. Dans Authentication → Email Templates, configurer le modèle Magic Link pour envoyer un code OTP avec `{{ .Token }}` (et non uniquement un lien). Le flux de liaison d'e-mail utilise également la confirmation d'identité.
+4. Dans Authentication → Email Templates, configurer **Magic Link** pour envoyer un code OTP avec `{{ .Token }}` (et non uniquement un lien).
+5. Configurer aussi le modèle **Change Email Address** avec `{{ .Token }}`, car l'ajout de l'e-mail à un compte téléphone passe par la vérification `email_change`.
 5. Dans Authentication → URL Configuration, ajouter `https://a-deux-jeu.onrender.com` comme Site URL et Redirect URL autorisée.
 
 Les clés API du fournisseur SMS restent dans les réglages Supabase, jamais dans le dépôt.
