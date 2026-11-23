@@ -17,12 +17,13 @@ import {
   nextDuoInteraction,
   submitDuoAnswer,
   setDuoPermissions,
-  sendDuoMessage
+  sendDuoMessage,
+  restartDuoGame
 } from "./api";
 import { extractRoomId, getSharedCategories, parseError } from "./lib/protocol";
 import { deriveScene } from "./lib/scene";
 import { applyPreferences, categoriesForIntensity, readPreferences, writePreferences, type Preferences } from "./lib/prefs";
-import { previewSnapshot } from "./lib/preview";
+import { previewDuoSnapshot, previewSnapshot } from "./lib/preview";
 import { playSound } from "./lib/sound";
 import type { Category, Player, Snapshot } from "./types";
 import { Wordmark } from "./components/Brand";
@@ -93,11 +94,14 @@ export default function App() {
   const [prefs, setPrefs] = useState<Preferences>(() => readPreferences(storage()));
   const [systemReduced, setSystemReduced] = useState(false);
   const previewMode = import.meta.env.DEV ? new URLSearchParams(location.search).get("apercu") : null;
+  const previewDuo = Boolean(previewMode?.startsWith("duo-"));
   const [identity, setIdentity] = useState<Identity | null>(() =>
-    previewMode && previewMode !== "home" ? { roomId: "demo", token: "demo", nickname: "Tao", avatar: "masculin", gameMode: "couple" } : readIdentity()
+    previewMode && previewMode !== "home"
+      ? { roomId: "demo", token: "demo", nickname: "Tao", avatar: "masculin", gameMode: previewDuo ? "duos" : "couple" }
+      : readIdentity()
   );
   const [snapshot, setSnapshot] = useState<Snapshot | null>(() =>
-    previewMode && previewMode !== "home" ? previewSnapshot(previewMode) : null
+    previewMode && previewMode !== "home" ? (previewDuo ? previewDuoSnapshot(previewMode) : previewSnapshot(previewMode)) : null
   );
   const [entry, setEntry] = useState<Entry>(() => {
     const room = new URLSearchParams(location.search).get("room");
@@ -519,7 +523,9 @@ export default function App() {
         )
       ) : snapshot.room.status === "finished" ? (
         identity.gameMode === "duos" ? (
-          <DuoEnd snap={snapshot as DuoSnapshot} onLeave={exitRoom}/>
+          <DuoEnd snap={snapshot as DuoSnapshot} busy={busy}
+            onReplay={() => identity && void run(() => restartDuoGame(identity.roomId, identity.token))}
+            onLeave={exitRoom}/>
         ) : (
           <End snap={snapshot} me={me} other={other} busy={busy}
             onRestart={() => identity && void run(() => restartGame(identity.roomId, identity.token))}
@@ -536,6 +542,8 @@ export default function App() {
             onPass={() => identity && void run(() => submitDuoAnswer(identity.roomId, identity.token, interaction.id, "", true, "private"))}
             onNext={() => identity && void run(() => nextDuoInteraction(identity.roomId, identity.token))}
             onSendMessage={(space, body) => identity && void run(() => sendDuoMessage(identity.roomId, identity.token, space, body))}
+            onResume={() => identity && void run(() => setPause(identity.roomId, identity.token, false))}
+            onPermissions={(permissions) => identity && void run(() => setDuoPermissions(identity.roomId, identity.token, permissions))}
             onLeave={exitRoom}
             onSafe={() => setSafeOpen(true)}
           />

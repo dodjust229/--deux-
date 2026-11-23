@@ -7,7 +7,7 @@ export interface Interaction {
   id: string; category: Category; kind: InteractionKind; title: string; prompt: string; options?: string[];
   level: 1 | 2 | 3 | 4; audience: Audience; visibility: Visibility;
 }
-export interface Player { id: string; seat: Seat; duo_no?: 1 | 2; cross_participation?: boolean; receive_media?: boolean; nickname: string; avatar: "masculin" | "feminin"; online: boolean; adult_consent: boolean; selected_categories?: Category[]; }
+export interface Player { id: string; seat: Seat; duo_no?: 1 | 2; cross_participation?: boolean; receive_media?: boolean; nickname: string; avatar: "masculin" | "feminin"; online: boolean; adult_consent: boolean; selected_categories?: Category[]; replay_vote?: boolean; }
 export interface Answer { player_id: string; answer: string; passed: boolean; visibility?: "private" | "duo" | "group"; }
 export interface Snapshot {
   room: { id: string; mode?: "couple" | "duos"; status: "waiting" | "playing" | "paused" | "finished"; current_index: number; total: number; adult_enabled: boolean };
@@ -19,4 +19,5 @@ export interface Snapshot {
 
 export interface DuoPermissions { cross_participation: boolean; receive_media: boolean; share_answers: boolean; }
 export interface DuoMessage { id: string; sender_player_id: string; space: "group" | "duo_a" | "duo_b"; message_type: "text" | "sticker" | "gif"; body: string; created_at: string; }
-export interface DuoSnapshot extends Snapshot { my_duo_no: 1 | 2; permissions: DuoPermissions; messages: DuoMessage[]; }
+export interface DuoReplay { votes: number; needed: number; mine: boolean; }
+export interface DuoSnapshot extends Snapshot { my_duo_no: 1 | 2; permissions: DuoPermissions; messages: DuoMessage[]; replay?: DuoReplay; }
