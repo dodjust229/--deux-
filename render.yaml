@@ -2,7 +2,7 @@ services:
   - type: web
     name: a-deux-jeu
     runtime: static
-    buildCommand: tar -xzf a-deux-source.tar.gz -C . && npm ci --no-audit --no-fund && npm run build
+    buildCommand: npm ci --no-audit --no-fund && npm run build
     staticPublishPath: ./dist
     envVars:
       - key: VITE_SUPABASE_URL

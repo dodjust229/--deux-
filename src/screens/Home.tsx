@@ -4,10 +4,11 @@ import { asset } from "../lib/assets";
 
 interface HomeProps {
   onCreate: () => void;
+  onCreateDuo: () => void;
   onJoin: () => void;
 }
 
-export function Home({ onCreate, onJoin }: HomeProps) {
+export function Home({ onCreate, onCreateDuo, onJoin }: HomeProps) {
   return (
     <main className="home">
       <section className="home__hero">
@@ -15,7 +16,7 @@ export function Home({ onCreate, onJoin }: HomeProps) {
           <span className="eyebrow">Jeu de conversation · 18 ans et plus</span>
           <Wordmark as="h1" size={200} className="home__logo" />
           <p className="home__lead">
-            Deux personnes, une conversation qui ose. Des questions qui font rire, des confidences qui
+            Deux ou quatre personnes, une conversation qui ose. Des questions qui font rire, des confidences qui
             rapprochent, des défis qu'on peut toujours refuser — et deux personnages qui les mettent en
             scène.
           </p>
@@ -23,6 +24,7 @@ export function Home({ onCreate, onJoin }: HomeProps) {
             <button className="primary" type="button" data-testid="create-room" onClick={onCreate}>
               Créer une partie <Icon name="arrow" />
             </button>
+            <button className="secondary" type="button" data-testid="create-duos" onClick={onCreateDuo}> <Icon name="users" /> Créer un salon DUOS · 4 joueurs</button>
             <button className="secondary" type="button" data-testid="join-room" onClick={onJoin}>
               <Icon name="link" /> Rejoindre une partie
             </button>
@@ -40,7 +42,7 @@ export function Home({ onCreate, onJoin }: HomeProps) {
             height={1400}
             decoding="async"
           />
-          <figcaption>Un espace privé, pour deux.</figcaption>
+          <figcaption>Un espace privé, à deux ou à quatre.</figcaption>
         </figure>
       </section>
 
