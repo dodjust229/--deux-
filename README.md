@@ -22,7 +22,7 @@ npm run dev
 Tests, vérification et build :
 
 ```bash
-npm test        # 21 tests unitaires + catalogue + pilote éditorial
+npm test        # tests unitaires + cohérence du catalogue et du pilote éditorial
 npm run build   # TypeScript strict + build Vite
 ```
 
@@ -78,15 +78,10 @@ partie n'est simulée.
 Aucune base de production n'est touchée. Sur une machine avec PostgreSQL 16 :
 
 ```bash
-createdb qspicy_test
-psql -d qspicy_test -c "create extension if not exists pgcrypto; create role anon nologin; create role authenticated nologin;"
-for f in 01_schema 02_catalog 03_reconnexion_securisee 06_duo_schema 08_duo_lifecycle 09_duo_replay 07_security_fixes 10_custom_room; do
-  psql -v ON_ERROR_STOP=1 -d qspicy_test -f supabase/$f.sql
-done
-python3 supabase/tests/custom_room.py
+bash supabase/tests/run_postgres.sh
 ```
 
-La recette vérifie 21 points : création, arrivée du deuxième joueur, refus de lancement pour
+La recette prépare une base jetable, applique les migrations documentées, installe le petit adaptateur de test `join_room_any` (absent des migrations versionnées mais présent sur le serveur actuel), puis vérifie 21 points : création, arrivée du deuxième joueur, refus de lancement pour
 l'invité, refus de remplacement des questions, validations (5 à 24, longueur, doublons),
 lancement, relecture après reconnexion, révélation simultanée, passage, fin de partie, et
 absence de palier 18+.
