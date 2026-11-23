@@ -33,6 +33,8 @@ import { Safety } from "./components/Safety";
 import { Stage } from "./components/Stage";
 import type { StagePlayer } from "./components/Stage";
 import { Home } from "./screens/Home";
+import { HostAccount } from "./screens/HostAccount";
+import { HostBilling } from "./screens/HostBilling";
 import { Mode } from "./screens/Mode";
 import { Preferences as PreferencesScreen } from "./screens/Preferences";
 import { Enter } from "./screens/Enter";
@@ -44,7 +46,7 @@ import type { DuoSnapshot } from "./types";
 
 type Identity = { roomId: string; token: string; nickname: string; avatar: "masculin" | "feminin"; gameMode?: "couple" | "duos" };
 type Entry = { mode: "create" | "join"; code: string; gameMode?: "couple" | "duos" } | null;
-type FlowStage = "home" | "mode" | "prefs" | "enter";
+type FlowStage = "home" | "host-auth" | "host-billing" | "mode" | "prefs" | "enter";
 
 const IDENTITY_KEY = "adeux_identity";
 const IDENTITY_COOKIE = "qspicy_session";
@@ -109,7 +111,7 @@ export default function App() {
   });
   const [flowMode, setFlowMode] = useState<"couple" | "duos">("couple");
   const [stage, setStage] = useState<FlowStage>(() =>
-    new URLSearchParams(location.search).get("room") ? "enter" : "home"
+    new URLSearchParams(location.search).get("payment") === "return" ? "host-billing" : new URLSearchParams(location.search).get("room") ? "enter" : "home"
   );
   const [selected, setSelected] = useState<Category[]>(() => categoriesForIntensity(prefs.intensity, prefs.exclusions));
   const [error, setError] = useState("");
@@ -434,7 +436,7 @@ export default function App() {
             lang={prefs.language}
             onEnter={() => {
               setError("");
-              setStage("mode");
+              setStage("host-auth");
             }}
             onInvite={() => {
               const room = new URLSearchParams(location.search).get("room") ?? "";
@@ -442,6 +444,16 @@ export default function App() {
               setError("");
               setStage("enter");
             }}
+          />
+        ) : stage === "host-auth" ? (
+          <HostAccount
+            onComplete={() => setStage("host-billing")}
+            onBack={() => setStage("home")}
+          />
+        ) : stage === "host-billing" ? (
+          <HostBilling
+            onAccessReady={() => setStage("mode")}
+            onBack={() => setStage("home")}
           />
         ) : stage === "mode" ? (
           <Mode

@@ -5,6 +5,6 @@ const key = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
 
 export const isConfigured = Boolean(url && key && !url.includes("VOTRE-PROJET") && !key.includes("VOTRE_CLE"));
 export const supabase = isConfigured ? createClient(url!, key!, {
-  auth: { persistSession: false, autoRefreshToken: false },
+  auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
   realtime: { params: { eventsPerSecond: 5 } }
 }) : null;
