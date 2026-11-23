@@ -389,12 +389,14 @@ export default function App() {
     <div className="app">
       {/* Fond animé du salon : monté à la racine. Dans un écran animé (.game, .duo-page),
           le transform de page-in crée un bloc conteneur et rogne le calque fixed. */}
-      <SalonAmbiance
-        salon={identity?.gameMode === "duos" ? "duos" : "couple"}
-        level={(snapshot?.interaction?.level ?? 1) as 1 | 2 | 3 | 4}
-        paused={snapshot?.room.status === "paused"}
-        waiting={Boolean(snapshot?.my_answer && !snapshot?.revealed)}
-      />
+      {snapshot && (
+        <SalonAmbiance
+          salon={identity?.gameMode === "duos" ? "duos" : "couple"}
+          level={(snapshot.interaction?.level ?? 1) as 1 | 2 | 3 | 4}
+          paused={snapshot.room.status === "paused"}
+          waiting={Boolean(snapshot.my_answer && !snapshot.revealed)}
+        />
+      )}
       {!(
         identity &&
         snapshot &&
