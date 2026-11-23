@@ -117,7 +117,7 @@ const escapeCsv = (value) => {
   const text = Array.isArray(value) ? value.join("|") : String(value);
   return /[",\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
 };
-const csv = `${FIELDS.join(",")}\n${cards.map((card) => FIELDS.map((field) => escapeCsv(card[field] ?? "")).join(",")).join("\n")}\n`;
+const csv = `\uFEFF${FIELDS.join(",")}\n${cards.map((card) => FIELDS.map((field) => escapeCsv(card[field] ?? "")).join(",")).join("\n")}\n`;
 
 if (errors.length) {
   console.error("✗ Catalogue pilote invalide :\n  - " + errors.join("\n  - "));

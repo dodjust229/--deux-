@@ -1,4 +1,4 @@
-id,text,type,level,category,context,modes,intensity,emoji,duration,visibility,skip_allowed,consent_note
+﻿id,text,type,level,category,context,modes,intensity,emoji,duration,visibility,skip_allowed,consent_note
 qsp-l1-ques-01,"Avant qu'on se parle vraiment, qu'est-ce qui t'a donné envie de continuer la conversation ?",QUESTION,1,premieres-impressions,rencontre,duo|duos|personnalise,1,👀,courte,partagee,true,Tu peux répondre à côté si la vraie réponse arrive trop tôt.
 qsp-l1-ques-02,Quelle phrase ou quel geste chez moi t'a fait sourire alors que je ne le voyais pas ?,QUESTION,1,humour,tous,duo|duos|personnalise,1,😊,courte,partagee,true,Rien d'obligatoire : une scène minuscule fait déjà une bonne réponse.
 qsp-l1-ques-03,"Prends position : un premier rendez-vous idéal, c'est un endroit où on peut parler trois heures, ou un endroit où on n'a pas besoin de parler du tout ?",PRISE_DE_POSITION,1,seduction,rencontre,duo|duos|personnalise,2,🍷,courte,partagee,true,"Une position, pas une promesse : tu peux changer d'avis demain."
