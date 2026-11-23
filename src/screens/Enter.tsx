@@ -62,7 +62,7 @@ export function Enter({ mode, initialCode, busy, error, onBack, onSubmit, lang, 
 
         <fieldset className="personas">
           <legend>{t("enter.persona")}</legend>
-          <div className="personas__grid" role="radiogroup" aria-label="Personnage">
+          <div className="personas__grid" role="radiogroup" aria-label={lang === "en" ? "Character" : "Personnage"}>
             {PERSONAS.map((value) => (
               <button
                 key={value}

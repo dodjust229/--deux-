@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Character } from "../components/Character";
-import { Atmosphere } from "../components/Atmosphere";
 import { Icon } from "../components/Icon";
+import { InfoTip } from "../components/InfoTip";
 import { categoryLabels, categoryDescriptions, levelLabels, kindLabels, audienceLabels } from "../content";
 import type { Category, DuoPermissions, DuoSnapshot, Interaction } from "../types";
 
@@ -22,10 +22,11 @@ function Hosts({ note }: { note: string }) {
   );
 }
 
-export function DuoLobby({ snap, inviteUrl, copied, onCopy, selected, shared, onToggleCategory, onToggleConsent, onStart, onPermissions, busy, onSafe }: {
+export function DuoLobby({ snap, inviteUrl, copied, onCopy, selected, shared, onToggleCategory, onToggleConsent, onStart, onPermissions, busy, onSafe, onOpenGuide, lang = "fr" }: {
   snap: DuoSnapshot; inviteUrl: string; copied: boolean; onCopy: () => void; selected: Category[]; shared: Category[];
   onToggleCategory: (c: Category) => void; onToggleConsent: (v: boolean) => void; onStart: () => void;
   onPermissions: (p: { cross_participation: boolean; receive_media: boolean; share_answers: boolean }) => void; busy: boolean; onSafe: () => void;
+  onOpenGuide?: () => void; lang?: "fr" | "en";
 }) {
   const ready = snap.players.length === 4;
   const adult = shared.includes("audacieux");
@@ -34,7 +35,6 @@ export function DuoLobby({ snap, inviteUrl, copied, onCopy, selected, shared, on
 
   return (
     <main className="duo-page page">
-      <Atmosphere variant="duos" />
       <header className="duo-head">
         <div>
           <span className="eyebrow">QSPICY · DUOS</span>
@@ -50,6 +50,12 @@ export function DuoLobby({ snap, inviteUrl, copied, onCopy, selected, shared, on
           <button className="secondary" type="button" onClick={onCopy}>
             <Icon name="copy" /> {copied ? "Copié" : "Copier le lien"}
           </button>
+          {onOpenGuide && (
+            <button className="icon-button" type="button" data-testid="duo-guide" onClick={onOpenGuide}
+              aria-label={lang === "fr" ? "Ouvrir le guide" : "Open the guide"} title={lang === "fr" ? "Guide d'utilisation" : "User guide"}>
+              <Icon name="info" />
+            </button>
+          )}
           <button className="safe-button" type="button" data-testid="safe-button" onClick={onSafe}>SAFE</button>
         </div>
       </header>
@@ -97,13 +103,24 @@ export function DuoLobby({ snap, inviteUrl, copied, onCopy, selected, shared, on
       </section>
 
       <section className="panel">
-        <h2>Consentement et limites</h2>
-        <p className="muted small">Chaque autorisation est personnelle et révocable. Sans elle, l'option correspondante reste fermée.</p>
+        <h2>{lang === "fr" ? "Consentement et limites" : "Consent and limits"} <InfoTip tip="duos" lang={lang} /></h2>
+        <p className="muted small">
+          {lang === "fr"
+            ? "Chaque autorisation est personnelle et révocable. Sans elle, l'option correspondante reste fermée."
+            : "Every permission is personal and revocable. Without it the matching option stays closed."}
+        </p>
+        <h3 className="duo-subhead">
+          {lang === "fr" ? "Accord 18+ : les quatre participants" : "18+ consent: all four players"} <InfoTip tip="levels" lang={lang} />
+        </h3>
         <label className="duo-toggle">
           <input type="checkbox" checked={snap.my_consent} onChange={(e) => onToggleConsent(e.target.checked)} />
-          <span>J'ai 18 ans ou plus et j'accepte la catégorie Audacieux.</span>
+          <span>{lang === "fr" ? "J'ai 18 ans ou plus et j'accepte la catégorie Audacieux." : "I am 18 or over and I consent to the Audacieux category."}</span>
         </label>
-        <p className="muted small">{snap.players.filter((p) => p.adult_consent).length}/4 ont donné leur accord.</p>
+        <p className="muted small">
+          {lang === "fr"
+            ? `${snap.players.filter((p) => p.adult_consent).length}/4 ont donné leur accord. En DUOS, la carte 18+ ne sort que si les quatre l'ont cochée ; un retrait la ferme immédiatement.`
+            : `${snap.players.filter((p) => p.adult_consent).length}/4 have consented. In DUOS the 18+ card only appears if all four ticked it; withdrawing closes it immediately.`}
+        </p>
         <label className="duo-toggle">
           <input type="checkbox" data-testid="duo-cross-consent" checked={perm.cross_participation} onChange={(e) => onPermissions({ ...perm, cross_participation: e.target.checked, share_answers: e.target.checked ? perm.share_answers : false })} />
           <span>J'autorise les interactions dans l'espace commun (désactivé par défaut).</span>
@@ -125,9 +142,9 @@ export function DuoLobby({ snap, inviteUrl, copied, onCopy, selected, shared, on
   );
 }
 
-export function DuoGame({ snap, interaction, busy, onSubmit, onPass, onNext, onSendMessage, onLeave, onSafe, onResume, onPermissions, paused = false }: {
+export function DuoGame({ snap, interaction, busy, onSubmit, onPass, onNext, onSendMessage, onLeave, onSafe, onResume, onPermissions, paused = false, onOpenGuide, lang = "fr" }: {
   snap: DuoSnapshot; interaction: Interaction; busy: boolean; paused?: boolean; onSubmit: (answer: string, visibility: "private" | "duo" | "group") => void;
-  onPass: () => void; onNext: () => void; onSendMessage: (space: "group" | "duo_a" | "duo_b", body: string) => void; onLeave: () => void; onSafe: () => void;
+  onPass: () => void; onNext: () => void; onSendMessage: (space: "group" | "duo_a" | "duo_b", body: string) => void; onLeave: () => void; onSafe: () => void; onOpenGuide?: () => void; lang?: "fr" | "en";
   onResume: () => void; onPermissions: (p: DuoPermissions) => void;
 }) {
   const [answer, setAnswer] = useState("");
@@ -151,7 +168,6 @@ export function DuoGame({ snap, interaction, busy, onSubmit, onPass, onNext, onS
 
   return (
     <main className="duo-page page">
-      <Atmosphere variant="duos" />
       <header className="duo-head">
         <div>
           <span className="eyebrow">DUOS · {snap.my_duo_no === 1 ? "DUO A" : "DUO B"}</span>
@@ -159,6 +175,12 @@ export function DuoGame({ snap, interaction, busy, onSubmit, onPass, onNext, onS
           <p className="muted">Votre duo privé reste séparé. Le salon commun dépend du consentement de chacun.</p>
         </div>
         <div className="duo-head-actions">
+          {onOpenGuide && (
+            <button className="icon-button" type="button" data-testid="duo-guide" onClick={onOpenGuide}
+              aria-label={lang === "fr" ? "Ouvrir le guide" : "Open the guide"} title={lang === "fr" ? "Guide d'utilisation" : "User guide"}>
+              <Icon name="info" />
+            </button>
+          )}
           <button className="safe-button" type="button" data-testid="safe-button" onClick={onSafe}>SAFE</button>
           <button className="secondary" type="button" onClick={onLeave}>
             <Icon name="log-out" /> Quitter
@@ -292,7 +314,6 @@ export function DuoEnd({ snap, busy, onReplay, onLeave }: { snap: DuoSnapshot; b
   const mine = snap.replay?.mine ?? false;
   return (
     <main className="duo-page page">
-      <Atmosphere variant="duos" />
       <span className="eyebrow">Fin de la partie DUOS</span>
       <h1>Quatre personnes, un moment à vous.</h1>
       <p className="muted">Les espaces privés sont restés séparés. Les réponses partagées ne sont visibles que selon les autorisations de chacun.</p>

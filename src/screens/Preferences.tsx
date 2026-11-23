@@ -1,4 +1,5 @@
 import { Icon } from "../components/Icon";
+import { InfoTip } from "../components/InfoTip";
 import { translator, type Lang } from "../lib/i18n";
 import { categoryLabels } from "../content";
 import type { Category } from "../types";
@@ -35,7 +36,9 @@ export function Preferences({ lang, prefs, onChange, onContinue, onBack }: Prefe
       <header className="flow__head">
         <span className="eyebrow">QSPICY</span>
         <h1>{t("prefs.title")}</h1>
-        <p className="muted">{t("prefs.sub")}</p>
+        <p className="muted">
+          {t("prefs.sub")} <InfoTip tip="prefs" lang={lang} />
+        </p>
       </header>
 
       <section className="panel prefs-panel">
@@ -62,7 +65,9 @@ export function Preferences({ lang, prefs, onChange, onContinue, onBack }: Prefe
         </div>
 
         <div className="prefs-block">
-          <span className="prefs-row__label">{t("prefs.intensity")}</span>
+          <span className="prefs-row__label">
+            {t("prefs.intensity")} <InfoTip tip="intensity" lang={lang} />
+          </span>
           <div className="intensity-grid" role="radiogroup" aria-label={t("prefs.intensity")}>
             {INTENSITIES.map((value) => (
               <button
@@ -81,7 +86,9 @@ export function Preferences({ lang, prefs, onChange, onContinue, onBack }: Prefe
         </div>
 
         <div className="prefs-block">
-          <span className="prefs-row__label">{t("prefs.exclusions")}</span>
+          <span className="prefs-row__label">
+            {t("prefs.exclusions")} <InfoTip tip="categories" lang={lang} />
+          </span>
           <p className="muted small">{t("prefs.exclusions.desc")}</p>
           <div className="chips chips--tight">
             {CATEGORIES.map((category) => {

@@ -36,7 +36,7 @@ export async function getDuoSnapshot(roomId: string, token: string): Promise<Duo
     other_submitted: (raw.answers ?? []).some((a: any) => a.player_id !== raw.my_player_id),
     first_answer: null, first_player_present: false, summary: null } as DuoSnapshot;
 }
-export async function getSessionSnapshot(roomId: string, token: string, mode?: "couple" | "duos"): Promise<Snapshot> {
+export async function getSessionSnapshot(roomId: string, token: string, mode?: "couple" | "duos" | "custom"): Promise<Snapshot> {
   return mode === "duos" ? getDuoSnapshot(roomId, token) : getSnapshot(roomId, token);
 }
 export const startDuoGame = (r: string, t: string) => rpc<boolean>("start_duo_game", { p_room_id: r, p_player_token: t });
@@ -45,3 +45,8 @@ export const submitDuoAnswer = (r: string, t: string, i: string, a: string, pass
 export const setDuoPermissions = (r: string, t: string, p: { cross_participation: boolean; receive_media: boolean; share_answers: boolean }) => rpc<boolean>("set_duo_permissions", { p_room_id: r, p_player_token: t, p_cross_participation: p.cross_participation, p_receive_media: p.receive_media, p_share_answers: p.share_answers });
 export const sendDuoMessage = (r: string, t: string, space: "group" | "duo_a" | "duo_b", body: string) => rpc<string>("send_duo_message", { p_room_id: r, p_player_token: t, p_space: space, p_message_type: "text", p_body: body });
 export const restartDuoGame = (r: string, t: string) => rpc<{ restarted: boolean; votes: number; needed: number }>("restart_duo_game", { p_room_id: r, p_player_token: t });
+
+/* Mode Personnalisé : la liste appartient à la salle (voir supabase/10_custom_room.sql). */
+export const startCustomGame = (r: string, t: string, questions: string[]) =>
+  rpc<boolean>("start_custom_game", { p_room_id: r, p_player_token: t, p_questions: questions });
+export const getCustomDeck = (r: string, t: string) => rpc<string[]>("get_custom_deck", { p_room_id: r, p_player_token: t });

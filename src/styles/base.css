@@ -498,3 +498,15 @@ textarea {
   animation: none !important;
   transition: none !important;
 }
+
+/* Accueil plein cadre : la barre haute flotte sur l'image, sans filet. */
+.topbar--over {
+  position: relative;
+  z-index: 3;
+  border-bottom-color: transparent;
+}
+
+.topbar--over .topbar__private,
+.topbar--over .icon-button {
+  color: rgba(244, 227, 205, 0.82);
+}
