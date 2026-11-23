@@ -80,3 +80,27 @@ revoke execute on function public.create_room(text,text) from public, anon;
 grant execute on function public.create_room(text,text) to authenticated;
 revoke execute on function public.create_duo_room(text,text) from public, anon;
 grant execute on function public.create_duo_room(text,text) to authenticated;
+
+-- Authenticated hosts use the same player-token game API after room creation.
+-- Guests still use the anonymous role; internal helper functions remain private.
+grant execute on function
+  public.join_room(uuid,text,text),
+  public.join_room_any(uuid,text,text),
+  public.get_room_snapshot(uuid,text),
+  public.set_adult_consent(uuid,text,boolean),
+  public.set_player_categories(uuid,text,text[]),
+  public.start_game(uuid,text,text[]),
+  public.submit_answer(uuid,text,text,boolean),
+  public.next_interaction(uuid,text),
+  public.set_pause(uuid,text,boolean),
+  public.restart_game(uuid,text),
+  public.leave_room(uuid,text),
+  public.join_duo_room(uuid,text,text),
+  public.get_duo_snapshot(uuid,text),
+  public.set_duo_permissions(uuid,text,boolean,boolean,boolean),
+  public.send_duo_message(uuid,text,text,text,text),
+  public.start_duo_game(uuid,text),
+  public.submit_duo_answer(uuid,text,text,text,boolean,text),
+  public.next_duo_interaction(uuid,text),
+  public.restart_duo_game(uuid,text)
+to authenticated;
