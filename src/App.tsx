@@ -594,7 +594,10 @@ export default function App() {
           try {
             const blockedKey = "qspicy.bloques";
             const blocked: string[] = JSON.parse(window.localStorage.getItem(blockedKey) ?? "[]");
-            const targets = snapshot?.players.filter((player) => player.id !== snapshot.my_player_id).map((player) => player.id) ?? (otherPlayer?.id ? [otherPlayer.id] : []);
+            const currentSnapshot = snapshot;
+            const targets = currentSnapshot
+              ? currentSnapshot.players.filter((player) => player.id !== currentSnapshot.my_player_id).map((player) => player.id)
+              : (otherPlayer?.id ? [otherPlayer.id] : []);
             const nextBlocked = [...new Set([...blocked, ...targets])];
             window.localStorage.setItem(blockedKey, JSON.stringify(nextBlocked));
 
