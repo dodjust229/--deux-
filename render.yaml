@@ -8,4 +8,4 @@ services:
       - key: VITE_SUPABASE_URL
         value: https://xqvxorvvjmwzpcqmqnqv.supabase.co
       - key: VITE_SUPABASE_ANON_KEY
-        sync: false
+        value: sb_publishable_yQf9K7yab85nkvaoocXt4Q_0nVUJPxG
