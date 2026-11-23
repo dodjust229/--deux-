@@ -1,4 +1,5 @@
 import { Icon } from "../components/Icon";
+import { Atmosphere } from "../components/Atmosphere";
 import { Stage } from "../components/Stage";
 import type { StagePlayer } from "../components/Stage";
 import type { Scene } from "../lib/scene";
@@ -29,6 +30,7 @@ interface LobbyProps {
   onToggleConsent: (value: boolean) => void;
   onLaunch: () => void;
   busy: boolean;
+  excluded?: Category[];
 }
 
 export function Lobby({
@@ -45,7 +47,8 @@ export function Lobby({
   otherConsent,
   onToggleConsent,
   onLaunch,
-  busy
+  busy,
+  excluded = []
 }: LobbyProps) {
   const bothPresent = Boolean(other);
   const wantsAdult = shared.includes("audacieux");
@@ -53,6 +56,7 @@ export function Lobby({
 
   return (
     <main className="lobby page">
+      <Atmosphere />
       <header className="lobby__head">
         <div>
           <span className="eyebrow">{bothPresent ? "Vous êtes deux" : "Salle privée ouverte"}</span>
@@ -95,13 +99,16 @@ export function Lobby({
             <div className="chips" role="group" aria-label="Catégories de la partie">
               {CATEGORIES.map((category) => {
                 const on = selected.includes(category);
+                const refused = excluded.includes(category);
                 return (
                   <button
                     key={category}
                     type="button"
                     aria-pressed={on}
-                    className={`chip chip--${category} ${on ? "is-on" : ""}`}
-                    disabled={busy}
+                    aria-disabled={refused}
+                    title={refused ? "Exclu dans tes préférences" : undefined}
+                    className={`chip chip--${category} ${on ? "is-on" : ""} ${refused ? "is-off" : ""}`}
+                    disabled={busy || refused}
                     onClick={() => onToggleCategory(category)}
                   >
                     <span className="chip__check" aria-hidden="true">{on ? "✓" : "+"}</span>
