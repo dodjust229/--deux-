@@ -9,6 +9,7 @@ import { MediaView } from "../components/MediaContent";
 import type { Scene } from "../lib/scene";
 import { decodePrediction } from "../lib/protocol";
 import { getRoundMoments } from "../lib/round-moments";
+import { getRoundEvent } from "../lib/round-events";
 import { PRIVATE_STORAGE_PREFIX, parseContent } from "../lib/media";
 import { audienceLabels, categoryLabels, kindLabels, levelLabels } from "../content";
 import type { Lang } from "../lib/i18n";
@@ -108,6 +109,7 @@ export function Game({
   const [curtain, setCurtain] = useState<1 | 2 | 3 | 4 | null>(null);
   const [selectedMoment, setSelectedMoment] = useState<string | null>(null);
   const roundMoments = getRoundMoments(interaction);
+  const roundEvent = getRoundEvent(snap.room.id, snap.room.current_index, snap.room.total, interaction);
   useEffect(() => setSelectedMoment(null), [interaction.id]);
   const lastLevel = useRef<number | null>(null);
   // Palier de SESSION (persistant, non décroissant), pas celui de la carte tirée :
@@ -179,6 +181,15 @@ export function Game({
           </blockquote>
         )}
       </section>
+
+      {roundEvent && (
+        <aside className="round-event" aria-label="Événement spécial de la manche">
+          <div className="round-event__top"><span>{roundEvent.subtitle}</span><span>✦</span></div>
+          <h2>{roundEvent.title}</h2>
+          <p>{roundEvent.instruction}</p>
+          <small>{roundEvent.cue}</small>
+        </aside>
+      )}
 
       {paused ? (
         <section className="panel panel--pause" role="status">
