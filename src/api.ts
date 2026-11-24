@@ -70,19 +70,18 @@ export type RoomPhotoState = {
 function photoEndpoint(roomId: string, action: string, extra = "") {
   const url = import.meta.env.VITE_SUPABASE_URL as string | undefined;
   if (!url) throw new Error("Le serveur photo n'est pas configuré.");
-  return `${url.replace(/\\/$/, "")}/functions/v1/qspicy-room-media?action=${encodeURIComponent(action)}&room_id=${encodeURIComponent(roomId)}${extra}`;
+  return `${url.endsWith("/") ? url.slice(0, -1) : url}/functions/v1/qspicy-room-media?action=${encodeURIComponent(action)}&room_id=${encodeURIComponent(roomId)}${extra}`;
 }
 async function photoRequest<T>(roomId: string, token: string, action: string, init: RequestInit = {}, extra = ""): Promise<T> {
   const key = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
   if (!key) throw new Error("Le serveur photo n'est pas configuré.");
+  const headers = new Headers(init.headers);
+  headers.set("apikey", key);
+  headers.set("Authorization", `Bearer ${key}`);
+  headers.set("x-player-token", token);
   const response = await fetch(photoEndpoint(roomId, action, extra), {
     ...init,
-    headers: {
-      apikey: key,
-      Authorization: `Bearer ${key}`,
-      "x-player-token": token,
-      ...(init.headers ?? {}),
-    },
+    headers,
     cache: "no-store",
   });
   const payload = await response.json().catch(() => ({}));
