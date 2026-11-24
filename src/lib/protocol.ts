@@ -22,6 +22,11 @@ export function speakerSeat(kind: string, index: number, firstDone: boolean): 1 
   return index % 2 === 0 ? 1 : 2;
 }
 
+/** Centres d'intérêt choisis individuellement par les participants : chaque choix compte. */
+export function getSelectedInterests<T extends string>(selected: readonly T[], others?: readonly (readonly T[] | null | undefined)[] | null): T[] {
+  return [...new Set([...selected, ...(others ?? []).flatMap(values => values ?? [])])];
+}
+
 /** Catégories que les deux joueurs ont sélectionnées. */
 export function getSharedCategories<T extends string>(selected: readonly T[], other?: readonly T[] | null): T[] {
   const otherSet = new Set(other ?? []);

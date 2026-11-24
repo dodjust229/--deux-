@@ -82,16 +82,16 @@ export function Lobby({
     <main className="lobby page">
       <header className="lobby__head">
         <div>
-          <span className="eyebrow">{bothPresent ? "Vous êtes deux" : "Salle privée ouverte"}</span>
+          <span className="eyebrow">{isHost ? "Hôte de la salle" : "Invité de la salle"}</span>
           <h1>{bothPresent ? "La scène est prête." : "Plus qu'une personne…"}</h1>
           <p className="muted">
             {custom
               ? bothPresent
-                ? "QSPICY compose une sélection privée dans vos catégories communes."
+                ? "QSPICY compose une sélection dans les centres d'intérêt choisis individuellement."
                 : "Envoie ce lien à la personne avec qui tu veux jouer. L'hôte choisira la sélection avant de lancer."
               : bothPresent
-                ? "Choisissez ensemble les ambiances. Seules les catégories communes seront tirées."
-                : "Envoie ce lien à la personne avec qui tu veux jouer. Elle seule pourra entrer."}
+                ? "Chacun choisit un seul centre d'intérêt. QSPICY combine vos choix pour composer la partie."
+               : "Partage le lien avec ton invité. Il choisira son centre d'intérêt à son arrivée."}
           </p>
         </div>
         <div className="lobby__tools">
@@ -108,7 +108,7 @@ export function Lobby({
             </button>
           )}
         </div>
-        <div className="lobby__invite">
+        {isHost && <div className="lobby__invite">
           <span className="lobby__invite-label">
             Lien d'invitation <InfoTip tip="invite" lang={lang} />
           </span>
@@ -118,7 +118,7 @@ export function Lobby({
               <Icon name="copy" size={16} /> {copied ? "Copié" : "Copier"}
             </button>
           </div>
-        </div>
+        </div>}
       </header>
 
       <Stage scene={WAITING_SCENE} me={me} other={other} size={190} variant="lobby" />
@@ -131,6 +131,30 @@ export function Lobby({
       ) : (
         <>
           {custom ? (
+            <>
+            <section className="panel" aria-labelledby="custom-interest">
+              <div className="panel__head">
+                <h2 id="custom-interest">Ton centre d'intérêt <InfoTip tip="categories" lang={lang} /></h2>
+                <span className="muted small">Sélection combinée : {shared.map((category) => categoryLabels[category]).join(" · ") || "en attente des choix"}</span>
+              </div>
+              <div className="chips" role="radiogroup" aria-label="Ton centre d'intérêt">
+                {CATEGORIES.map((category) => {
+                  const on = selected.includes(category);
+                  const refused = excluded.includes(category);
+                  return (
+                    <button key={category} type="button" role="radio" aria-checked={on} aria-disabled={refused}
+                      title={refused ? "Exclu dans tes préférences" : undefined}
+                      className={`chip chip--${category} ${on ? "is-on" : ""} ${refused ? "is-off" : ""}`}
+                      disabled={busy || refused} onClick={() => onToggleCategory(category)}>
+                      <span className="chip__check" aria-hidden="true">{on ? "✓" : "+"}</span>
+                      <strong>{categoryLabels[category]}</strong>
+                      <small>{categoryDescriptions[category]}</small>
+                    </button>
+                  );
+                })}
+              </div>
+              <p className="muted small">Chaque joueur choisit un seul intérêt. QSPICY combine vos choix.</p>
+            </section>
             <CustomQuestions
               lang={lang}
               catalog={customCatalog}
@@ -144,20 +168,21 @@ export function Lobby({
               otherConsent={otherConsent}
               onToggleConsent={onToggleConsent}
             />
+            </>
           ) : (
           <>
           <section className="panel" aria-labelledby="ambiances">
             <div className="panel__head">
               <h2 id="ambiances">
-                Vos ambiances <InfoTip tip="categories" lang={lang} />
+                Ton centre d'intérêt <InfoTip tip="categories" lang={lang} />
               </h2>
               <span className="muted small">
                 {shared.length > 0
-                  ? `En commun : ${shared.map((category) => categoryLabels[category]).join(" · ")}`
-                  : "Aucune catégorie commune pour l'instant"}
+                  ? `Sélection combinée : ${shared.map((category) => categoryLabels[category]).join(" · ")}`
+                 : "Choisissez chacun un centre d'intérêt"}
               </span>
             </div>
-            <div className="chips" role="group" aria-label={lang === "en" ? "Game categories" : "Catégories de la partie"}>
+            <div className="chips" role="radiogroup" aria-label={lang === "en" ? "Your one interest" : "Ton centre d'intérêt"}>
               {CATEGORIES.map((category) => {
                 const on = selected.includes(category);
                 const refused = excluded.includes(category);
@@ -165,7 +190,8 @@ export function Lobby({
                   <button
                     key={category}
                     type="button"
-                    aria-pressed={on}
+                    role="radio"
+                    aria-checked={on}
                     aria-disabled={refused}
                     title={refused ? "Exclu dans tes préférences" : undefined}
                     className={`chip chip--${category} ${on ? "is-on" : ""} ${refused ? "is-off" : ""}`}
@@ -179,12 +205,7 @@ export function Lobby({
                 );
               })}
             </div>
-            {selected.includes("audacieux") && !shared.includes("audacieux") && (
-              <p className="muted small">
-                « Audacieux » ne sera tiré que si vous le choisissez tous les deux et que vous cochez le
-                consentement 18+.
-              </p>
-            )}
+            <p className="muted small">Chaque joueur choisit un seul intérêt. QSPICY combine vos choix.</p>
           </section>
 
           <section className={`consent ${wantsAdult ? "is-required" : ""}`}>
@@ -196,9 +217,9 @@ export function Lobby({
                 onChange={(event) => onToggleConsent(event.target.checked)}
               />
               <span>
-                <strong>{gameLevel >= 3 ? "J'ai 18 ans ou plus et j'accepte les paliers 3–4." : "J'ai 18 ans ou plus et j'accepte la catégorie « Audacieux »."}</strong>
+                <strong>J'ai 18 ans ou plus et j'accepte les contenus 18+ s'ils sont sélectionnés.</strong>
                 <small>
-                  {gameLevel >= 3 ? "Obligatoire pour les paliers 3–4. Accord révocable à tout moment." : "Facultatif pour les autres paliers ; accord révocable à tout moment."} Les deux joueurs doivent être d’accord.
+                  Accord personnel et révocable à tout moment. Les deux joueurs doivent accepter si une carte 18+ est sélectionnée.
                 </small>
               </span>
             </label>
@@ -209,14 +230,12 @@ export function Lobby({
             </p>
           </section>
 
-          <button className="primary full" type="button" data-testid="launch" disabled={blocked} onClick={onLaunch}>
-            {shared.length === 0
-              ? "Choisissez au moins une catégorie commune"
-              : wantsAdult && !(myConsent && otherConsent)
-                ? "En attente de l'accord 18+ des deux"
-                : "Lancer la partie"}
-            {!blocked && <Icon name="arrow" />}
-          </button>
+          {isHost ? (
+            <button className="primary full" type="button" data-testid="launch" disabled={blocked} onClick={onLaunch}>
+              {shared.length === 0 ? "Choisissez au moins un centre d'intérêt" : wantsAdult && !(myConsent && otherConsent) ? "En attente de l'accord 18+ des deux" : "Lancer la partie"}
+              {!blocked && <Icon name="arrow" />}
+            </button>
+          ) : <p className="lobby__waiting" role="status">Ton choix est enregistré. En attente du lancement par l'hôte…</p>}
           </>
           )}
         </>

@@ -22,7 +22,7 @@ import {
   sendDuoMessage,
   restartDuoGame
 } from "./api";
-import { extractRoomId, getSharedCategories, parseError } from "./lib/protocol";
+import { extractRoomId, getSelectedInterests, parseError } from "./lib/protocol";
 import { deriveScene } from "./lib/scene";
 import { applyPreferences, categoriesForIntensity, readPreferences, writePreferences, type Preferences } from "./lib/prefs";
 import { previewDuoSnapshot, previewSnapshot } from "./lib/preview";
@@ -199,7 +199,9 @@ export default function App() {
         );
         if (joined.length > 0) {
           playSound("join", prefs);
-          setNotice(`${joined[0].nickname} a rejoint le salon.`);
+          setNotice(data.my_seat === 1
+            ? `Invitation acceptée : ${joined[0].nickname} a rejoint le salon.`
+            : `${joined[0].nickname} a rejoint le salon.`);
           setPartnerLeft(null);
         }
         if (departed.length > 0 || wentOffline.length > 0) {
@@ -299,7 +301,7 @@ export default function App() {
     try {
       const result = mode === "create" ? (entry?.gameMode === "duos" ? await createDuoRoom(name, persona) : await createRoom(name, persona)) : await joinRoom(roomId, name, persona);
       if (mode === "create") {
-        await setPlayerCategories(result.room_id, result.player_token, selected);
+        await setPlayerCategories(result.room_id, result.player_token, [selected[0] ?? "decouverte"]);
       }
       // Le salon Personnalisé utilise la salle à deux du serveur : on garde le mode choisi
       // à l'écran, sinon un invité retomberait sur le lobby du catalogue.
@@ -378,7 +380,9 @@ export default function App() {
     const custom = identity?.gameMode === "custom" ? resolveCustomInteraction(snapshot?.interaction_id ?? null, customDeck) : null;
     return custom ?? snapshot?.interaction ?? null;
   }, [identity?.gameMode, snapshot?.interaction, snapshot?.interaction_id, customDeck]);
-  const shared = useMemo(() => identity?.gameMode === "duos" && snapshot ? selected.filter(c => snapshot.players.length === 4 && snapshot.players.every(p => p.selected_categories?.includes(c))) : getSharedCategories(selected, snapshot?.other_categories), [identity?.gameMode, snapshot, selected]);
+  const shared = useMemo(() => identity?.gameMode === "duos" && snapshot
+    ? getSelectedInterests([], snapshot.players.map(player => player.selected_categories))
+    : getSelectedInterests(selected, [snapshot?.other_categories]), [identity?.gameMode, snapshot, selected]);
   const bothConsent = Boolean(snapshot && snapshot.players.length === (identity?.gameMode === "duos" ? 4 : 2) && snapshot.players.every((player) => player.adult_consent));
 
   const scene = useMemo(() => {
@@ -425,11 +429,7 @@ export default function App() {
   })();
 
   const toggleCategory = (category: Category) => {
-    const next = selected.includes(category) ? selected.filter((value) => value !== category) : [...selected, category];
-    if (next.length === 0) {
-      setError("Garde au moins une catégorie.");
-      return;
-    }
+    const next = [category]; // un seul centre d'intérêt par participant
     setSelected(next);
     if (identity && snapshot?.room.status === "waiting") void run(() => setPlayerCategories(identity.roomId, identity.token, next));
   };
@@ -607,6 +607,7 @@ export default function App() {
             onPermissions={(permissions) => identity && void run(() => setDuoPermissions(identity.roomId, identity.token, permissions))}
             onStart={() => identity && void run(() => startDuoGame(identity.roomId, identity.token, prefs.gameLevel))}
             gameLevel={prefs.gameLevel}
+            isHost={snapshot.my_seat === 1}
             busy={busy}
             onSafe={() => setSafeOpen(true)}
             onOpenGuide={() => setGuideOpen(true)}

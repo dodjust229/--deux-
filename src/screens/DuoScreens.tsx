@@ -22,11 +22,11 @@ function Hosts({ note }: { note: string }) {
   );
 }
 
-export function DuoLobby({ snap, inviteUrl, copied, onCopy, selected, shared, onToggleCategory, onToggleConsent, onStart, onPermissions, busy, onSafe, onOpenGuide, lang = "fr", gameLevel = 2 }: {
+export function DuoLobby({ snap, inviteUrl, copied, onCopy, selected, shared, onToggleCategory, onToggleConsent, onStart, onPermissions, busy, onSafe, onOpenGuide, lang = "fr", gameLevel = 2, isHost = false }: {
   snap: DuoSnapshot; inviteUrl: string; copied: boolean; onCopy: () => void; selected: Category[]; shared: Category[];
   onToggleCategory: (c: Category) => void; onToggleConsent: (v: boolean) => void; onStart: () => void;
   onPermissions: (p: { cross_participation: boolean; receive_media: boolean; share_answers: boolean }) => void; busy: boolean; onSafe: () => void;
-  onOpenGuide?: () => void; lang?: "fr" | "en"; gameLevel?: 1 | 2 | 3 | 4;
+  onOpenGuide?: () => void; lang?: "fr" | "en"; gameLevel?: 1 | 2 | 3 | 4; isHost?: boolean;
 }) {
   const ready = snap.players.length === 4;
   const adult = shared.includes("audacieux") || gameLevel >= 3;
@@ -37,7 +37,7 @@ export function DuoLobby({ snap, inviteUrl, copied, onCopy, selected, shared, on
     <main className="duo-page page">
       <header className="duo-head">
         <div>
-          <span className="eyebrow">QSPICY · DUOS</span>
+          <span className="eyebrow">QSPICY · DUOS · {isHost ? "HÔTE" : "INVITÉ"}</span>
           <h1>Quatre joueurs. Deux complicités.</h1>
           <p className="muted">
             Les duos sont fixes : sièges 1–2 et 3–4. Chaque duo garde son espace privé, avec un salon commun
@@ -45,11 +45,13 @@ export function DuoLobby({ snap, inviteUrl, copied, onCopy, selected, shared, on
           </p>
         </div>
         <div className="duo-invite">
-          <small>{ready ? "Salon complet" : `Lien à partager · ${snap.players.length}/4`}</small>
-          <code data-testid="duo-invite">{inviteUrl}</code>
-          <button className="secondary" type="button" onClick={onCopy}>
-            <Icon name="copy" /> {copied ? "Copié" : "Copier le lien"}
-          </button>
+          <small>{ready ? "Salon complet" : isHost ? `Lien à partager · ${snap.players.length}/4` : "En attente des autres invités"}</small>
+          {isHost && <>
+            <code data-testid="duo-invite">{inviteUrl}</code>
+            <button className="secondary" type="button" onClick={onCopy}>
+              <Icon name="copy" /> {copied ? "Copié" : "Copier le lien"}
+            </button>
+          </>}
           {onOpenGuide && (
             <button className="icon-button" type="button" data-testid="duo-guide" onClick={onOpenGuide}
               aria-label={lang === "fr" ? "Ouvrir le guide" : "Open the guide"} title={lang === "fr" ? "Guide d'utilisation" : "User guide"}>
@@ -71,7 +73,7 @@ export function DuoLobby({ snap, inviteUrl, copied, onCopy, selected, shared, on
                 <>
                   <Character persona={p.avatar} name={p.nickname} size={94} state={p.online ? "idle" : "shy"} />
                   <strong>{p.nickname}</strong>
-                  <small>{duoName(p.duo_no ?? (seat <= 2 ? 1 : 2))}</small>
+                  <small>{duoName(p.duo_no ?? (seat <= 2 ? 1 : 2))} · {categoryLabels[p.selected_categories?.[0] ?? "decouverte"]}</small>
                   <span className={p.online ? "duo-online" : "duo-offline"}>{p.online ? "En ligne" : "Absent"}</span>
                 </>
               ) : (
@@ -88,18 +90,18 @@ export function DuoLobby({ snap, inviteUrl, copied, onCopy, selected, shared, on
       </section>
 
       <section className="panel">
-        <h2>Ambiances communes</h2>
-        <p className="muted small">Une catégorie doit être choisie par les quatre joueurs.</p>
-        <div className="chips">
+        <h2>Ton centre d'intérêt</h2>
+        <p className="muted small">Chaque participant choisit un seul intérêt. QSPICY combine les choix des quatre joueurs.</p>
+        <div className="chips" role="radiogroup" aria-label="Ton centre d'intérêt">
           {CATEGORIES.map((c) => (
-            <button key={c} className={`chip chip--${c} ${selected.includes(c) ? "is-on" : ""}`} aria-pressed={selected.includes(c)} onClick={() => onToggleCategory(c)} disabled={busy}>
+            <button key={c} role="radio" aria-checked={selected.includes(c)} className={`chip chip--${c} ${selected.includes(c) ? "is-on" : ""}`} onClick={() => onToggleCategory(c)} disabled={busy}>
               <span className="chip__check" aria-hidden="true">{selected.includes(c) ? "✓" : "+"}</span>
               <strong>{categoryLabels[c]}</strong>
               <small>{categoryDescriptions[c]}</small>
             </button>
           ))}
         </div>
-        <p className="muted small">En commun : {shared.map((c) => categoryLabels[c]).join(" · ") || "aucune catégorie pour le moment"}</p>
+        <p className="muted small">Intérêts réunis : {shared.map((c) => categoryLabels[c]).join(" · ") || "en attente des choix"}</p>
       </section>
 
       <section className="panel">
@@ -114,12 +116,12 @@ export function DuoLobby({ snap, inviteUrl, copied, onCopy, selected, shared, on
         </h3>
         <label className="duo-toggle">
           <input type="checkbox" checked={snap.my_consent} onChange={(e) => onToggleConsent(e.target.checked)} />
-          <span>{lang === "fr" ? (gameLevel >= 3 ? "J’ai 18 ans ou plus et j’accepte les paliers 3–4." : "J’ai 18 ans ou plus et j’accepte la catégorie Audacieux.") : (gameLevel >= 3 ? "I am 18 or over and consent to levels 3–4." : "I am 18 or over and I consent to the Audacieux category.")}</span>
+          <span>{lang === "fr" ? "J’ai 18 ans ou plus et j’accepte les contenus 18+ s’ils sont sélectionnés." : "I am 18 or over and agree to adult content if selected."}</span>
         </label>
         <p className="muted small">
           {lang === "fr"
-            ? `${snap.players.filter((p) => p.adult_consent).length}/4 ont donné leur accord. Les paliers 3–4 et Audacieux exigent l’accord des quatre ; un retrait bloque leur lancement.`
-            : `${snap.players.filter((p) => p.adult_consent).length}/4 have consented. Levels 3–4 and Audacieux require all four; withdrawing consent blocks their launch.`}
+            ? `${snap.players.filter((p) => p.adult_consent).length}/4 ont donné leur accord. Un contenu 18+ exige l'accord des quatre ; chacun peut le retirer.`
+            : `${snap.players.filter((p) => p.adult_consent).length}/4 have consented. Adult content requires all four; anyone can withdraw.`}
         </p>
         <label className="duo-toggle">
           <input type="checkbox" data-testid="duo-cross-consent" checked={perm.cross_participation} onChange={(e) => onPermissions({ ...perm, cross_participation: e.target.checked, share_answers: e.target.checked ? perm.share_answers : false })} />
@@ -135,9 +137,13 @@ export function DuoLobby({ snap, inviteUrl, copied, onCopy, selected, shared, on
         </label>
       </section>
 
-      <button className="primary full" type="button" data-testid="duo-start" disabled={blocked} onClick={onStart}>
-        {!ready ? `En attente des quatre joueurs (${snap.players.length}/4)` : !shared.length ? "Choisissez une catégorie commune" : adult && !snap.players.every((p) => p.adult_consent) ? "Accord 18+ requis par les quatre" : "Lancer la partie DUOS"} <Icon name="arrow" />
-      </button>
+      {isHost ? (
+        <button className="primary full" type="button" data-testid="duo-start" disabled={blocked} onClick={onStart}>
+          {!ready ? `En attente des quatre joueurs (${snap.players.length}/4)` : !shared.length ? "Choisissez un centre d'intérêt" : adult && !snap.players.every((p) => p.adult_consent) ? "Accord 18+ requis par les quatre" : "Lancer la partie DUOS"} <Icon name="arrow" />
+        </button>
+      ) : (
+        <p className="lobby__waiting" role="status">Ton intérêt et tes autorisations sont enregistrés. En attente du lancement par l'hôte…</p>
+      )}
     </main>
   );
 }
