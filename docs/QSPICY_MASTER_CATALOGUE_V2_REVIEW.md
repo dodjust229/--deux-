@@ -2,7 +2,7 @@
 
 Date : 24 novembre 2026  
 Fichier de référence : `content/draft/qspicy-master-catalogue-v2.json`  
-Statut : catalogue éditorial consolidé, en attente de validation humaine avant toute intégration.
+Statut : catalogue V2 intégré dans la branche `integrate/qspicy-master-catalogue-v2`, PR #33 ouverte ; aucun déploiement effectué.
 
 ## 1. Composition du catalogue
 
@@ -60,17 +60,18 @@ Une comparaison lexicale de toutes les paires du catalogue a fait ressortir 17 r
 
 Cette vérification ne remplace pas le dernier regard éditorial humain sur le ton et la pertinence de chaque carte.
 
-## 6. Compatibilité technique — blocage volontaire
+## 6. Intégration technique du catalogue V2
 
-Le catalogue actif compte actuellement 192 cartes, avec exactement 48 cartes par niveau technique. Le brouillon V2 en compte 220 et présente cette répartition technique :
-- niveau 1 : 52 ;
-- niveau 2 : 53 ;
-- niveau 3 : 54 ;
-- niveau 4 : 61.
+Le catalogue actif de l'application est remplacé par les 220 cartes du master V2 dans `src/catalog.json`. La contrainte historique de 48 cartes par niveau a été retirée du contrôle de synchronisation : les niveaux techniques restent 1–4, avec la répartition 52 / 53 / 54 / 61.
 
-Le script `catalog:check` exige encore 48 cartes par niveau. **Le catalogue V2 ne doit donc pas être copié dans `src/catalog.json` ni synchronisé vers Supabase.**
+Le champ éditorial `intensity` (1–5) est désormais :
+- obligatoire dans le type TypeScript `Interaction` ;
+- persisté dans `public.catalog` ;
+- inclus dans le SQL généré et la migration `22_catalogue_maitre_v2.sql` ;
+- affiché sur les cartes en Couple, DUOS et dans l'aperçu Personnalisé ;
+- utilisé par le contrôle 18+ du mode Personnalisé.
 
-Le champ `level` reste technique (1–4). Le champ `intensity` est éditorial (1–5) et n'est pas encore consommé par le moteur. Il faudra décider séparément comment intégrer le nouveau champ et comment faire évoluer la contrainte de répartition, avec des tests applicatifs et SQL.
+La migration 22 réinsère les 220 cartes et retire les identifiants qui ne font plus partie du master, sans supprimer les salles ni les réponses. Elle doit être exécutée dans Supabase avant tout déploiement.
 
 ## 7. Statut final du travail éditorial
 
@@ -82,4 +83,4 @@ Le champ `level` reste technique (1–4). Le champ `intensity` est éditorial (1
 - Formulations dépendantes du temps réel corrigées.
 - Intensités 4 et 5 réévaluées pour rester réellement adultes et explicites.
 
-Le travail éditorial préparatoire est consolidé. L'intégration dans l'application et la base de données constitue une étape technique distincte, non effectuée ici. Aucun changement de production ni déploiement n'a eu lieu.
+Le remplacement du catalogue et son intégration applicative sont préparés dans la PR #33. Les vérifications automatisées sont en cours. Aucune base Supabase de production n'a été modifiée et aucun déploiement n'a eu lieu.
