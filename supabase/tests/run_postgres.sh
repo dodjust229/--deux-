@@ -128,12 +128,6 @@ python3 supabase/tests/custom_catalog_engine.py
 echo "Applying Palier 4 invitation and permissions rules"
 "${PSQL[@]}" -d "$DB" -f supabase/17_invitation_permissions.sql
 
-echo "Applying level and mode integrity fix (must run after 17)"
-"${PSQL[@]}" -d "$DB" -f supabase/20_level_and_mode_integrity.sql
-
-echo "Re-running level engine recipe against the final schema"
-"${PSQL[@]}" -d "$DB" -f supabase/tests/level_engine.sql
-
 echo "Running Palier 4 invitation and permissions integration recipe"
 python3 supabase/tests/palier4_invitation_permissions.py
 
@@ -142,6 +136,13 @@ echo "Applying Palier 5 private gallery photo rules"
 
 echo "Applying invitation finalisation (after 16, 17 and 18)"
 "${PSQL[@]}" -d "$DB" -f "supabase/19_invitation_finalisation.sql"
+
+echo "Applying level and mode integrity fix (after 19)"
+"${PSQL[@]}" -d "$DB" -f supabase/20_level_and_mode_integrity.sql
+
+echo "Re-running level engine recipe against the final schema"
+"${PSQL[@]}" -d "$DB" -f supabase/tests/level_engine.sql
+
 
 echo "Running Palier 5 private gallery photo integration recipe"
 "${PSQL[@]}" -d "$DB" -f "supabase/tests/photo_sharing.sql"
