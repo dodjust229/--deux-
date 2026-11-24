@@ -18,8 +18,8 @@
   padding: 0;
   width: 100vw;
   margin-left: calc(50% - 50vw);
-  margin-top: -76px;
-  padding-top: 76px;
+  margin-top: -84px;
+  padding-top: 84px;
   min-height: clamp(620px, 86vh, 880px);
   overflow: hidden;
   isolation: isolate;
