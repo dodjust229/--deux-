@@ -92,8 +92,8 @@ export function Preferences({ lang, prefs, onChange, onContinue, onBack }: Prefe
           </span>
           <p className="muted small">
             {lang === "en"
-              ? "Choose the level you want to play directly. You do not have to unlock the previous levels."
-              : "Choisis directement le palier que tu veux jouer. Aucun passage obligatoire par les niveaux précédents."}
+              ? "Choose the level you want to play directly. Previous levels do not need to be unlocked. At levels 3–4, all non-excluded categories are offered by default to provide enough cards."
+              : "Choisis directement le palier que tu veux jouer. Aucun passage obligatoire par les niveaux précédents. Aux paliers 3–4, toutes les catégories non exclues sont proposées par défaut pour garantir un choix suffisant de cartes."}
           </p>
           <div className="intensity-grid" role="radiogroup" aria-label={lang === "en" ? "Game level" : "Palier de jeu"}>
             {([1, 2, 3, 4] as const).map((value) => (
