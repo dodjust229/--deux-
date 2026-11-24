@@ -109,6 +109,14 @@ test("personnalisé : le paquet provient du catalogue et exclut les paliers 3–
   ].sort());
 });
 
+test("personnalisé : le paquet respecte les catégories communes", () => {
+  const catalog = [
+    { id: "a", category: "decouverte", level: 1, kind: "free", prompt: "Question découverte numéro un ?" },
+    { id: "b", category: "seduction", level: 2, kind: "free", prompt: "Question séduction numéro deux ?" }
+  ] as any;
+  assert.deepEqual(buildCustomDeck(catalog, 5, () => 0, ["seduction"]), ["Question séduction numéro deux ?"]);
+});
+
 test("personnalisé : le paquet est limité à 24 et ne contient aucun doublon", () => {
   const catalog = Array.from({ length: 30 }, (_, i) => ({
     id: String(i), level: 1, kind: "free", prompt: `Question ouverte numéro ${i} ?`
