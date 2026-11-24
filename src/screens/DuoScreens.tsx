@@ -94,7 +94,7 @@ export function DuoLobby({ snap, inviteUrl, copied, onCopy, selected, shared, on
         <p className="muted small">Chaque participant choisit un seul intérêt. QSPICY combine les choix des quatre joueurs.</p>
         <div className="chips" role="radiogroup" aria-label="Ton centre d'intérêt">
           {CATEGORIES.map((c) => (
-            <button key={c} className={`chip chip--${c} ${selected.includes(c) ? "is-on" : ""}`} aria-pressed={selected.includes(c)} onClick={() => onToggleCategory(c)} disabled={busy}>
+            <button key={c} role="radio" aria-checked={selected.includes(c)} className={`chip chip--${c} ${selected.includes(c) ? "is-on" : ""}`} onClick={() => onToggleCategory(c)} disabled={busy}>
               <span className="chip__check" aria-hidden="true">{selected.includes(c) ? "✓" : "+"}</span>
               <strong>{categoryLabels[c]}</strong>
               <small>{categoryDescriptions[c]}</small>
