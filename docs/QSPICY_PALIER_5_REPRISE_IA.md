@@ -29,14 +29,14 @@ Parcours prévu :
 ## 3. Sécurité prévue et implémentée dans la branche
 
 - Bucket Supabase privé `qspicy-private-media`, jamais public.
-- Formats autorisés : JPEG, PNG et WebP uniquement ; taille maximale : 5 Mo.
-- Le navigateur réencode la photo en JPEG, réduit sa taille à 1600 px maximum et retire les métadonnées EXIF avant l'envoi.
+- Format autorisé côté serveur : JPEG uniquement (toutes les images choisies sont réencodées en JPEG par le navigateur) ; taille maximale : 5 Mo.
+- Le navigateur réencode la photo en JPEG, réduit sa taille à 1600 px maximum et retire les métadonnées EXIF avant l'envoi ; l'Edge Function vérifie la signature JPEG et bloque les dimensions supérieures à 4000 px ou 16 mégapixels.
 - L'Edge Function `qspicy-room-media` valide le jeton de joueur, la salle, la destination, les autorisations, le type réel du fichier et sa taille.
 - Les clients n'ont aucun droit direct d'écriture ou de lecture sur la table `room_media` ni sur les objets Storage.
 - Les téléchargements passent par des URL signées de cinq minutes.
 - Noms de fichiers opaques et aléatoires ; aucun pseudo ni nom d'origine dans le chemin.
 - Limites temporaires : 20 photos actives maximum par salle, 8 par expéditeur, et 8 envois par minute.
-- Suppression autorisée à l'expéditeur ; suppression globale lors de la fin de partie et du départ volontaire. Nettoyage opportuniste des fichiers expirés lors des consultations.
+- Suppression autorisée à l'expéditeur ; suppression globale lors de la fin de partie et du départ volontaire. Nettoyage opportuniste des fichiers expirés lors des consultations. Si tous les navigateurs ferment brutalement la salle, les fichiers restent privés et les URL signées expirent, mais la suppression physique attend une prochaine consultation ou action de nettoyage.
 - Migration : `supabase/18_room_photo_sharing.sql`.
 - Edge Function : `supabase/functions/qspicy-room-media/index.ts`.
 - Interface : `src/components/PhotoShare.tsx`, montée dans les salles d'attente et de jeu.
