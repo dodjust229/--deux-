@@ -191,7 +191,7 @@ export function PhotoShare({ roomId, token, myPlayerId, mode, onPermissionChange
               </a>
               <figcaption>
                 <span>{mine ? "Envoyée par toi" : sender?.nickname ?? "Joueur"}</span>
-                {mine && <button type="button" className="photo-share__delete" onClick={() => void remove(photo.id)} disabled={busy} aria-label="Supprimer cette photo"><Icon name="trash" size={14} /></button>}
+                {mine && <button type="button" className="photo-share__delete" onClick={() => void remove(photo.id)} disabled={busy} aria-label="Supprimer cette photo"><Icon name="close" size={14} /></button>}
               </figcaption>
             </figure>
           );
