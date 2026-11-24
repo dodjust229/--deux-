@@ -82,5 +82,11 @@ echo "Running level engine integration recipe"
 echo "Applying test-only join_room_any shim"
 "${PSQL[@]}" -d "$DB" -f supabase/tests/bootstrap_custom_room.sql
 
-echo "Running custom-room integration recipe"
+echo "Running legacy custom-room integration recipe"
 python3 supabase/tests/custom_room.py
+
+echo "Applying catalog-backed custom engine"
+"${PSQL[@]}" -d "$DB" -f supabase/16_custom_catalog_engine.sql
+
+echo "Running catalog-backed custom-engine integration recipe"
+python3 supabase/tests/custom_catalog_engine.py
