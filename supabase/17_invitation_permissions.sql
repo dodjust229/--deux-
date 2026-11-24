@@ -34,6 +34,7 @@ begin
     raise exception 'E_STATE: Le centre d’intérêt ne peut plus être modifié après le lancement.';
   end if;
   if p_categories is null or cardinality(p_categories)<>1
+     or p_categories[1] is null
      or p_categories[1] not in ('decouverte','complicite','profondeur','seduction','audacieux') then
     raise exception 'E_INTEREST: Choisis un seul centre d’intérêt.';
   end if;
