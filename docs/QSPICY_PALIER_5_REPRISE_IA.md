@@ -36,11 +36,12 @@ Parcours prévu :
 - Les téléchargements passent par des URL signées de cinq minutes.
 - Noms de fichiers opaques et aléatoires ; aucun pseudo ni nom d'origine dans le chemin.
 - Limites temporaires : 20 photos actives maximum par salle, 8 par expéditeur, et 8 envois par minute.
-- Suppression autorisée à l'expéditeur ; suppression globale lors de la fin de partie et du départ volontaire. Nettoyage opportuniste global des fichiers expirés lors de toute consultation photo ; les références restent présentes après purge de la salle pour permettre ce nettoyage. Si tous les navigateurs ferment brutalement, les fichiers restent privés et les URL signées expirent, puis le nettoyage physique est déclenché à la prochaine activité photo sur QSPICY.
+- Suppression autorisée à l'expéditeur ; suppression globale lors de la fin de partie et du départ volontaire. Nettoyage global des fichiers expirés au démarrage de l'application et lors des consultations photo ; les références restent présentes après purge de la salle pour permettre ce nettoyage. Si tous les navigateurs ferment brutalement, les fichiers restent privés et les URL signées expirent, puis le nettoyage physique est déclenché à la prochaine ouverture de QSPICY.
 - Migration : `supabase/18_room_photo_sharing.sql`.
 - Edge Function : `supabase/functions/qspicy-room-media/index.ts`.
 - Interface : `src/components/PhotoShare.tsx`, montée dans les salles d'attente et de jeu.
-- API : `getRoomPhotos`, `uploadRoomPhoto`, `deleteRoomPhoto`, `setRoomMediaPermission`, `clearRoomPhotos`.
+- API : `getRoomPhotos`, `uploadRoomPhoto`, `deleteRoomPhoto`, `setRoomMediaPermission`, `clearRoomPhotos`, `cleanupExpiredRoomPhotos`.
+- Nettoyage global public `action=cleanup_expired` : ne retourne aucune photo, supprime uniquement les objets dont l'expiration de six heures est atteinte.
 
 ## 4. Architecture de validation serveur
 
