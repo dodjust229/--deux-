@@ -39,7 +39,7 @@ const migration = "-- QSPICY · Remplacement intégral du catalogue par le maste
   "alter table public.catalog alter column intensity set default 1;\n" +
   "alter table public.catalog alter column intensity set not null;\n" +
   "alter table public.catalog alter column explicit_rank set default 1;\n" +
-  "do $ begin\n  if not exists (select 1 from pg_constraint where conname='catalog_intensity_check') then\n" +
+  "do $$ begin\n  if not exists (select 1 from pg_constraint where conname='catalog_intensity_check') then\n" +
   "    alter table public.catalog add constraint catalog_intensity_check check (intensity between 1 and 5);\n  end if;\nend $$;\n" +
   upsert + cleanup + "\nupdate public.catalog set explicit_rank = least(4, intensity) where explicit_rank is distinct from least(4, intensity);\n";
 if (process.argv.includes("--check")) {
