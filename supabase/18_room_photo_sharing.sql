@@ -95,8 +95,7 @@ begin
   end if;
   return true;
 end
-$;
-
+$$;
 create or replace function public.qspicy_media_targets(
   p_room_id uuid,
   p_player_token text,
