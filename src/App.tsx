@@ -189,17 +189,30 @@ export default function App() {
 
         const joined = data.players.filter((player) => !before.players.some((old) => old.id === player.id));
         const departed = before.players.filter((player) => !data.players.some((current) => current.id === player.id));
+        const wentOffline = data.players.filter((player) =>
+          player.id !== data.my_player_id && !player.online &&
+          before.players.some((old) => old.id === player.id && old.online)
+        );
+        const cameBackOnline = data.players.filter((player) =>
+          player.id !== data.my_player_id && player.online &&
+          before.players.some((old) => old.id === player.id && !old.online)
+        );
         if (joined.length > 0) {
           playSound("join", prefs);
           setNotice(`${joined[0].nickname} a rejoint le salon.`);
           setPartnerLeft(null);
         }
-        if (departed.length > 0) {
-          if (identity.gameMode === "duos") setNotice(`${departed[0].nickname} a quitté le salon.`);
+        if (departed.length > 0 || wentOffline.length > 0) {
+          const person = departed[0] ?? wentOffline[0];
+          if (identity.gameMode === "duos") setNotice(`${person.nickname} a quitté le salon ou perdu la connexion.`);
           else {
             setNotice("");
-            setPartnerLeft(departed[0].nickname);
+            setPartnerLeft(person.nickname);
           }
+        }
+        if (cameBackOnline.length > 0) {
+          setPartnerLeft(null);
+          setNotice(`${cameBackOnline[0].nickname} est de retour dans le salon.`);
         }
       }
       previous.current = data;
@@ -496,9 +509,9 @@ export default function App() {
           <button className="sheet__backdrop" type="button" aria-label="Fermer" onClick={() => setPartnerLeft(null)} />
           <div className="sheet__panel">
             <header className="sheet__head">
-              <h2 id="partner-left-title">{partnerLeft} a quitté le salon.</h2>
+              <h2 id="partner-left-title">Connexion interrompue avec {partnerLeft}.</h2>
             </header>
-            <p className="sheet__note">Voulez-vous toujours continuer ? Tu peux poursuivre seul(e), ou quitter la partie.</p>
+            <p className="sheet__note">Cette personne a quitté le salon ou perdu la connexion. Voulez-vous toujours continuer ? Tu peux poursuivre seul(e), ou quitter la partie.</p>
             <div className="sheet__actions">
               <button className="primary full" type="button" onClick={() => setPartnerLeft(null)}>
                 Continuer la partie
