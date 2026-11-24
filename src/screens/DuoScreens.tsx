@@ -161,7 +161,7 @@ export function DuoGame({ snap, interaction, busy, onSubmit, onPass, onNext, onS
   const [message, setMessage] = useState("");
   const [selectedMoment, setSelectedMoment] = useState<string | null>(null);
   const roundMoments = getRoundMoments(interaction);
-  const roundEvent = getRoundEvent(snap.room.id, snap.room.current_index, snap.room.total, interaction);
+  const roundEvent = getRoundEvent(snap.room.id, snap.room.current_index, snap.room.total, interaction, lang);
   useEffect(() => setSelectedMoment(null), [interaction.id]);
   const ownSpace = snap.my_duo_no === 1 ? "duo_a" : "duo_b";
   const canGroup = snap.players.length === 4 && snap.players.every((p) => p.cross_participation === true);
