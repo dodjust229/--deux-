@@ -122,3 +122,28 @@ export function resolveCustomInteraction(interactionId: string | null, deck: rea
   if (!Number.isInteger(index) || index < 0 || typeof text !== "string") return null;
   return customInteraction(interactionId, text, index);
 }
+
+
+/**
+ * Construit un paquet Personnalisé à partir du catalogue officiel QSPICY.
+ * On ne retient ici que les questions ouvertes des paliers 1–2 : le moteur
+ * historique du mode personnalisé ne sait pas encore restituer les options,
+ * les réponses croisées ni appliquer le consentement 18+ carte par carte.
+ */
+export function buildCustomDeck(
+  catalog: readonly Interaction[],
+  requestedCount: number,
+  random: () => number = Math.random
+): string[] {
+  const eligible = catalog.filter(
+    (card) => card.level <= 2 && card.kind === "free" && card.prompt.trim().length >= CUSTOM.minChars
+  );
+  const pool = [...eligible];
+  // Fisher–Yates : chaque partie obtient un ordre aléatoire sans doublon.
+  for (let i = pool.length - 1; i > 0; i -= 1) {
+    const j = Math.min(i, Math.max(0, Math.floor(random() * (i + 1))));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  const count = Math.max(CUSTOM.min, Math.min(CUSTOM.max, Math.floor(requestedCount) || CUSTOM.min));
+  return pool.slice(0, Math.min(count, pool.length)).map((card) => card.prompt.trim());
+}
