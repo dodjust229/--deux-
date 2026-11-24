@@ -24,11 +24,11 @@ Base : `main` après la PR #17.
    - Les droits restent limités à `anon`, comme les fonctions existantes ; `public` et `authenticated` sont révoqués.
 
 2. `supabase/tests/level_engine.sql`
-   - Ajoute des tests d'intégration Couple et DUOS : premier tirage, deuxième tirage sans recouvrement, puis renouvellement après épuisement.
+   - Ajoute des tests d'intégration Couple et DUOS : deux sessions complètes de 24 cartes sans recouvrement, le reliquat de deux cartes, puis renouvellement après épuisement.
    - Les cartes temporaires `t98` et `t99` sont supprimées à la fin du test.
 
 3. `supabase/tests/run_postgres.sh`
-   - Ajoute la migration 14 à la chaîne de recette.
+   - Ajoute les migrations 14 et 15 à la chaîne de recette.
 
 4. `src/screens/End.tsx`
    - Le bouton devient « Nouvelle partie ».
@@ -82,7 +82,6 @@ Après CI verte et revue du diff :
 
 - Ne pas effacer `played_interaction_ids` dans `restart_game` ou `restart_duo_game` : cela réintroduirait les répétitions.
 - Ne pas remplacer le paquet en cours lors d'une reconnexion : `interaction_ids` + `current_index` sont la source de vérité.
-- Ne pas remettre à zéro tout l'historique quand un seul palier/catégorie est épuisé.
 - Ne pas remettre à zéro tout l'historique quand un seul palier/catégorie est épuisé.
 - Garder le catalogue source `src/catalog.json` et le SQL `supabase/02_catalog.sql` synchronisés avec `npm run catalog:sync`.
 
