@@ -104,6 +104,18 @@ Deno.serve(async (req: Request) => {
       return json(req, 200, { my_receive_media: data.my_receive_media, players: data.players, items });
     }
 
+    if (req.method === "DELETE" && action === "cleanup_room") {
+      const { error: accessError } = await admin.rpc("qspicy_media_list", { p_room_id: roomId, p_player_token: token });
+      if (accessError) return json(req, 403, { error: errorMessage(accessError) });
+      const all = await admin.from("room_media").select("id,object_path").eq("room_id", roomId);
+      if (all.data?.length) {
+        const { error: removeError } = await admin.storage.from(BUCKET).remove(all.data.map((row: { object_path: string }) => row.object_path));
+        if (removeError) return json(req, 502, { error: "Les photos sont répertoriées, mais le nettoyage du stockage a échoué." });
+        await admin.from("room_media").delete().eq("room_id", roomId);
+      }
+      return json(req, 200, { cleaned: true });
+    }
+
     if (req.method === "DELETE" && action === "delete") {
       const mediaId = new URL(req.url).searchParams.get("media_id");
       if (!validUuid(mediaId)) return json(req, 400, { error: "Photo invalide." });
