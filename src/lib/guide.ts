@@ -212,7 +212,7 @@ const TIPS_FR: Record<TipId, { title: string; body: string }> = {
   invite: { title: "Invitation", body: "Le lien contient l'identifiant de la salle. Sans lui, personne ne peut entrer ; une salle pleine refuse les autres." },
   lobby: { title: "Salle d'attente", body: "La partie démarre quand tout le monde est là, qu'une catégorie est commune et que les accords 18+ nécessaires sont donnés." },
   safe: { title: "SAFE", body: "Pause pour les deux, sortie immédiate ou sortie avec blocage mémorisé sur cet appareil." },
-  levels: { title: "Paliers de jeu", body: "Choisis directement le palier que tu veux jouer : aucun déblocage des précédents n’est nécessaire. Les paliers 3–4 exigent l’accord 18+ de tous les joueurs." },
+  levels: { title: "Paliers de jeu", body: "Choisis directement le palier que tu veux jouer : aucun déblocage des précédents n’est nécessaire. Aux paliers 3–4, toutes les catégories non exclues sont proposées par défaut. Ces paliers exigent l’accord 18+ de tous les joueurs." },
   custom: { title: "Tes questions", body: "Entre 5 et 24 questions, jouées dans l'ordre affiché. Le serveur vérifie la longueur et les doublons au lancement. Pas de palier 18+ ici." },
   duos: { title: "Salon DUOS", body: "Quatre joueurs, deux duos. Chaque réponse choisit qui la voit ; le salon commun n'ouvre que si les quatre l'autorisent." }
 };
@@ -225,7 +225,7 @@ const TIPS_EN: Record<TipId, { title: string; body: string }> = {
   invite: { title: "Invitation", body: "The link carries the room id. Without it nobody can enter; a full room refuses newcomers." },
   lobby: { title: "Waiting room", body: "The game starts when everyone is here, one category is shared and the required 18+ consents are given." },
   safe: { title: "SAFE", body: "Pause for both, leave immediately, or leave with a block remembered on this device." },
-  levels: { title: "Game levels", body: "Choose the exact level you want to play; previous levels do not need to be unlocked. Levels 3–4 require 18+ consent from everyone." },
+  levels: { title: "Game levels", body: "Choose the exact level you want to play; previous levels do not need to be unlocked. At levels 3–4, all non-excluded categories are offered by default. These levels require 18+ consent from everyone." },
   custom: { title: "Your questions", body: "5 to 24 questions, played in the order shown. The server checks length and duplicates when the game starts. No 18+ tier here." },
   duos: { title: "DUOS room", body: "Four players, two duos. Each answer chooses who sees it; the shared room opens only if all four allow it." }
 };
