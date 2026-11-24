@@ -25,7 +25,7 @@ import {
   clearRoomPhotos,
   cleanupExpiredRoomPhotos
 } from "./api";
-import { extractRoomId, getSelectedInterests, parseError } from "./lib/protocol";
+import { extractRoomId, getSelectedInterests, parseError, sessionFingerprint } from "./lib/protocol";
 import { deriveScene } from "./lib/scene";
 import { clearPrivateAnswers } from "./lib/media";
 import { applyPreferences, categoriesForIntensity, readPreferences, writePreferences, type Preferences } from "./lib/prefs";
@@ -139,9 +139,17 @@ export default function App() {
   const [copied, setCopied] = useState(false);
 
   const failures = useRef(0);
-  const inFlight = useRef(false);
+  const inFlight = useRef<string | null>(null);
   const lastQuestion = useRef<string | null>(null);
   const previous = useRef<Snapshot | null>(null);
+  const activeSession = useRef<string | null>(null);
+  const currentSession = sessionFingerprint(identity);
+  if (activeSession.current !== currentSession) {
+    activeSession.current = currentSession;
+    previous.current = null;
+    lastQuestion.current = null;
+    failures.current = 0;
+  }
 
   /* ---------- Préférences locales (jamais synchronisées) ---------- */
   useEffect(() => {
@@ -182,10 +190,13 @@ export default function App() {
   }, [identity]);
 
   const refresh = useCallback(async () => {
-    if (!identity || inFlight.current) return;
-    inFlight.current = true;
+    if (!identity) return;
+    const requestSession = sessionFingerprint(identity);
+    if (!requestSession || inFlight.current === requestSession) return;
+    inFlight.current = requestSession;
     try {
       const data = await getSessionSnapshot(identity.roomId, identity.token, identity.gameMode);
+      if (activeSession.current !== requestSession) return;
       failures.current = 0;
       setOffline(false);
       setSnapshot(data);
@@ -235,6 +246,7 @@ export default function App() {
       }
       previous.current = data;
     } catch (caught) {
+      if (activeSession.current !== requestSession) return;
       const parsed = parseError(caught);
       if (parsed.fatal) dropSession(parsed.message);
       else {
@@ -242,7 +254,7 @@ export default function App() {
         setOffline(true);
       }
     } finally {
-      inFlight.current = false;
+      if (inFlight.current === requestSession) inFlight.current = null;
     }
   }, [identity, dropSession, prefs]);
 
@@ -331,6 +343,8 @@ export default function App() {
       saveIdentity(nextIdentity);
       lastQuestion.current = null;
       previous.current = null;
+      activeSession.current = sessionFingerprint(nextIdentity);
+      failures.current = 0;
       setNotice("");
       setPartnerLeft(null);
       setIdentity(nextIdentity);
