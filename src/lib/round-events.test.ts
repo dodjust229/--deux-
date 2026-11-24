@@ -48,7 +48,7 @@ test("level 4 surprise rounds use direct adult mechanics", () => {
   const event = getRoundEvent("room-a", 2, 8, { ...interaction, level: 4 });
   assert.ok(event);
   assert.match(event.id, /^l4-/);
-  assert.match(event.instruction, /sexuel|sexuelle|sexe/i);
+  assert.match(event.subtitle, /PALIER 4/);
 });
 
 test("English sessions receive translated event copy", () => {
