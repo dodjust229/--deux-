@@ -74,7 +74,16 @@ begin
     raise exception 'un invité doit recevoir room_kind=custom (reçu %)', v_guest->>'room_kind';
   end if;
 
-  -- ===== 5. Un invité ne peut pas changer le type du salon =====
+  -- ===== 5. Une salle legacy sans type conserve le fallback du lien =====
+  v_couple := public.create_room('HoteLegacy', 'masculin');
+  v_room := (v_couple->>'room_id')::uuid;
+  update public.rooms set room_kind = null where id = v_room;
+  v_guest := public.join_room_any(v_room, 'InviteLegacy', 'feminin');
+  if v_guest ? 'room_kind' and v_guest->>'room_kind' is not null then
+    raise exception 'une salle legacy sans type explicite doit conserver room_kind=NULL (reçu %)', v_guest->>'room_kind';
+  end if;
+
+  -- ===== 6. Un invité ne peut pas changer le type du salon =====
   v_ok := false;
   begin
     perform public.set_room_kind(v_room, v_guest->>'player_token', 'couple');
@@ -85,7 +94,7 @@ begin
     raise exception 'un invité ne doit pas pouvoir changer le type du salon';
   end if;
 
-  -- ===== 6. get_custom_deck renvoie la séquence du moteur catalogue =====
+  -- ===== 7. get_custom_deck renvoie la séquence du moteur catalogue =====
   -- (le salon Personnalisé est encore en attente : la séquence est vide, mais l'appel doit
   --  répondre sans erreur et renvoyer un tableau JSON.)
   v_deck := public.get_custom_deck(v_room, v_token);
