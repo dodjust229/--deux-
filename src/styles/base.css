@@ -503,7 +503,29 @@ textarea {
 .topbar--over {
   position: relative;
   z-index: 3;
+  min-height: 84px;
   border-bottom-color: transparent;
+}
+
+.topbar--over .topbar__brand {
+  display: inline-flex;
+  align-items: center;
+  min-height: 60px;
+}
+
+.topbar--over .wordmark__logo {
+  border-radius: 17%;
+  box-shadow: 0 12px 34px rgba(0, 0, 0, .48), 0 0 24px rgba(240, 192, 106, .18);
+}
+
+@media (max-width: 640px) {
+  .topbar--over {
+    min-height: 64px;
+  }
+
+  .topbar--over .topbar__brand {
+    min-height: 52px;
+  }
 }
 
 .topbar--over .topbar__private,
