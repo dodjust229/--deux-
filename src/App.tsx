@@ -729,6 +729,7 @@ export default function App() {
           token={identity.token}
           myPlayerId={snapshot.my_player_id}
           mode={identity.gameMode === "duos" ? "duos" : "couple"}
+          lang={prefs.language}
           onPermissionChange={(allow) => void run(() => setRoomMediaPermission(identity.roomId, identity.token, allow), false)}
         />
       )}
