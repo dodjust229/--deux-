@@ -14,7 +14,7 @@ test("keeps the opening rounds clean and introduces a surprise every third round
   assert.equal(getRoundEvent("room-a", 1, 8, interaction), null);
   assert.ok(getRoundEvent("room-a", 2, 8, interaction));
   assert.equal(getRoundEvent("room-a", 3, 8, interaction), null);
-  assert.equal(getRoundEvent("room-a", 5, 8, interaction)?.subtitle.includes("SURPRISE"), true);
+  assert.match(getRoundEvent("room-a", 5, 8, interaction)?.subtitle ?? "", /SURPRISE/);
 });
 
 test("always gives the final round a finale event, even outside the cadence", () => {
@@ -30,11 +30,11 @@ test("all devices derive the same event for the same room and round", () => {
   );
 });
 
-test("different rooms can receive different event cards", () => {
-  const a = getRoundEvent("room-a", 2, 8, interaction);
-  const b = getRoundEvent("room-b", 2, 8, interaction);
-  assert.ok(a && b);
-  assert.ok(a.id !== b.id || a.title === b.title);
+test("event selection changes across rooms instead of showing a fixed surprise", () => {
+  const ids = new Set(
+    Array.from({ length: 24 }, (_, index) => getRoundEvent(`room-${index}`, 2, 8, interaction)?.id)
+  );
+  assert.ok(ids.size > 1);
 });
 
 test("invalid round coordinates never produce an event", () => {
