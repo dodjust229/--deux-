@@ -134,8 +134,28 @@ python3 supabase/tests/palier4_invitation_permissions.py
 echo "Applying Palier 5 private gallery photo rules"
 "${PSQL[@]}" -d "$DB" -f "supabase/18_room_photo_sharing.sql"
 
+# Simule une ancienne salle Personnalisé créée avant l'existence de room_kind.
+"${PSQL[@]}" -d "$DB" <<'SQL'
+INSERT INTO public.rooms (id, mode, status, custom_deck, interaction_ids)
+VALUES ('00000000-0000-4000-8000-000000000019', 'couple', 'waiting',
+        '["Question personnalisée legacy"]'::jsonb, ARRAY['perso-1']);
+SQL
+
 echo "Applying invitation finalisation (after 16, 17 and 18)"
 "${PSQL[@]}" -d "$DB" -f "supabase/19_invitation_finalisation.sql"
+
+# La migration doit reconnaître le deck historique et le préserver en Personnalisé.
+"${PSQL[@]}" -d "$DB" <<'SQL'
+DO $legacy$
+BEGIN
+  IF (SELECT room_kind FROM public.rooms
+       WHERE id = '00000000-0000-4000-8000-000000000019') IS DISTINCT FROM 'custom' THEN
+    RAISE EXCEPTION 'La migration 19 a mal classé une ancienne salle Personnalisé';
+  END IF;
+END
+$legacy$;
+DELETE FROM public.rooms WHERE id = '00000000-0000-4000-8000-000000000019';
+SQL
 
 echo "Applying level and mode integrity fix (after 19)"
 "${PSQL[@]}" -d "$DB" -f supabase/20_level_and_mode_integrity.sql
