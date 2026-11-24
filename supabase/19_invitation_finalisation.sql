@@ -19,13 +19,20 @@
 -- Additif et idempotent : aucune donnée n'est supprimée, aucune salle en cours n'est modifiée.
 
 -- ===== 1. Type de salon porté par la salle =====
-alter table public.rooms add column if not exists room_kind text not null default 'couple';
+alter table public.rooms add column if not exists room_kind text;
+-- Une salle préexistante sans type explicite reste identifiable comme legacy : le client
+-- conserve alors le mode du lien d'invitation au lieu de forcer Couple.
+alter table public.rooms alter column room_kind drop default;
+alter table public.rooms alter column room_kind drop not null;
 alter table public.rooms drop constraint if exists rooms_room_kind_check;
 alter table public.rooms add constraint rooms_room_kind_check
   check (room_kind in ('couple','custom','duos'));
 
 -- Les salles DUOS existantes se reconnaissent à leur mode.
-update public.rooms set room_kind = 'duos' where mode = 'duos' and room_kind <> 'duos';
+update public.rooms set room_kind = 'duos' where mode = 'duos' and room_kind is distinct from 'duos';
+-- Les anciennes salles du moteur historique stockaient leur deck libre dans custom_deck.
+update public.rooms set room_kind = 'custom'
+ where mode = 'couple' and custom_deck is not null and room_kind is null;
 
 -- Un salon DUOS créé après cette migration doit naître avec le bon type : le défaut de colonne
 -- est 'couple', on le corrige à la création.
@@ -120,7 +127,7 @@ begin
   end if;
   -- Le type du salon accompagne la réponse : un lien tronqué (sans &mode=) ne fait plus
   -- arriver l'invité dans le mauvais format.
-  return v_result || jsonb_build_object('room_kind', coalesce(v_kind, v_mode));
+  return v_result || jsonb_build_object('room_kind', v_kind);
 end
 $$;
 
