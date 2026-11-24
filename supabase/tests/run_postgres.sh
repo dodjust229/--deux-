@@ -191,3 +191,8 @@ echo "Applying explicit content floor fix (must run after 20)"
 
 echo "Running explicit content floor recipe"
 "${PSQL[@]}" -d "$DB" -f "supabase/tests/explicit_content_floor.sql"
+
+# Re-run the multi-interest custom flow after migration 21, which replaces start_custom_game.
+"${PSQL[@]}" -d "$DB" -c "TRUNCATE public.rate_events"
+echo "Rechecking Couple, DUOS and custom union-of-interests after all migrations"
+python3 supabase/tests/palier4_invitation_permissions.py
