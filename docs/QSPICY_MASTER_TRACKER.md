@@ -28,7 +28,7 @@ L'utilisateur ne peut pas joindre de fichiers dans cette conversation. Travaille
 | 5 | Confidentialité et photos personnelles depuis la galerie | Livré côté code et infrastructure | `docs/QSPICY_PALIER_5_REPRISE_IA.md` ; PR #21, #22, #23 fusionnées ; migration 18 et Edge Function déployées ; Render live. Recette photo multi-appareils restante. |
 | 6 | Musique et ambiance | Livré code et déployé | PR #24 fusionnée ; CI #45372319685 réussie ; Render `dep-dc2m65ss728c73b0u7c0` live. Recette audio réelle mobile/desktop restante. |
 | 7 | Tests globaux, bugs et stabilisation | Livré code et déployé | PR #25 fusionnée ; CI #45374406093 réussie, dont recette PostgreSQL 16 ; Render `dep-dc2mc1m7bikc7394161g` live. Recette terrain à deux/quatre appareils encore nécessaire. Voir `docs/QSPICY_PALIER_7_REPRISE_IA.md`. |
-| 8 | Finalisation du parcours d'invitation | Livré sur branche, PR à examiner | Branche `qspicy/test-invitation-personnalise` ; migration 19 ; recettes E2E 13/13 + 6/6 et suite SQL complète au vert sur base neuve. Voir ci-dessous. |
+| 8 | Finalisation du parcours d'invitation | Livré sur branche, PR #27 à examiner | Branche `qspicy/test-invitation-personnalise` ; migration 19 ; recettes E2E 13/13 + 6/6 et suite SQL complète au vert sur base neuve ; CI du 24/11 sur la PR #27 : succès. Voir ci-dessous. |
 
 ## Palier 8 — finalisation du parcours d'invitation
 
