@@ -377,22 +377,20 @@ begin
     raise exception 'E_CUSTOM: Sélection invalide (5 à 24 cartes uniques attendues).';
   end if;
 
-  select array_agg(c order by c) into v_categories
-    from unnest(me.selected_categories) c
-   where exists (
-     select 1 from public.players other
-      where other.room_id = p_room_id and other.status = 'active'
-        and other.id <> me.id and c = any(other.selected_categories)
-   );
+  -- Le paquet Personnalisé peut utiliser les intérêts choisis par l'un OU l'autre joueur.
+  select array_agg(distinct chosen.category order by chosen.category) into v_categories
+    from public.players participant
+    cross join lateral unnest(participant.selected_categories) as chosen(category)
+   where participant.room_id = p_room_id and participant.status = 'active';
   if coalesce(cardinality(v_categories), 0) = 0 then
-    raise exception 'E_CATEGORIES: Choisissez au moins une catégorie en commun.';
+    raise exception 'E_CATEGORIES: Chaque joueur doit choisir un centre d''intérêt.';
   end if;
 
   select count(*) into v_count
     from public.catalog c
    where c.id = any(p_interaction_ids) and c.category = any(v_categories);
   if v_count <> cardinality(p_interaction_ids) then
-    raise exception 'E_CUSTOM: Une ou plusieurs cartes ne font pas partie du catalogue ou des catégories communes.';
+    raise exception 'E_CUSTOM: Une ou plusieurs cartes ne font pas partie du catalogue ou des centres d''intérêt choisis.';
   end if;
 
   select exists(
