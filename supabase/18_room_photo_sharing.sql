@@ -135,7 +135,7 @@ begin
         from public.players p left join public.duo_permissions dp on dp.player_id=p.id
        where p.room_id=p_room_id and p.status='active';
       if not coalesce(v_all_cross,false) then
-        raise exception 'E_MEDIA_CONSENT: Les quatre joueurs doivent autoriser l'espace commun.';
+        raise exception 'E_MEDIA_CONSENT: Les quatre joueurs doivent autoriser l’espace commun.';
       end if;
       select array_agg(p.id order by p.seat) into v_recipients
         from public.players p
@@ -151,7 +151,7 @@ begin
     left join public.duo_permissions dp on dp.player_id=p.id
     where p.id=any(v_recipients) and not coalesce(dp.receive_media,false)
   ) then
-    raise exception 'E_MEDIA_CONSENT: Au moins un destinataire n'accepte pas les photos.';
+    raise exception 'E_MEDIA_CONSENT: Au moins un destinataire n’accepte pas les photos.';
   end if;
 
   return jsonb_build_object('sender_id',me.id,'scope',p_scope,'recipient_ids',to_jsonb(v_recipients),'room_mode',r.mode);
