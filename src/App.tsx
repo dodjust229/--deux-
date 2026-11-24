@@ -718,7 +718,7 @@ export default function App() {
         </main>
       )}
 
-      {identity && snapshot && (
+      {identity && snapshot && snapshot.room.status !== "finished" && (
         <PhotoShare
           roomId={identity.roomId}
           token={identity.token}
