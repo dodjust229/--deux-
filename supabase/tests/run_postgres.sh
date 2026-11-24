@@ -45,7 +45,8 @@ for migration in \
   10_custom_room \
   11_game_levels \
   12_level_consent_guard \
-  13_expand_balanced_catalog
+  13_expand_balanced_catalog \
+  14_session_question_history
 do
   echo "Applying supabase/${migration}.sql"
   "${PSQL[@]}" -d "$DB" -f "supabase/${migration}.sql"
