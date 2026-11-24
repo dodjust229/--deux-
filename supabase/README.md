@@ -84,3 +84,12 @@ les catégories communes couvrent toutes ses cartes. Pour offrir plusieurs sessi
 complètes sans répétition, il faudra augmenter le catalogue au-delà de 24 cartes
 par palier. L'historique fonctionne déjà pour des pools plus larges et pour les
 sélections de catégories plus restreintes.
+
+
+### Extension du catalogue — 48 cartes par palier
+
+Appliquer ensuite `15_expand_session_catalog.sql`. Le catalogue passe à 192 cartes
+(48 par palier). Une session de 24 questions peut ainsi être suivie d'une deuxième
+session complète sans aucune répétition, tant que les joueurs conservent un ensemble
+de catégories qui couvre le pool correspondant. La migration 15 est un UPSERT non
+destructif ; les textes, titres et formulations complets sont dans `src/catalog.json`.
