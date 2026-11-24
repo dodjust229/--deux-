@@ -119,7 +119,7 @@ export function DuoLobby({ snap, inviteUrl, copied, onCopy, selected, shared, on
         <p className="muted small">
           {lang === "fr"
             ? `${snap.players.filter((p) => p.adult_consent).length}/4 ont donné leur accord. Les paliers 3–4 et Audacieux exigent l’accord des quatre ; un retrait bloque leur lancement.`
-            : `${snap.players.filter((p) => p.adult_consent).length}/4 have consented. Levels 3–4 and Audacieux require all four; withdrawing consent blocks their launch.`
+            : `${snap.players.filter((p) => p.adult_consent).length}/4 have consented. Levels 3–4 and Audacieux require all four; withdrawing consent blocks their launch.`}
         </p>
         <label className="duo-toggle">
           <input type="checkbox" data-testid="duo-cross-consent" checked={perm.cross_participation} onChange={(e) => onPermissions({ ...perm, cross_participation: e.target.checked, share_answers: e.target.checked ? perm.share_answers : false })} />
