@@ -10,7 +10,7 @@ create table if not exists public.room_media (
   recipient_player_ids uuid[] not null,
   scope text not null check (scope in ('partner','duo','group')),
   object_path text not null unique,
-  mime_type text not null check (mime_type in ('image/jpeg','image/png','image/webp')),
+  mime_type text not null check (mime_type = 'image/jpeg'),
   byte_size integer not null check (byte_size between 1 and 5242880),
   created_at timestamptz not null default now(),
   expires_at timestamptz not null default (now() + interval '6 hours')
@@ -27,7 +27,7 @@ grant select, delete on public.room_media to service_role;
 
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values ('qspicy-private-media','qspicy-private-media',false,5242880,
-        array['image/jpeg','image/png','image/webp'])
+        array['image/jpeg'])
 on conflict (id) do update
 set public=false, file_size_limit=5242880,
     allowed_mime_types=array['image/jpeg','image/png','image/webp'];
@@ -142,7 +142,7 @@ begin
      or p_object_path !~ '^[0-9a-fA-F-]{36}/[0-9a-fA-F-]{36}\.(jpg|png|webp)$' then
     raise exception 'E_MEDIA_PATH: Chemin de fichier invalide.';
   end if;
-  if p_mime_type is null or p_mime_type not in ('image/jpeg','image/png','image/webp')
+  if p_mime_type is distinct from 'image/jpeg'
      or p_byte_size is null or p_byte_size not between 1 and 5242880 then
     raise exception 'E_MEDIA_FILE: Fichier non autorisé ou trop volumineux.';
   end if;
