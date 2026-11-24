@@ -70,3 +70,14 @@ VIP1 / Pass Hôte reste un chantier commercial séparé : le backend FedaPay exi
 ## Statut
 
 Palier 7 : correctif et recette de régression ajoutés au dépôt ; clôture technique après CI, fusion et Render live. La recette manuelle multi-appareils reste à confirmer avant de qualifier l'ensemble du produit de testé sur le terrain.
+
+## Production — livraison Palier 7
+
+- PR #25 fusionnée : https://github.com/dodjust229/--deux-/pull/25.
+- Commit de fusion : `e8617dda400578ea7b282bc0f0b7e2107a886e5d`.
+- GitHub Actions run `45374406093` : `success` — TypeScript, tests unitaires/catalogue, build Vite et intégration PostgreSQL 16.
+- La recette PostgreSQL finale a terminé par `PALIER 7 SECURITY REGRESSION OK`.
+- Render : déploiement `dep-dc2mc1m7bikc7394161g`, statut `live`.
+- Application : https://a-deux-jeu.onrender.com.
+- Aucune migration ni modification de données Supabase de production n'a été nécessaire pour ce palier.
+- Statut : code et infrastructure livrés. La recette réelle sur téléphones/ordinateurs reste nécessaire ; les tests CI ne simulent pas les appareils physiques.
