@@ -1,9 +1,9 @@
 # QSPICY — dossier de reprise IA · Palier 2
 
 Date : 24 novembre 2026  
-Travail historique fusionné par la PR #17 ; extension du catalogue préparée sur `qspicy/palier-2-catalog-expansion`.  
-Base : `main` après la PR #17.  
-État : moteur d'historique fusionné et migration 14 appliquée en production ; migration 15 + catalogue 192 cartes en attente de CI, fusion et application.
+Palier 2 terminé et fusionné dans `main` par les PR #17 et #18.  
+Commit de livraison : `d0185ec34fcd1a76fd19b5dcc2f9eab1ec81b5a9`.  
+État : migrations 14 et 15 appliquées en production ; catalogue et moteur anti-répétition vérifiés ; CI verte ; déploiement Render `dep-dc2kqbcs728c73atac50` au statut `live`.
 
 ## Objectif du palier 2
 
@@ -13,7 +13,7 @@ Base : `main` après la PR #17.
 - Une fois toutes les cartes du pool choisi (palier + catégories communes) consommées, seul ce pool est remis à zéro. L'historique des autres paliers/catégories reste intact.
 - L'historique est attaché à la salle. Créer une nouvelle salle démarre un historique vierge.
 
-## Modifications préparées sur cette branche
+## Modifications livrées
 
 1. `supabase/14_session_question_history.sql`
    - Ajoute `rooms.played_interaction_ids text[] not null default '{}'`.
@@ -38,7 +38,7 @@ Base : `main` après la PR #17.
    - Documente l'ordre des migrations et les 48 cartes par palier.
 
 6. `src/catalog.json` + `supabase/02_catalog.sql`
-   - Catalogue étendu à 192 cartes, soit 48 par palier ; le SQL généré est synchronisé.
+   - Catalogue de production : 192 cartes, soit 48 par palier ; le SQL généré est synchronisé.
 
 7. `supabase/15_expand_session_catalog.sql`
    - UPSERT des métadonnées des 96 nouvelles cartes ; aucun TRUNCATE ni effacement.
@@ -47,9 +47,9 @@ Base : `main` après la PR #17.
 
 Le catalogue est maintenant étendu à **192 cartes, soit 48 par palier**. Une session de 24 questions peut être suivie d'une deuxième session complète sans répétition si les catégories communes couvrent tout le pool du palier. Si les joueurs ne sélectionnent qu'une partie des catégories, la taille du pool éligible varie et le cycle peut s'épuiser plus tôt.
 
-## Vérifications à effectuer avant fusion
+## Vérifications exécutées
 
-Depuis une copie fraîche de la branche `qspicy/palier-2-catalog-expansion` :
+Commandes exécutées par la CI GitHub sur la PR #18 :
 
 ```bash
 npm ci
@@ -58,25 +58,20 @@ npm run build
 bash supabase/tests/run_postgres.sh
 ```
 
-La recette SQL doit confirmer :
+La CI a confirmé :
 - aucun identifiant commun entre deux paquets successifs tant que le pool contient des cartes inédites ;
 - remise à zéro limitée au palier et aux catégories épuisés ;
 - fonctionnement identique pour Couple et DUOS ;
 - conservation du consentement et du filtrage par niveau ;
 - reconnexion à une session en cours sans nouveau tirage.
 
-Vérifier aussi que `supabase/tests/run_postgres.sh` applique bien `14_session_question_history.sql` puis `15_expand_session_catalog.sql` après les migrations 11 à 13.
+La recette PostgreSQL 16 applique bien les migrations 14 et 15, puis vérifie le catalogue équilibré et deux sessions complètes sans répétition en Couple et DUOS.
 
 ## Déploiement / base de production
 
-**Le moteur d'historique est déjà en production.** La migration 14 a été appliquée et vérifiée sur Supabase. L'extension du catalogue (migration 15 + 96 nouvelles cartes) n'est pas encore fusionnée ni appliquée. Aucun déploiement de cette extension n'a été confirmé.
+**Déploiement effectué.** Les migrations 14 et 15 ont été appliquées au projet Supabase `xqvxorvvjmwzpcqmqnqv`. Vérifications SQL : 192 cartes uniques, 48 cartes par palier, 96 nouvelles cartes insérées. Les deux RPC de lancement restent exécutables par `anon` uniquement ; `authenticated` et `public` n'ont pas le droit `EXECUTE`.
 
-Après CI verte et revue du diff :
-1. obtenir une CI verte, puis fusionner la PR catalogue dans `main` ;
-2. appliquer `15_expand_session_catalog.sql` une seule fois sur le projet Supabase `xqvxorvvjmwzpcqmqnqv` (la migration 14 est déjà appliquée) ;
-3. vérifier 192 cartes, 48 par palier, et les grants des RPC ;
-4. laisser Render déployer le commit `main` (le service compile directement le dépôt avec `npm ci && npm run build`) ;
-5. vérifier le déploiement `live`, puis une reconnexion et deux sessions de 24 questions sans recouvrement dans la même salle.
+Render : service `a-deux-jeu`, déploiement `dep-dc2kqbcs728c73atac50`, commit `d0185ec34fcd1a76fd19b5dcc2f9eab1ec81b5a9`, statut `live`. Le build `npm ci --no-audit --no-fund && npm run build` a réussi. Le service compile directement le dépôt ; il n'a pas besoin de régénérer `a-deux-source.tar.gz`.
 
 ## Ne pas faire
 
@@ -87,4 +82,4 @@ Après CI verte et revue du diff :
 
 ## État technique connu
 
-La migration conserve les réponses, salles et données existantes. Elle n'effectue aucune suppression de données utilisateur. Les tests ajoutés sont des tests de base jetable, pas une partie réelle créée en production.
+Les migrations sont additives et non destructives : elles conservent les salles, réponses et historiques existants. La recette utilise une base PostgreSQL jetable. Le contrôle final de production a vérifié le schéma, le volume du catalogue et les privilèges RPC ; il n'a pas simulé une vraie partie avec deux navigateurs. Une vérification fonctionnelle manuelle Couple et DUOS reste utile après la livraison.
