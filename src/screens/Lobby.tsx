@@ -37,6 +37,7 @@ interface LobbyProps {
   /** « custom » remplace les ambiances par l'écriture des questions. */
   kind?: "couple" | "custom";
   customCatalog: readonly Interaction[];
+  selectedCategories: Category[];
   onLaunchCustom?: (questions: string[]) => void;
   customError?: string;
   isHost?: boolean;
@@ -64,6 +65,7 @@ export function Lobby({
   lang = "fr",
   kind = "couple",
   customCatalog,
+  selectedCategories,
   onLaunchCustom,
   customError,
   isHost = true,
@@ -85,8 +87,8 @@ export function Lobby({
           <p className="muted">
             {custom
               ? bothPresent
-                ? "Vos questions remplacent le catalogue. Elles se jouent dans l'ordre écrit."
-                : "Envoie ce lien à la personne avec qui tu veux jouer. Les questions s'écrivent en attendant."
+                ? "QSPICY compose une sélection privée dans vos catégories communes."
+                : "Envoie ce lien à la personne avec qui tu veux jouer. L'hôte choisira la sélection avant de lancer."
               : bothPresent
                 ? "Choisissez ensemble les ambiances. Seules les catégories communes seront tirées."
                 : "Envoie ce lien à la personne avec qui tu veux jouer. Elle seule pourra entrer."}
@@ -132,6 +134,7 @@ export function Lobby({
             <CustomQuestions
               lang={lang}
               catalog={customCatalog}
+              selectedCategories={selectedCategories}
               onLaunch={onLaunchCustom ?? (() => {})}
               isHost={isHost}
               partnerHere={bothPresent}
