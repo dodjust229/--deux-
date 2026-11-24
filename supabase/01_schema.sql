@@ -17,6 +17,7 @@ create table if not exists public.rooms (
   current_index integer not null default 0,
   interaction_ids text[] not null default '{}',
   adult_enabled boolean not null default false,
+  selected_level integer not null default 2 check (selected_level between 1 and 4),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   last_activity timestamptz not null default now()
@@ -133,16 +134,30 @@ end $$;
 -- Recalcule le mode 18+ : actif seulement si les DEUX joueurs actifs ont consenti. Retrait = effet immédiat.
 create or replace function public._sync_adult(p_room_id uuid) returns void
 language plpgsql security definer set search_path = public, extensions, pg_temp as $$
-declare v_ok boolean; r public.rooms; cat text;
+declare v_ok boolean; v_required integer; r public.rooms; cat text; v_int text;
 begin
-  select count(*)=2 and bool_and(adult_consent) into v_ok from public.players where room_id=p_room_id and status='active';
-  update public.rooms set adult_enabled=coalesce(v_ok,false), updated_at=now() where id=p_room_id returning * into r;
-  if r.status in ('playing','paused') and not r.adult_enabled then
-    select category into cat from public.catalog where id=r.interaction_ids[r.current_index+1];
-    if cat='audacieux' then
-      delete from public.answers where room_id=p_room_id and interaction_id=r.interaction_ids[r.current_index+1];
+  select * into r from public.rooms where id=p_room_id for update;
+  if r.id is null then return; end if;
+  v_required := case when r.mode='duos' then 4 else 2 end;
+  select count(*)=v_required and coalesce(bool_and(adult_consent),false) into v_ok
+    from public.players where room_id=p_room_id and status='active';
+  update public.rooms set adult_enabled=coalesce(v_ok,false), updated_at=now()
+   where id=p_room_id returning * into r;
+  if r.status in ('playing','paused') and not coalesce(v_ok,false) then
+    v_int := r.interaction_ids[r.current_index+1];
+    if r.selected_level >= 3 then
+      delete from public.answers where room_id=p_room_id and interaction_id=v_int;
+      delete from public.duo_answers where room_id=p_room_id and interaction_id=v_int;
       update public.players set ack_index=-1 where room_id=p_room_id;
-      perform public._advance(p_room_id);
+      update public.rooms set status='finished', adult_enabled=false, updated_at=now(), last_activity=now() where id=p_room_id;
+    else
+      select category into cat from public.catalog where id=v_int;
+      if cat='audacieux' then
+        delete from public.answers where room_id=p_room_id and interaction_id=v_int;
+        delete from public.duo_answers where room_id=p_room_id and interaction_id=v_int;
+        update public.players set ack_index=-1 where room_id=p_room_id;
+        perform public._advance(p_room_id);
+      end if;
     end if;
   end if;
 end $$;
