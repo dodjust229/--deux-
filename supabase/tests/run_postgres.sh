@@ -51,7 +51,7 @@ done
 
 echo "Checking level-aware catalog and RPCs"
 "${PSQL[@]}" -d "$DB" <<'SQL'
-DO $
+DO $qspicy$
 BEGIN
   IF (SELECT count(*) FROM public.catalog) <> 63 THEN
     RAISE EXCEPTION 'Expected 63 catalog cards after level migration';
@@ -66,7 +66,7 @@ BEGIN
     RAISE EXCEPTION 'Missing start_duo_game_by_level RPC';
   END IF;
 END
-$;
+$qspicy$;
 SQL
 
 echo "Applying test-only join_room_any shim"
