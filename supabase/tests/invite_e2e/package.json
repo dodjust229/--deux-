@@ -1,0 +1,9 @@
+{
+  "name": "qspicy-invite-e2e",
+  "private": true,
+  "type": "module",
+  "description": "Recette navigateur de l'invitation du mode Personnalisé sur une base Supabase de test",
+  "dependencies": {
+    "puppeteer-core": "^23.11.1"
+  }
+}
