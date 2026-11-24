@@ -99,6 +99,27 @@ déploiement de production, aucune écriture sur la base Supabase de production.
 - Bucket `qspicy-private-media` : privé, JPEG uniquement, 5 Mo maximum.
 - Le dossier Palier 5 précise les limites de nettoyage après fermeture brutale de tous les navigateurs.
 
+## Correctif paliers et modes (24/11/2026)
+
+Trois défauts constatés en jouant, corrigés dans `supabase/20_level_and_mode_integrity.sql`
+(additive, idempotente, appliquée après la 17 dont elle conserve toutes les règles).
+
+- **La progression régressait.** L'interface lisait le palier de la carte tirée
+  (`interaction.level`) au lieu du palier de session. Sans carte active l'affichage
+  retombait à 1 ; en mode Personnalisé (paquet multi-paliers) il sautait de 3 à 2 puis à 1.
+  `rooms.current_level` est désormais un palier de session persistant, strictement non
+  décroissant (trigger `trg_rooms_current_level`), exposé au client via `get_room_snapshot`.
+- **« Pas d'option disponible » en choisissant Audacieux.** Les cartes `audacieux`
+  n'existent qu'aux paliers 3–4 (13 + 28, aucune aux paliers 1–2). `_effective_level`
+  relève le palier au minimum nécessaire pour servir le mode choisi, sans jamais le
+  rabaisser ni relever un palier qui a déjà des cartes.
+- **L'intensité était rabaissée.** `restart_game` effaçait l'accord 18+ de tous les
+  joueurs ; `_advance` sautait alors les cartes `audacieux`. L'accord est conservé d'une
+  partie à l'autre (toujours révocable via `set_adult_consent`) et le palier ne recule plus.
+
+Recette dédiée : `supabase/tests/level_and_mode_integrity.sql`. Suite SQL complète verte,
+41/41 tests front, `tsc -b` sans erreur, CI GitHub verte (run 45397972009).
+
 ## Conventions techniques
 
 - GitHub : `dodjust229/--deux-`, branche `main`.

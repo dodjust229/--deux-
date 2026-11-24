@@ -168,3 +168,25 @@ reproductible sur une base neuve et corrige quatre écarts :
 La migration est additive et idempotente : aucune donnée n'est supprimée, aucune salle en cours
 n'est modifiée. Les recettes `supabase/tests/run_postgres.sh` et
 `supabase/tests/invite_e2e/run.sh` l'appliquent et ne dépendent plus d'aucun adaptateur de test.
+
+## Migration 20 — intégrité des paliers et respect du mode
+
+`20_level_and_mode_integrity.sql` corrige trois défauts constatés en jouant. Elle est
+additive et idempotente, et **doit s'appliquer après `17_invitation_permissions.sql`** :
+elle redéfinit `start_game_by_level` et `start_duo_game_by_level` en conservant toutes
+les règles de la 17 (hôte seul, union des centres d'intérêt, consentement 18+).
+
+- `rooms.current_level` : palier de session persistant, strictement non décroissant
+  (trigger `trg_rooms_current_level`), exposé au client dans `get_room_snapshot`.
+  L'interface lisait auparavant le palier de la carte tirée, d'où les régressions
+  d'affichage (retour à 1 sans carte active, 3 → 2 → 1 en mode Personnalisé).
+- `_effective_level(categories, level)` : relève le palier au minimum nécessaire quand
+  le palier demandé ne produit aucune carte pour les catégories choisies. C'est le cas
+  d'Audacieux, absent des paliers 1–2 : le choisir ne renvoie plus « aucune option
+  disponible ». Un palier qui a déjà des cartes n'est jamais relevé.
+- `restart_game` conserve l'accord 18+ d'une partie à l'autre (toujours révocable via
+  `set_adult_consent`). L'effacer faisait sauter silencieusement les cartes `audacieux`
+  dans `_advance`, ce qui rabaissait l'intensité de la partie.
+
+Recette : `supabase/tests/level_and_mode_integrity.sql`, exécutée par `run_postgres.sh`
+après la migration 20.
