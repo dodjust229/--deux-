@@ -99,3 +99,6 @@ export const deleteRoomPhoto = (r: string, t: string, id: string) =>
   photoRequest<{ deleted: boolean }>(r, t, "delete", { method: "DELETE" }, `&media_id=${encodeURIComponent(id)}`);
 export const setRoomMediaPermission = (r: string, t: string, allow: boolean) =>
   rpc<boolean>("set_room_media_permission", { p_room_id: r, p_player_token: t, p_receive_media: allow });
+
+export const clearRoomPhotos = (r: string, t: string) =>
+  photoRequest<{ cleaned: boolean }>(r, t, "cleanup_room", { method: "DELETE" });
