@@ -6,7 +6,7 @@ alter table public.duo_permissions
 create table if not exists public.room_media (
   id uuid primary key default gen_random_uuid(),
   room_id uuid references public.rooms(id) on delete set null,
-  sender_player_id uuid not null references public.players(id) on delete cascade,
+  sender_player_id uuid references public.players(id) on delete set null,
   recipient_player_ids uuid[] not null,
   scope text not null check (scope in ('partner','duo','group')),
   object_path text not null unique,
