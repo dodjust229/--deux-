@@ -28,6 +28,7 @@ import { applyPreferences, categoriesForIntensity, readPreferences, writePrefere
 import { previewDuoSnapshot, previewSnapshot } from "./lib/preview";
 import { playSound } from "./lib/sound";
 import type { Category, Player, Snapshot } from "./types";
+import { interactions } from "./content";
 import { checkQuestions, customMessage, explainCustomError, resolveCustomInteraction } from "./lib/custom";
 import { Wordmark } from "./components/Brand";
 import { Icon } from "./components/Icon";
@@ -128,7 +129,6 @@ export default function App() {
   const [settingsOpen, setSettingsOpen] = useState(() => import.meta.env.DEV && new URLSearchParams(location.search).has("reglages"));
   const [safeOpen, setSafeOpen] = useState(false);
   const [guideOpen, setGuideOpen] = useState(false);
-  const [customQuestions, setCustomQuestions] = useState<string[]>(["", "", "", "", ""]);
   const [customDeck, setCustomDeck] = useState<string[]>([]);
   const [customError, setCustomError] = useState("");
   const [copied, setCopied] = useState(false);
@@ -298,7 +298,7 @@ export default function App() {
     setError("");
     try {
       const result = mode === "create" ? (entry?.gameMode === "duos" ? await createDuoRoom(name, persona) : await createRoom(name, persona)) : await joinRoom(roomId, name, persona);
-      if (mode === "create" && entry?.gameMode !== "custom") {
+      if (mode === "create") {
         await setPlayerCategories(result.room_id, result.player_token, selected);
       }
       // Le salon Personnalisé utilise la salle à deux du serveur : on garde le mode choisi
@@ -320,10 +320,10 @@ export default function App() {
     }
   }
 
-  const launchCustom = () =>
+  const launchCustom = (questions: string[]) =>
     run(async () => {
       if (!identity) return;
-      const check = checkQuestions(customQuestions);
+      const check = checkQuestions(questions);
       if (!check.ok) {
         setCustomError(customMessage(prefs.language, check.errors[0]));
         return;
@@ -635,8 +635,7 @@ export default function App() {
             onLaunch={() => identity && void run(() => startGame(identity.roomId, identity.token, selected, prefs.gameLevel))}
             busy={busy}
             kind={identity.gameMode === "custom" ? "custom" : "couple"}
-            customQuestions={customQuestions}
-            onCustomQuestions={setCustomQuestions}
+            customCatalog={interactions}
             onLaunchCustom={launchCustom}
             customError={customError}
             isHost={snapshot.my_seat === 1}
