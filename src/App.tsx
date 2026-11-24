@@ -258,6 +258,11 @@ export default function App() {
     };
   }, [identity, refresh, previewMode]);
 
+  useEffect(() => {
+    if (!identity || previewMode || snapshot?.room.status !== "finished") return;
+    void clearRoomPhotos(identity.roomId, identity.token).catch(() => undefined);
+  }, [identity, snapshot?.room.status, previewMode]);
+
   /* Mode Personnalisé : la séquence appartient à la salle, l'écran ne fait que la relire. */
   useEffect(() => {
     if (previewMode || !identity || identity.gameMode !== "custom") return;
