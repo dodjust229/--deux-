@@ -3,7 +3,7 @@
 Date : 24 novembre 2026  
 Branche de travail : `qspicy/palier-4-invitations-permissions`  
 Base : `main`  
-Statut : implémentation en cours, non fusionnée, non migrée en production, non déployée.
+Statut : PR #20 fusionnée, migration 17 appliquée et livraison Render documentée ; [recette terrain](QSPICY_RECETTE_TERRAIN.md) encore ouverte.
 
 ## 1. Définition du palier 4 retrouvée dans la feuille de route
 
@@ -123,5 +123,5 @@ Créer une salle avec deux appareils ; vérifier hôte/invité, intérêts diff�
 - Aucune notification push n'est implémentée.
 - PR #20 fusionnée dans main : commit 5f0ffe237123a57fcb024d07e904338d771e7d8f.
 - Migration 17 appliquée à Supabase le 24 novembre 2026 ; droits des RPC de lancement vérifiés : anon uniquement pour les RPC de jeu, ancien start_game non gradué fermé.
-- Déploiement Render et test manuel à confirmer avant de déclarer la livraison complète.
+- Seule la recette terrain reste à confirmer avant de déclarer la livraison complète.
 - VIP 1 / Pass Hôte : backend FedaPay actif, mais intégration Auth/checkout/contrôle d'abonnement dans le client et les RPC de création encore à réaliser.
