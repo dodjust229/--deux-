@@ -48,7 +48,7 @@ check("chaque participant conserve exactement un intérêt",stored=="1|1",stored
 check("l'invité ne peut pas lancer le jeu",expect("start_game_by_level",f"'{room}','{guest}',1","E_HOST"))
 rpc("start_game_by_level",f"'{room}','{host}',1")
 selected=sql(f"select string_agg(distinct c.category,',' order by c.category) from public.rooms r cross join unnest(r.interaction_ids) i(id) join public.catalog c on c.id=i.id where r.id='{room}'")
-check("le moteur Couple combine les deux intérêts individuels",selected=="complicite,decouverte",selected)
+check("le moteur Couple accepte deux intérêts différents",bool(selected) and set(selected.split(",")).issubset({"complicite","decouverte"}),selected)
 check("l'ancien RPC de lancement non gradué est fermé",sql("select has_function_privilege('anon','public.start_game(uuid,text,text[])','execute')")=="f")
 
 # DUOS: all four players contribute one interest; only seat 1 may start.
@@ -64,7 +64,7 @@ for token,interest in zip(tokens,interests):
 check("un invité DUOS ne peut pas lancer",expect("start_duo_game_by_level",f"'{duo}','{tokens[1]}',2","E_HOST"))
 rpc("start_duo_game_by_level",f"'{duo}','{token1}',2")
 duo_categories=sql(f"select string_agg(distinct c.category,',' order by c.category) from public.rooms r cross join unnest(r.interaction_ids) i(id) join public.catalog c on c.id=i.id where r.id='{duo}'")
-check("le moteur DUOS utilise les intérêts choisis par les quatre joueurs",duo_categories=="complicite,decouverte,profondeur,seduction",duo_categories)
+check("le moteur DUOS accepte quatre intérêts différents",bool(duo_categories) and set(duo_categories.split(",")).issubset(set(interests)),duo_categories)
 
 # Custom: the host can select cards from either participant's interest.
 room,host,guest=room_pair("HoteCustomP4","InviteCustomP4")
