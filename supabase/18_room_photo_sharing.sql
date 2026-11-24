@@ -90,11 +90,12 @@ begin
   if not coalesce(p_cross_participation,false) or not coalesce(p_receive_media,false) then
     update public.room_media
        set recipient_player_ids=array_remove(recipient_player_ids,me.id)
-     where room_id=p_room_id and me.id=any(recipient_player_ids);
+     where room_id=p_room_id and me.id=any(recipient_player_ids)
+       and (not coalesce(p_receive_media,false) or scope='group');
   end if;
   return true;
 end
-$$;
+$;
 
 create or replace function public.qspicy_media_targets(
   p_room_id uuid,
