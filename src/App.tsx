@@ -348,7 +348,6 @@ export default function App() {
       activeSession.current = sessionFingerprint(nextIdentity);
       lastQuestion.current = null;
       previous.current = null;
-      activeSession.current = sessionFingerprint(nextIdentity);
       failures.current = 0;
       setNotice("");
       setPartnerLeft(null);
