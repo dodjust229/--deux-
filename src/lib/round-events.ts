@@ -23,6 +23,22 @@ const EVENTS: RoundEvent[] = [
   { id: "truth", title: "La vérité derrière la réponse", subtitle: "SURPRISE · SINCÉRITÉ", instruction: "Ajoute ce que tu n'aurais pas dit spontanément. Tu peux rester pudique ou passer : la sincérité n'oblige jamais à tout dévoiler.", cue: "La confiance compte plus que la confession." }
 ];
 
+
+const ENGLISH: Record<string, Omit<RoundEvent, "id">> = {
+  mirror: { title: "The mirror", subtitle: "SURPRISE · SECRET ANSWER", instruction: "Before answering, silently guess what the other person will write. Give no hints. After the reveal, compare your instincts.", cue: "Who really knows whom?" },
+  detail: { title: "The detail that changes everything", subtitle: "SURPRISE · BE SPECIFIC", instruction: "No vague answers: add one concrete detail, gesture, sentence or moment that makes your answer real.", cue: "Specific beats polished." },
+  reverse: { title: "In their shoes", subtitle: "SURPRISE · SWITCH ROLES", instruction: "First answer as you imagine the other person would. After the reveal, give your real answer and see where your views meet.", cue: "Careful with assumptions." },
+  scene: { title: "The scene", subtitle: "SURPRISE · CINEMATIC", instruction: "Tell your answer as a short scene: a place, a gesture and a line. Make it come alive instead of summarizing it.", cue: "Let the other person step into the moment." },
+  "one-line": { title: "One sentence only", subtitle: "SURPRISE · NO DETOURS", instruction: "Answer in one sentence, with no preamble or justification. After the reveal, the other person may ask one clarifying question.", cue: "Short, clear, owned." },
+  "no-cliche": { title: "No clichés", subtitle: "SURPRISE · BE REAL", instruction: "Avoid automatic answers like “it depends”, “whatever you want” or “I don't know”. Say what you really think, or pass.", cue: "Don't answer just to please." },
+  senses: { title: "The five senses", subtitle: "SURPRISE · IMMERSION", instruction: "Add one sensory detail: an atmosphere, sound, texture, scent or feeling. Pick the one that best tells your story.", cue: "Make it felt, not just understood." },
+  counterpoint: { title: "The unexpected angle", subtitle: "SURPRISE · SWITCH IT UP", instruction: "Don't take your first reflex. Find an angle the other person won't expect, while staying sincere.", cue: "Surprise without pretending." },
+  "bold-choice": { title: "Own your choice", subtitle: "SURPRISE · PICK ONE", instruction: "If there are several possibilities, choose the one that feels most like you today. Explain with one detail instead of hiding behind “a bit of everything”.", cue: "A clear preference beats a list." },
+  "question-back": { title: "Your turn to ask", subtitle: "SURPRISE · TWO-WAY", instruction: "Answer honestly, then prepare one short question for the other person on the same subject. Let the conversation go both ways.", cue: "One answer opens another door." },
+  future: { title: "What if it were tomorrow?", subtitle: "SURPRISE · LOOK AHEAD", instruction: "Imagine the next 24 hours: what would you actually do, and how would the other person know?", cue: "Turn an idea into a real possibility." },
+  truth: { title: "The truth behind the answer", subtitle: "SURPRISE · HONESTY", instruction: "Add something you wouldn't have said spontaneously. You can keep your privacy or pass: honesty never means revealing everything.", cue: "Trust matters more than confession." }
+};
+
 function hash(value: string): number {
   let result = 2166136261;
   for (const char of value) {
@@ -41,7 +57,8 @@ export function getRoundEvent(
   roomId: string,
   roundIndex: number,
   total: number,
-  interaction: Pick<Interaction, "id" | "category" | "kind" | "level">
+  interaction: Pick<Interaction, "id" | "category" | "kind" | "level">,
+  lang: "fr" | "en" = "fr"
 ): RoundEvent | null {
   if (!roomId || !Number.isInteger(roundIndex) || roundIndex < 0 || total < 1 || roundIndex >= total) return null;
   const isFinale = roundIndex === total - 1;
@@ -50,7 +67,9 @@ export function getRoundEvent(
 
   const seed = hash(`${roomId}:${interaction.id}:${roundIndex}:${interaction.category}:${interaction.kind}:${interaction.level}`);
   const event = EVENTS[seed % EVENTS.length];
-  return isFinale
-    ? { ...event, subtitle: "DERNIER TOUR · SURPRISE", cue: "Terminez sur une réponse dont vous vous souviendrez." }
-    : event;
+  const translated = lang === "en" ? { id: event.id, ...ENGLISH[event.id] } : event;
+  if (!isFinale) return translated;
+  return lang === "en"
+    ? { ...translated, subtitle: "FINAL ROUND · SURPRISE", cue: "Finish with an answer you will remember." }
+    : { ...translated, subtitle: "DERNIER TOUR · SURPRISE", cue: "Terminez sur une réponse dont vous vous souviendrez." };
 }
