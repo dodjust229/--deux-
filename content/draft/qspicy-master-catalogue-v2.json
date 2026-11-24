@@ -2891,7 +2891,7 @@
     }
   ],
   "validation_notes": {
-    "schema_compatibility": "Les identifiants, catégories, types de carte et champs requis suivent les contraintes actuelles de src/catalog.json. Le champ intensity est éditorial et n'est pas encore consommé par l'application.",
+    "schema_compatibility": "Catalogue intégré dans src/catalog.json. Le champ level reste technique (1–4) ; intensity est persisté et utilisé comme classification éditoriale (1–5).",
     "technical_level_counts": {
       "1": 52,
       "2": 53,
@@ -2901,11 +2901,11 @@
     "intensity_counts": {
       "1": 52,
       "2": 53,
-      "3": 32,
-      "4": 47,
-      "5": 36
+      "3": 49,
+      "4": 32,
+      "5": 34
     },
-    "active_catalog_constraint": "Le catalogue actif impose 48 cartes par level ; ce brouillon de 220 cartes ne doit pas être synchronisé ni intégré tel quel.",
+    "active_catalog_constraint": "La contrainte historique de 48 cartes par level a été retirée du contrôle de synchronisation. La migration 22 remplace les cartes actives et supprime les identifiants absents du master.",
     "new_ids": "n01 à n40, conformes au format d'identifiant actuel."
   }
 }
