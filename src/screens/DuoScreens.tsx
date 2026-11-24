@@ -3,6 +3,7 @@ import { Character } from "../components/Character";
 import { Icon } from "../components/Icon";
 import { InfoTip } from "../components/InfoTip";
 import { categoryLabels, categoryDescriptions, levelLabels, kindLabels, audienceLabels } from "../content";
+import { getRoundMoments } from "../lib/round-moments";
 import type { Category, DuoPermissions, DuoSnapshot, Interaction } from "../types";
 
 const CATEGORIES: Category[] = ["decouverte", "complicite", "profondeur", "seduction", "audacieux"];
@@ -157,6 +158,9 @@ export function DuoGame({ snap, interaction, busy, onSubmit, onPass, onNext, onS
   const [visibility, setVisibility] = useState<"private" | "duo" | "group">("private");
   const [space, setSpace] = useState<"group" | "duo_a" | "duo_b">(snap.my_duo_no === 1 ? "duo_a" : "duo_b");
   const [message, setMessage] = useState("");
+  const [selectedMoment, setSelectedMoment] = useState<string | null>(null);
+  const roundMoments = getRoundMoments(interaction);
+  useEffect(() => setSelectedMoment(null), [interaction.id]);
   const ownSpace = snap.my_duo_no === 1 ? "duo_a" : "duo_b";
   const canGroup = snap.players.length === 4 && snap.players.every((p) => p.cross_participation === true);
   const answered = snap.my_answer !== null;
@@ -257,6 +261,38 @@ export function DuoGame({ snap, interaction, busy, onSubmit, onPass, onNext, onS
               </article>
             ))}
           </div>
+          <section className="round-moments" aria-labelledby="duo-round-moments-title">
+            <div className="round-moments__intro">
+              <span className="round-moments__eyebrow">APRÈS LA RÉVÉLATION</span>
+              <h3 id="duo-round-moments-title">Faites vivre la discussion.</h3>
+              <p>Choisissez ensemble une relance bonus. Respectez toujours la visibilité choisie par chaque personne.</p>
+            </div>
+            <div className="round-moments__choices">
+              {roundMoments.map((moment, index) => (
+                <button
+                  key={moment.id}
+                  type="button"
+                  className={`round-moment ${selectedMoment === moment.id ? "is-selected" : ""}`}
+                  aria-pressed={selectedMoment === moment.id}
+                  onClick={() => setSelectedMoment(selectedMoment === moment.id ? null : moment.id)}
+                >
+                  <span className="round-moment__number">0{index + 1}</span>
+                  <span className="round-moment__copy">
+                    <strong>{moment.title}</strong>
+                    <small>{moment.label}</small>
+                  </span>
+                  <span className="round-moment__mark">{selectedMoment === moment.id ? "−" : "+"}</span>
+                </button>
+              ))}
+            </div>
+            {selectedMoment && (
+              <div className="round-moments__prompt" role="status" aria-live="polite">
+                <span>VOTRE RELANCE</span>
+                <p>{roundMoments.find((moment) => moment.id === selectedMoment)?.prompt}</p>
+                <button type="button" className="round-moments__close" onClick={() => setSelectedMoment(null)}>Fermer</button>
+              </div>
+            )}
+          </section>
           <button className="primary full" type="button" data-testid="duo-next" onClick={onNext} disabled={busy || paused || snap.i_acked}>
             {snap.i_acked ? "En attente des trois autres…" : "Question suivante"}
           </button>
