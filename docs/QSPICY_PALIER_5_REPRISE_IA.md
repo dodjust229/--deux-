@@ -81,7 +81,11 @@ Le texte des réponses privées est actuellement gardé dans le `localStorage`, 
 - prévoir un nettoyage des anciennes clés orphelines ;
 - ne pas présenter le stockage local comme chiffré ou comme un coffre-fort : tout script exécuté sur la même origine peut y accéder, et l'utilisateur du navigateur peut inspecter ses données.
 
-Cette correction doit être couverte par des tests unitaires ciblant les clés du salon concerné, sans effacer les données d'autres salles.
+Correction déjà ajoutée sur la branche de ce palier :
+- `clearPrivateAnswers(roomId, storage)` supprime uniquement les clés préfixées par l'identifiant de la salle quittée.
+- `exitRoom()` appelle ce nettoyage après la tentative de sortie côté serveur.
+- Un test unitaire vérifie que les confidences d'une autre salle et la clé de session restent intactes.
+- La CI de la PR doit encore confirmer TypeScript, tests et build avant de considérer cette correction validée.
 
 ## 7. Tests et preuves
 
@@ -110,5 +114,5 @@ Cette correction doit être couverte par des tests unitaires ciblant les clés d
 - Audit initial effectué ; aucun code de partage photo n'a été activé.
 - Aucune migration SQL ni création de bucket n'a été effectuée.
 - Aucune modification de production n'a été effectuée.
-- Point prioritaire identifié : nettoyage du texte privé conservé dans le `localStorage`.
+- Correction du nettoyage des confidences locales ajoutée dans `src/lib/media.ts` et appelée depuis `src/App.tsx` ; test ciblé ajouté dans `src/lib/media.test.ts`. CI en attente au moment de la rédaction.
 - Le palier 5 ne doit pas être déclaré terminé tant que le cycle de vie des confidences et les permissions médias n'ont pas été corrigés et testés.
