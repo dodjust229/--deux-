@@ -91,3 +91,21 @@ Appliquer ensuite `15_expand_session_catalog.sql`. Le catalogue passe à 192 car
 session complète sans aucune répétition, tant que les joueurs conservent un ensemble
 de catégories qui couvre le pool correspondant. La migration 15 est un UPSERT non
 destructif ; les textes, titres et formulations complets sont dans `src/catalog.json`.
+
+
+## Palier 3 — moteur Personnalisé adossé au catalogue
+
+Appliquer ensuite `16_custom_catalog_engine.sql`. Le mode Personnalisé sélectionne désormais
+des identifiants canoniques de `public.catalog` au lieu de fabriquer des questions `perso-N`
+à partir de textes libres. Il conserve ainsi le vrai format de chaque carte (libre, secret,
+prédiction, défi, croisée), son niveau et ses options. Le serveur vérifie l'hôte, les deux
+joueurs actifs, les catégories communes, les identifiants et le consentement 18+ avant le
+lancement. La révocation du consentement saute toute carte de niveau 3–4 ou de catégorie
+Audacieux. L'historique anti-répétition de la salle est également partagé avec les sessions
+Personnalisées.
+
+La migration conserve les salons déjà en cours qui utilisent encore les identifiants
+historiques `perso-N` et leur `custom_deck`. L'ancien RPC de création à partir de texte libre
+est révoqué pour les clients ; le nouveau RPC n'accepte que les IDs du catalogue.
+La recette PostgreSQL exécute l'ancien parcours de compatibilité avant la migration 16,
+puis les tests du nouveau moteur après celle-ci.
