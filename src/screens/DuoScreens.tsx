@@ -22,14 +22,14 @@ function Hosts({ note }: { note: string }) {
   );
 }
 
-export function DuoLobby({ snap, inviteUrl, copied, onCopy, selected, shared, onToggleCategory, onToggleConsent, onStart, onPermissions, busy, onSafe, onOpenGuide, lang = "fr" }: {
+export function DuoLobby({ snap, inviteUrl, copied, onCopy, selected, shared, onToggleCategory, onToggleConsent, onStart, onPermissions, busy, onSafe, onOpenGuide, lang = "fr", gameLevel = 2 }: {
   snap: DuoSnapshot; inviteUrl: string; copied: boolean; onCopy: () => void; selected: Category[]; shared: Category[];
   onToggleCategory: (c: Category) => void; onToggleConsent: (v: boolean) => void; onStart: () => void;
   onPermissions: (p: { cross_participation: boolean; receive_media: boolean; share_answers: boolean }) => void; busy: boolean; onSafe: () => void;
-  onOpenGuide?: () => void; lang?: "fr" | "en";
+  onOpenGuide?: () => void; lang?: "fr" | "en"; gameLevel?: 1 | 2 | 3 | 4;
 }) {
   const ready = snap.players.length === 4;
-  const adult = shared.includes("audacieux");
+  const adult = shared.includes("audacieux") || gameLevel >= 3;
   const blocked = busy || !ready || !shared.length || (adult && !snap.players.every((p) => p.adult_consent));
   const perm = snap.permissions;
 
@@ -114,12 +114,12 @@ export function DuoLobby({ snap, inviteUrl, copied, onCopy, selected, shared, on
         </h3>
         <label className="duo-toggle">
           <input type="checkbox" checked={snap.my_consent} onChange={(e) => onToggleConsent(e.target.checked)} />
-          <span>{lang === "fr" ? "J'ai 18 ans ou plus et j'accepte la catégorie Audacieux." : "I am 18 or over and I consent to the Audacieux category."}</span>
+          <span>{lang === "fr" ? (gameLevel >= 3 ? "J’ai 18 ans ou plus et j’accepte les paliers 3–4." : "J’ai 18 ans ou plus et j’accepte la catégorie Audacieux.") : (gameLevel >= 3 ? "I am 18 or over and consent to levels 3–4." : "I am 18 or over and I consent to the Audacieux category.")}</span>
         </label>
         <p className="muted small">
           {lang === "fr"
-            ? `${snap.players.filter((p) => p.adult_consent).length}/4 ont donné leur accord. En DUOS, la carte 18+ ne sort que si les quatre l'ont cochée ; un retrait la ferme immédiatement.`
-            : `${snap.players.filter((p) => p.adult_consent).length}/4 have consented. In DUOS the 18+ card only appears if all four ticked it; withdrawing closes it immediately.`}
+            ? `${snap.players.filter((p) => p.adult_consent).length}/4 ont donné leur accord. Les paliers 3–4 et Audacieux exigent l’accord des quatre ; un retrait bloque leur lancement.`
+            : `${snap.players.filter((p) => p.adult_consent).length}/4 have consented. Levels 3–4 and Audacieux require all four; withdrawing consent blocks their launch.`
         </p>
         <label className="duo-toggle">
           <input type="checkbox" data-testid="duo-cross-consent" checked={perm.cross_participation} onChange={(e) => onPermissions({ ...perm, cross_participation: e.target.checked, share_answers: e.target.checked ? perm.share_answers : false })} />
