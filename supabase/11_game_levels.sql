@@ -76,7 +76,6 @@ on conflict (id) do update set category=excluded.category, kind=excluded.kind, o
 create or replace function public.start_game_by_level(
   p_room_id uuid,
   p_player_token text,
-  p_categories text[],
   p_level integer
 )
 returns boolean
@@ -157,5 +156,5 @@ begin
 end
 $$;
 
-revoke execute on function public.start_game_by_level(uuid,text,text[],integer) from public, authenticated;
+revoke execute on function public.start_game_by_level(uuid,text,integer) from public, authenticated;
 grant execute on function public.start_game_by_level(uuid,text,text[],integer) to anon;
