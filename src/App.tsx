@@ -298,6 +298,9 @@ export default function App() {
     setError("");
     try {
       const result = mode === "create" ? (entry?.gameMode === "duos" ? await createDuoRoom(name, persona) : await createRoom(name, persona)) : await joinRoom(roomId, name, persona);
+      if (mode === "create" && entry?.gameMode !== "custom") {
+        await setPlayerCategories(result.room_id, result.player_token, selected);
+      }
       // Le salon Personnalisé utilise la salle à deux du serveur : on garde le mode choisi
       // à l'écran, sinon un invité retomberait sur le lobby du catalogue.
       const gameMode: GameMode = entry?.gameMode === "custom" ? "custom" : (result.mode ?? entry?.gameMode ?? "couple");
