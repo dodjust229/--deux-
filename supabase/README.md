@@ -132,7 +132,10 @@ La migration :
 Les notifications d'arrivée, de départ et de retour sont déjà présentes dans l'interface
 (toasts issus de l'état de salle). Elles ne sont pas des notifications push en arrière-plan.
 
-Le statut VIP 1 / Pass Hôte n'est pas activé par cette migration : l'application actuelle
-n'a pas encore d'identité de compte persistante ni de preuve de paiement serveur. Ne jamais
-remplacer cette vérification par un simple booléen côté navigateur. Voir
-`docs/QSPICY_PALIER_4_REPRISE_IA.md` pour les prérequis et la reprise.
+Le backend VIP 1 / Pass Hôte existe déjà dans Supabase : tables `host_payments` /
+`host_subscriptions` et Edge Functions FedaPay `create-host-checkout`,
+`verify-host-payment`, `fedapay-webhook`. Il n'est pas encore branché au client :
+l'application ne gère pas encore l'Auth hôte, le paiement ni le contrôle d'abonnement
+à la création des salles. Le modèle actif dans les Edge Functions est 750 XOF / 15 jours,
+hôte payeur et invités gratuits. Ne jamais remplacer la vérification serveur par un
+booléen côté navigateur. Voir `docs/QSPICY_PALIER_4_REPRISE_IA.md` pour la reprise.
