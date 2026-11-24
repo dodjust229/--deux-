@@ -383,7 +383,7 @@ begin
     cross join lateral unnest(participant.selected_categories) as chosen(category)
    where participant.room_id = p_room_id and participant.status = 'active';
   if coalesce(cardinality(v_categories), 0) = 0 then
-    raise exception 'E_CATEGORIES: Chaque joueur doit choisir un centre d'intérêt.';
+    raise exception 'E_CATEGORIES: Chaque joueur doit choisir un centre d''intérêt.';
   end if;
 
   select count(*) into v_count
