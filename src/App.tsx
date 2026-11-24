@@ -627,7 +627,7 @@ export default function App() {
             myConsent={snapshot.my_consent}
             otherConsent={Boolean(otherPlayer?.adult_consent)}
             onToggleConsent={(value) => identity && void run(() => setAdultConsent(identity.roomId, identity.token, value))}
-            onLaunch={() => identity && void run(() => startGame(identity.roomId, identity.token, selected))}
+            onLaunch={() => identity && void run(() => startGame(identity.roomId, identity.token, selected, prefs.gameLevel))}
             busy={busy}
             kind={identity.gameMode === "custom" ? "custom" : "couple"}
             customQuestions={customQuestions}
