@@ -71,7 +71,7 @@ $$;
 revoke execute on function public.start_custom_game(uuid,text,jsonb) from public, anon, authenticated;
 -- PostgreSQL/PostgREST function overloading is not a safe RPC contract here.
 -- The legacy function has no dependent objects; old active rooms continue via get_custom_deck.
-drop function public.start_custom_game(uuid,text,jsonb);
+drop function if exists public.start_custom_game(uuid,text,jsonb);
 
 create or replace function public.start_custom_game(
   p_room_id uuid,
