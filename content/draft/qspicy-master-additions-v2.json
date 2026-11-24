@@ -38,7 +38,7 @@
       "intensity": 1,
       "category": "souvenirs",
       "format": "question",
-      "prompt": "Quel est le dernier baiser dont tu te souviens vraiment bien, et qu'est-ce qui l'a rendu mémorable ?"
+      "prompt": "Quel est le dernier baiser que tu as donné ou reçu avant notre rencontre ? Dans quel contexte et avec qui ?"
     },
     {
       "id": "int-006",
@@ -220,7 +220,7 @@
       "intensity": 4,
       "category": "sexualite_communication",
       "format": "question",
-      "prompt": "Quel mot, quelle phrase ou quel type de parole aimerais-tu entendre pendant le sexe, et qu'est-ce qui te ferait immédiatement décrocher ?"
+      "prompt": "Entre sexe oral et pénétration, quelle pratique te procure le plus de plaisir, et qu'est-ce qui fait la différence pour toi ?"
     },
     {
       "id": "int-032",
@@ -255,7 +255,7 @@
       "intensity": 5,
       "category": "sexualite",
       "format": "question",
-      "prompt": "As-tu déjà exploré une dynamique de domination ou de soumission dans l'intimité ? Qu'est-ce qui t'attire dans ce jeu de rôles ?"
+      "prompt": "As-tu déjà simulé un orgasme ou fait semblant d'avoir plus de plaisir que tu n'en avais ? Pourquoi ?"
     },
     {
       "id": "int-037",
@@ -276,7 +276,7 @@
       "intensity": 5,
       "category": "sexualite_communication",
       "format": "question",
-      "prompt": "Y a-t-il une pratique sexuelle que tu refuses catégoriquement, une autre que tu adores, et une troisième qui t'intrigue encore ?"
+      "prompt": "Y a-t-il une pratique sexuelle que tu as acceptée par curiosité puis regrettée, ou au contraire découverte et adorée ?"
     },
     {
       "id": "int-040",
