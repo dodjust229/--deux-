@@ -55,3 +55,88 @@ BEGIN
   DELETE FROM public.rooms WHERE id=room_duos;
 END
 $qspicy$;
+
+
+-- Palier 2 : les cartes déjà jouées sont exclues au lancement suivant,
+-- et le cycle ne repart qu'après épuisement du pool éligible.
+DO $history$
+DECLARE
+  room_couple uuid;
+  room_duos uuid;
+  token_a text := repeat('a',64);
+  token_b text := repeat('b',64);
+  token_c text := repeat('c',64);
+  token_d text := repeat('d',64);
+  first_ids text[];
+  second_ids text[];
+  ok boolean;
+  overlap_count integer;
+BEGIN
+  INSERT INTO public.catalog(id,category,kind,options,level)
+  VALUES
+    ('t98','decouverte','free',null,1),
+    ('t99','decouverte','free',null,1)
+  ON CONFLICT (id) DO UPDATE SET category=excluded.category,kind=excluded.kind,options=excluded.options,level=excluded.level;
+
+  INSERT INTO public.rooms(status,selected_level) VALUES ('waiting',1) RETURNING id INTO room_couple;
+  INSERT INTO public.players(room_id,seat,nickname,avatar,token_hash,adult_consent,selected_categories)
+  VALUES
+    (room_couple,1,'History A','masculin',encode(extensions.digest(token_a,'sha256'),'hex'),true,ARRAY['decouverte','complicite']),
+    (room_couple,2,'History B','feminin',encode(extensions.digest(token_b,'sha256'),'hex'),true,ARRAY['decouverte','complicite']);
+
+  SELECT public.start_game_by_level(room_couple,token_a,1) INTO ok;
+  IF NOT ok THEN RAISE EXCEPTION 'Couple history first session did not start'; END IF;
+  SELECT interaction_ids INTO first_ids FROM public.rooms WHERE id=room_couple;
+  UPDATE public.rooms SET status='finished' WHERE id=room_couple;
+  PERFORM public.restart_game(room_couple,token_a);
+  SELECT public.start_game_by_level(room_couple,token_a,1) INTO ok;
+  IF NOT ok THEN RAISE EXCEPTION 'Couple history second session did not start'; END IF;
+  SELECT interaction_ids INTO second_ids FROM public.rooms WHERE id=room_couple;
+  SELECT count(*) INTO overlap_count FROM unnest(second_ids) x WHERE x=ANY(first_ids);
+  IF overlap_count<>0 THEN RAISE EXCEPTION 'Couple history repeated % cards before pool exhaustion', overlap_count; END IF;
+  IF cardinality(second_ids)<>2 THEN RAISE EXCEPTION 'Couple history expected the 2 remaining cards, got %', cardinality(second_ids); END IF;
+  UPDATE public.rooms SET status='finished' WHERE id=room_couple;
+  PERFORM public.restart_game(room_couple,token_a);
+  SELECT public.start_game_by_level(room_couple,token_a,1) INTO ok;
+  IF NOT ok THEN RAISE EXCEPTION 'Couple history cycle reset did not start'; END IF;
+  IF (SELECT cardinality(played_interaction_ids) FROM public.rooms WHERE id=room_couple)<>24 THEN
+    RAISE EXCEPTION 'Couple history did not reset cleanly after pool exhaustion';
+  END IF;
+  DELETE FROM public.rooms WHERE id=room_couple;
+
+  INSERT INTO public.rooms(mode,status,selected_level) VALUES ('duos','waiting',1) RETURNING id INTO room_duos;
+  INSERT INTO public.players(room_id,seat,nickname,avatar,token_hash,adult_consent,selected_categories,duo_no)
+  VALUES
+    (room_duos,1,'History A','masculin',encode(extensions.digest(token_a,'sha256'),'hex'),true,ARRAY['decouverte','complicite'],1),
+    (room_duos,2,'History B','feminin',encode(extensions.digest(token_b,'sha256'),'hex'),true,ARRAY['decouverte','complicite'],1),
+    (room_duos,3,'History C','masculin',encode(extensions.digest(token_c,'sha256'),'hex'),true,ARRAY['decouverte','complicite'],2),
+    (room_duos,4,'History D','feminin',encode(extensions.digest(token_d,'sha256'),'hex'),true,ARRAY['decouverte','complicite'],2);
+
+  SELECT public.start_duo_game_by_level(room_duos,token_a,1) INTO ok;
+  IF NOT ok THEN RAISE EXCEPTION 'DUOS history first session did not start'; END IF;
+  SELECT interaction_ids INTO first_ids FROM public.rooms WHERE id=room_duos;
+  UPDATE public.rooms SET status='finished' WHERE id=room_duos;
+  PERFORM public.restart_duo_game(room_duos,token_a);
+  PERFORM public.restart_duo_game(room_duos,token_b);
+  PERFORM public.restart_duo_game(room_duos,token_c);
+  PERFORM public.restart_duo_game(room_duos,token_d);
+  SELECT public.start_duo_game_by_level(room_duos,token_a,1) INTO ok;
+  IF NOT ok THEN RAISE EXCEPTION 'DUOS history second session did not start'; END IF;
+  SELECT interaction_ids INTO second_ids FROM public.rooms WHERE id=room_duos;
+  SELECT count(*) INTO overlap_count FROM unnest(second_ids) x WHERE x=ANY(first_ids);
+  IF overlap_count<>0 THEN RAISE EXCEPTION 'DUOS history repeated % cards before pool exhaustion', overlap_count; END IF;
+  IF cardinality(second_ids)<>2 THEN RAISE EXCEPTION 'DUOS history expected the 2 remaining cards, got %', cardinality(second_ids); END IF;
+  UPDATE public.rooms SET status='finished' WHERE id=room_duos;
+  PERFORM public.restart_duo_game(room_duos,token_a);
+  PERFORM public.restart_duo_game(room_duos,token_b);
+  PERFORM public.restart_duo_game(room_duos,token_c);
+  PERFORM public.restart_duo_game(room_duos,token_d);
+  SELECT public.start_duo_game_by_level(room_duos,token_a,1) INTO ok;
+  IF NOT ok THEN RAISE EXCEPTION 'DUOS history cycle reset did not start'; END IF;
+  IF (SELECT cardinality(played_interaction_ids) FROM public.rooms WHERE id=room_duos)<>24 THEN
+    RAISE EXCEPTION 'DUOS history did not reset cleanly after pool exhaustion';
+  END IF;
+  DELETE FROM public.rooms WHERE id=room_duos;
+  DELETE FROM public.catalog WHERE id IN ('t98','t99');
+END
+$history$;
