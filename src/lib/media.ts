@@ -41,3 +41,25 @@ export function describeContent(content: Content): string {
       return "Réponse illisible";
   }
 }
+
+
+/** Supprime uniquement les confidences locales liées à une salle quittée. */
+export function clearPrivateAnswers(
+  roomId: string,
+  storage: Pick<Storage, "length" | "key" | "removeItem">
+): number {
+  const prefix = `${PRIVATE_STORAGE_PREFIX}${roomId}.`;
+  let removed = 0;
+  try {
+    for (let index = storage.length - 1; index >= 0; index -= 1) {
+      const key = storage.key(index);
+      if (key?.startsWith(prefix)) {
+        storage.removeItem(key);
+        removed += 1;
+      }
+    }
+  } catch {
+    // Le départ de salle ne doit jamais échouer à cause du stockage local.
+  }
+  return removed;
+}
