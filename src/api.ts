@@ -50,3 +50,53 @@ export const restartDuoGame = (r: string, t: string) => rpc<{ restarted: boolean
 export const startCustomGame = (r: string, t: string, interactionIds: string[]) =>
   rpc<boolean>("start_custom_game", { p_room_id: r, p_player_token: t, p_interaction_ids: interactionIds });
 export const getCustomDeck = (r: string, t: string) => rpc<string[]>("get_custom_deck", { p_room_id: r, p_player_token: t });
+
+
+export type RoomPhoto = {
+  id: string;
+  sender_player_id: string;
+  scope: "partner" | "duo" | "group";
+  mime_type: string;
+  byte_size: number;
+  created_at: string;
+  expires_at: string;
+  signed_url: string;
+};
+export type RoomPhotoState = {
+  my_receive_media: boolean;
+  players: Array<{ id: string; nickname: string; seat: number; duo_no?: 1 | 2; receive_media: boolean; cross_participation: boolean }>;
+  items: RoomPhoto[];
+};
+function photoEndpoint(roomId: string, action: string, extra = "") {
+  const url = import.meta.env.VITE_SUPABASE_URL as string | undefined;
+  if (!url) throw new Error("Le serveur photo n'est pas configuré.");
+  return `${url.replace(/\\/$/, "")}/functions/v1/qspicy-room-media?action=${encodeURIComponent(action)}&room_id=${encodeURIComponent(roomId)}${extra}`;
+}
+async function photoRequest<T>(roomId: string, token: string, action: string, init: RequestInit = {}, extra = ""): Promise<T> {
+  const key = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
+  if (!key) throw new Error("Le serveur photo n'est pas configuré.");
+  const response = await fetch(photoEndpoint(roomId, action, extra), {
+    ...init,
+    headers: {
+      apikey: key,
+      Authorization: `Bearer ${key}`,
+      "x-player-token": token,
+      ...(init.headers ?? {}),
+    },
+    cache: "no-store",
+  });
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(payload.error ?? "Opération photo impossible.");
+  return payload as T;
+}
+export const getRoomPhotos = (r: string, t: string) => photoRequest<RoomPhotoState>(r, t, "list");
+export const uploadRoomPhoto = (r: string, t: string, scope: "partner" | "duo" | "group", file: Blob) =>
+  photoRequest<{ photo: { id: string } }>(r, t, "upload", {
+    method: "POST",
+    headers: { "Content-Type": file.type },
+    body: file,
+  }, `&scope=${encodeURIComponent(scope)}`);
+export const deleteRoomPhoto = (r: string, t: string, id: string) =>
+  photoRequest<{ deleted: boolean }>(r, t, "delete", { method: "DELETE" }, `&media_id=${encodeURIComponent(id)}`);
+export const setRoomMediaPermission = (r: string, t: string, allow: boolean) =>
+  rpc<boolean>("set_room_media_permission", { p_room_id: r, p_player_token: t, p_receive_media: allow });
