@@ -607,7 +607,8 @@ export default function App() {
             onToggleCategory={toggleCategory}
             onToggleConsent={(value) => identity && void run(() => setAdultConsent(identity.roomId, identity.token, value))}
             onPermissions={(permissions) => identity && void run(() => setDuoPermissions(identity.roomId, identity.token, permissions))}
-            onStart={() => identity && void run(() => startDuoGame(identity.roomId, identity.token))}
+            onStart={() => identity && void run(() => startDuoGame(identity.roomId, identity.token, prefs.gameLevel))}
+            gameLevel={prefs.gameLevel}
             busy={busy}
             onSafe={() => setSafeOpen(true)}
             onOpenGuide={() => setGuideOpen(true)}
@@ -626,6 +627,7 @@ export default function App() {
             onToggleCategory={toggleCategory}
             myConsent={snapshot.my_consent}
             otherConsent={Boolean(otherPlayer?.adult_consent)}
+            gameLevel={prefs.gameLevel}
             onToggleConsent={(value) => identity && void run(() => setAdultConsent(identity.roomId, identity.token, value))}
             onLaunch={() => identity && void run(() => startGame(identity.roomId, identity.token, selected, prefs.gameLevel))}
             busy={busy}
