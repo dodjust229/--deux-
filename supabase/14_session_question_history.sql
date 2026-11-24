@@ -71,7 +71,16 @@ begin
 
   -- Si le pool éligible est épuisé, on démarre un nouveau cycle.
   if coalesce(cardinality(v_ids),0)=0 then
-    update public.rooms set played_interaction_ids='{}'::text[] where id=p_room_id;
+    update public.rooms
+       set played_interaction_ids = array(
+         select h.card_id
+           from unnest(coalesce(played_interaction_ids,'{}'::text[])) as h(card_id)
+          where not exists (
+            select 1 from public.catalog c
+             where c.id=h.card_id and c.category=any(v_categories) and c.level=p_level
+          )
+       )
+     where id=p_room_id;
     select array_agg(id order by random()) into v_ids
       from (
         select id from public.catalog
@@ -161,7 +170,16 @@ begin
     ) cards;
 
   if coalesce(cardinality(v_ids),0)=0 then
-    update public.rooms set played_interaction_ids='{}'::text[] where id=p_room_id;
+    update public.rooms
+       set played_interaction_ids = array(
+         select h.card_id
+           from unnest(coalesce(played_interaction_ids,'{}'::text[])) as h(card_id)
+          where not exists (
+            select 1 from public.catalog c
+             where c.id=h.card_id and c.category=any(v_categories) and c.level=p_level
+          )
+       )
+     where id=p_room_id;
     select array_agg(id order by random()) into v_ids
       from (
         select id from public.catalog
