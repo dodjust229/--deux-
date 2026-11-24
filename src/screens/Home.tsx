@@ -15,18 +15,18 @@ export function Home({ lang, onEnter, onInvite }: HomeProps) {
       <picture className="home__bg">
         <source
           media="(max-width: 699px)"
-          srcSet={asset("brand/accueil-mobile.webp")}
+          srcSet={asset("brand/Étreinte passionnée dans une chambre burgundy.png")}
           width={1080}
           height={1440}
         />
         <source
           media="(max-width: 1099px)"
-          srcSet={asset("brand/accueil-tablette.webp")}
+          srcSet={asset("brand/Étreinte passionnée dans une chambre burgundy.png")}
           width={1280}
           height={960}
         />
         <img
-          src={asset("brand/accueil-bureau.webp")}
+          src={asset("brand/Étreinte passionnée dans une chambre burgundy.png")}
           alt=""
           width={1600}
           height={900}

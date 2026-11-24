@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { Character } from "../components/Character";
 import { Icon } from "../components/Icon";
 import { InfoTip } from "../components/InfoTip";
+import { getRoundMoments } from "../lib/round-moments";
+import { decodePrediction, encodePrediction } from "../lib/protocol";
+import { getRoundEvent } from "../lib/round-events";
 import { categoryLabels, categoryDescriptions, levelLabels, kindLabels, audienceLabels } from "../content";
 import type { Category, DuoPermissions, DuoSnapshot, Interaction } from "../types";
 
@@ -154,9 +157,26 @@ export function DuoGame({ snap, interaction, busy, onSubmit, onPass, onNext, onS
   onResume: () => void; onPermissions: (p: DuoPermissions) => void;
 }) {
   const [answer, setAnswer] = useState("");
+  const [guess, setGuess] = useState("");
   const [visibility, setVisibility] = useState<"private" | "duo" | "group">("private");
   const [space, setSpace] = useState<"group" | "duo_a" | "duo_b">(snap.my_duo_no === 1 ? "duo_a" : "duo_b");
   const [message, setMessage] = useState("");
+  const [selectedMoment, setSelectedMoment] = useState<string | null>(null);
+  const roundMoments = getRoundMoments(interaction);
+  const roundEvent = getRoundEvent(snap.room.id, snap.room.current_index, snap.room.total, interaction, lang);
+  const isSecret = interaction.kind === "secret";
+  const isPrediction = interaction.kind === "prediction";
+  const isChallenge = interaction.kind === "challenge";
+  const duoCrossRole = snap.my_seat % 2 === 1 ? "first" : "second";
+  const answerPayload = () => isPrediction
+    ? answer.trim() && guess.trim() ? encodePrediction(answer, guess) : ""
+    : isChallenge ? answer.trim() || "Défi relevé ✓" : answer.trim();
+  useEffect(() => {
+    setAnswer("");
+    setGuess("");
+    setSelectedMoment(null);
+    setVisibility("private");
+  }, [interaction.id]);
   const ownSpace = snap.my_duo_no === 1 ? "duo_a" : "duo_b";
   const canGroup = snap.players.length === 4 && snap.players.every((p) => p.cross_participation === true);
   const answered = snap.my_answer !== null;
@@ -218,6 +238,25 @@ export function DuoGame({ snap, interaction, busy, onSubmit, onPass, onNext, onS
         <small className="muted">Public : {audienceLabels[interaction.audience]}</small>
       </section>
 
+      {interaction.kind === "cross" && (
+        <aside className="duo-cross-role" aria-label={lang === "fr" ? "Rôle de la question croisée" : "Cross-question role"}>
+          <span>{lang === "fr" ? (duoCrossRole === "first" ? "TON RÔLE · PREMIER" : "TON RÔLE · SECOND") : (duoCrossRole === "first" ? "YOUR ROLE · FIRST" : "YOUR ROLE · SECOND")}</span>
+          <p>{lang === "fr"
+            ? (duoCrossRole === "first" ? "Dans ton duo, réponds à la première partie de la consigne. Ton partenaire répondra à la seconde. Comparez vos versions après la révélation." : "Dans ton duo, réponds à la seconde partie de la consigne. Ton partenaire répond à la première. Comparez vos versions après la révélation.")
+            : (duoCrossRole === "first" ? "In your duo, answer the first part of the prompt. Your partner answers the second. Compare your versions after the reveal." : "In your duo, answer the second part of the prompt. Your partner answers the first. Compare your versions after the reveal.")}</p>
+          <small>{lang === "fr" ? "Vous choisissez librement si vos réponses sont privées ou partagées au duo." : "You choose whether your answers stay private or are shared with your duo."}</small>
+        </aside>
+      )}
+
+      {roundEvent && (
+        <aside className="round-event" aria-label="Événement spécial de la manche">
+          <div className="round-event__top"><span>{roundEvent.subtitle}</span><span>✦</span></div>
+          <h2>{roundEvent.title}</h2>
+          <p>{roundEvent.instruction}</p>
+          <small>{roundEvent.cue}</small>
+        </aside>
+      )}
+
       {paused ? (
         <section className="panel">
           <h2>Partie en pause</h2>
@@ -237,10 +276,36 @@ export function DuoGame({ snap, interaction, busy, onSubmit, onPass, onNext, onS
               <option value="group" disabled={!snap.permissions.share_answers || !canGroup}>Les quatre (accord de tous requis)</option>
             </select>
           </label>
-          <textarea className="input duo-answer" data-testid="duo-answer" rows={4} maxLength={2000} value={answer} onChange={(e) => setAnswer(e.target.value)} placeholder="Écris ce que tu souhaites partager…" disabled={busy || paused || answered} />
+          {isSecret ? (
+            <div className="options" role="radiogroup" aria-label={lang === "fr" ? "Choisis une option" : "Choose an option"}>
+              {(interaction.options ?? []).map((option) => (
+                <button key={option} type="button" role="radio" aria-checked={answer === option}
+                  className={"option " + (answer === option ? "is-selected" : "")} disabled={busy || paused || answered}
+                  onClick={() => setAnswer(option)}>
+                  <span>{option}</span>{answer === option && <Icon name="check" size={16} />}
+                </button>
+              ))}
+            </div>
+          ) : (
+            <>
+              <textarea className="input duo-answer" data-testid="duo-answer" rows={isPrediction ? 3 : 4} maxLength={2000}
+                value={answer} onChange={(e) => setAnswer(e.target.value)}
+                placeholder={lang === "fr" ? (isChallenge ? "Décris ton défi, ou valide simplement « défi relevé »." : "Écris ta réponse…") : (isChallenge ? "Describe your challenge, or simply mark it as completed." : "Write your answer…")}
+                disabled={busy || paused || answered} />
+              {isPrediction && (
+                <label className="field">
+                  <span>{lang === "fr" ? "Ton pronostic sur la réponse de l'autre" : "Your prediction of the other person's answer"}</span>
+                  <input className="input" value={guess} maxLength={2000} onChange={(e) => setGuess(e.target.value)}
+                    placeholder={lang === "fr" ? "Ce que l'autre va répondre…" : "What the other person will answer…"} disabled={busy || paused || answered} />
+                </label>
+              )}
+            </>
+          )}
           <div className="composer__actions">
-            <button className="secondary" type="button" onClick={onPass} disabled={busy || answered}>Passer</button>
-            <button className="primary" type="button" data-testid="duo-send" onClick={() => onSubmit(answer, visibility)} disabled={busy || paused || answered || !answer.trim()}>Envoyer ma réponse <Icon name="send" /></button>
+            <button className="secondary" type="button" onClick={onPass} disabled={busy || answered}>{lang === "fr" ? "Passer" : "Pass"}</button>
+            <button className="primary" type="button" data-testid="duo-send" onClick={() => onSubmit(answerPayload(), visibility)} disabled={busy || paused || answered || !answerPayload()}>
+              {isChallenge && !answer.trim() ? (lang === "fr" ? "Défi relevé" : "Challenge completed") : (lang === "fr" ? "Envoyer ma réponse" : "Submit answer")} <Icon name="send" />
+            </button>
           </div>
           {answered && <p className="muted">Réponse enregistrée : {visibilityLabel[visibility]}.</p>}
         </section>
@@ -252,11 +317,44 @@ export function DuoGame({ snap, interaction, busy, onSubmit, onPass, onNext, onS
             {snap.answers.map((a) => (
               <article key={a.player_id}>
                 <strong>{name(a.player_id)}</strong>
-                <p>{a.passed ? "A choisi de passer." : a.answer}</p>
+                {(() => {
+                  const prediction = !a.passed && interaction.kind === "prediction" ? decodePrediction(a.answer) : null;
+                  return prediction ? (
+                    <dl className="answer-pair">
+                      <div><dt>{lang === "fr" ? "Sa réponse" : "Their answer"}</dt><dd>{prediction.own}</dd></div>
+                      <div><dt>{lang === "fr" ? "Son pronostic" : "Their prediction"}</dt><dd>{prediction.guess}</dd></div>
+                    </dl>
+                  ) : <p>{a.passed ? (lang === "fr" ? "A choisi de passer." : "Chose to pass.") : a.answer}</p>;
+                })()}
                 {a.visibility && <small>{visibilityLabel[a.visibility] ?? a.visibility}</small>}
               </article>
             ))}
           </div>
+          <section className="round-moments" aria-labelledby="duo-round-moments-title">
+            <div className="round-moments__intro">
+              <span className="round-moments__eyebrow">APRÈS LA RÉVÉLATION</span>
+              <h3 id="duo-round-moments-title">Faites vivre la discussion.</h3>
+              <p>Choisissez ensemble une relance bonus. Respectez toujours la visibilité choisie par chaque personne.</p>
+            </div>
+            <div className="round-moments__choices">
+              {roundMoments.map((moment, index) => (
+                <button key={moment.id} type="button" className={`round-moment ${selectedMoment === moment.id ? "is-selected" : ""}`}
+                  aria-pressed={selectedMoment === moment.id}
+                  onClick={() => setSelectedMoment(selectedMoment === moment.id ? null : moment.id)}>
+                  <span className="round-moment__number">0{index + 1}</span>
+                  <span className="round-moment__copy"><strong>{moment.title}</strong><small>{moment.label}</small></span>
+                  <span className="round-moment__mark">{selectedMoment === moment.id ? "−" : "+"}</span>
+                </button>
+              ))}
+            </div>
+            {selectedMoment && (
+              <div className="round-moments__prompt" role="status" aria-live="polite">
+                <span>VOTRE RELANCE</span>
+                <p>{roundMoments.find((moment) => moment.id === selectedMoment)?.prompt}</p>
+                <button type="button" className="round-moments__close" onClick={() => setSelectedMoment(null)}>Fermer</button>
+              </div>
+            )}
+          </section>
           <button className="primary full" type="button" data-testid="duo-next" onClick={onNext} disabled={busy || paused || snap.i_acked}>
             {snap.i_acked ? "En attente des trois autres…" : "Question suivante"}
           </button>

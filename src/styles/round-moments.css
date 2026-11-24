@@ -1,0 +1,86 @@
+.round-moments {
+  margin: 18px 0 16px;
+  padding: 16px;
+  border: 1px solid rgba(210, 144, 85, 0.28);
+  border-radius: var(--radius);
+  background: linear-gradient(145deg, rgba(210, 144, 85, 0.09), rgba(255, 255, 255, 0.015));
+}
+.round-moments__intro { margin-bottom: 12px; }
+.round-moments__eyebrow {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--gold);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .18em;
+}
+.round-moments__intro h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(18px, 2.8vw, 22px);
+  font-weight: 500;
+}
+.round-moments__intro p {
+  margin: 5px 0 0;
+  color: var(--ink-mute);
+  font-size: 12px;
+  line-height: 1.5;
+}
+.round-moments__choices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.round-moment {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: rgba(0, 0, 0, .13);
+  color: var(--ink);
+  text-align: left;
+}
+.round-moment:hover, .round-moment.is-selected {
+  border-color: var(--copper);
+  background: rgba(210, 144, 85, .12);
+}
+.round-moment__number {
+  color: var(--gold);
+  font-family: var(--font-display);
+  font-size: 18px;
+}
+.round-moment__copy { display: grid; gap: 2px; min-width: 0; }
+.round-moment__copy strong { font-size: 11.5px; line-height: 1.25; }
+.round-moment__copy small {
+  color: var(--ink-mute);
+  font-size: 9px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.round-moment__mark { margin-left: auto; color: var(--gold); font-size: 18px; }
+.round-moments__prompt {
+  margin-top: 10px;
+  padding: 13px 14px;
+  border-left: 2px solid var(--pepper);
+  border-radius: 0 12px 12px 0;
+  background: rgba(0, 0, 0, .18);
+}
+.round-moments__prompt > span {
+  color: var(--pepper);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .16em;
+}
+.round-moments__prompt p { margin: 5px 0 0; font-size: 13px; line-height: 1.6; }
+.round-moments__close {
+  margin-top: 8px;
+  padding: 4px 0;
+  color: var(--ink-mute);
+  font-size: 11px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+@media (max-width: 560px) {
+  .round-moments { padding: 13px; }
+  .round-moments__choices { grid-template-columns: 1fr; }
+  .round-moment { min-height: 48px; }
+}

@@ -3,7 +3,7 @@ import fs from "node:fs";
 const cats = ["decouverte","complicite","profondeur","seduction","audacieux"];
 const kinds = ["free","secret","prediction","challenge","cross"];
 const items = JSON.parse(fs.readFileSync("src/catalog.json","utf8"));
-const errors = [], seen = new Set();
+const errors = [], seen = new Set(), seenTitles = new Map();
 for (const it of items) {
   if (!/^[a-z]\d{2}$/.test(it.id ?? "")) errors.push(`Identifiant invalide : ${it.id}`);
   if (seen.has(it.id)) errors.push(`Identifiant en double : ${it.id}`);
@@ -11,6 +11,9 @@ for (const it of items) {
   if (!cats.includes(it.category)) errors.push(`${it.id} : catégorie inconnue`);
   if (!kinds.includes(it.kind)) errors.push(`${it.id} : type inconnu`);
   if (!it.title || !it.prompt) errors.push(`${it.id} : titre/consigne manquant`);
+  const titleKey = (it.title ?? "").toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "").replace(/[^a-z0-9]+/g, " ").trim();
+  if (titleKey && seenTitles.has(titleKey)) errors.push(`Titre en double : ${it.title} (${seenTitles.get(titleKey)} / ${it.id})`);
+  if (titleKey) seenTitles.set(titleKey, it.id);
   if (it.prompt && !/\p{Extended_Pictographic}/u.test(it.prompt)) errors.push(`${it.id} : emoji manquant dans la question`);
   if (["challenge","cross"].includes(it.kind) && !it.prompt.includes("?")) errors.push(`${it.id} : un défi doit être formulé comme une question`);
   if (![1,2,3,4].includes(it.level)) errors.push(`${it.id} : palier invalide (1 à 4)`);

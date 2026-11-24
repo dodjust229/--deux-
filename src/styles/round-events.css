@@ -1,0 +1,86 @@
+.round-event {
+  position: relative;
+  overflow: hidden;
+  margin: 14px 0 18px;
+  padding: 16px 18px 15px;
+  border: 1px solid rgba(211, 158, 99, .38);
+  border-radius: 16px;
+  background:
+    radial-gradient(ellipse at 92% 0%, rgba(155, 48, 52, .2), transparent 48%),
+    linear-gradient(135deg, rgba(72, 28, 35, .72), rgba(17, 12, 15, .94));
+  box-shadow: inset 0 1px 0 rgba(255, 224, 180, .06), 0 12px 32px rgba(0, 0, 0, .12);
+}
+.round-event::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 2px;
+  background: linear-gradient(180deg, transparent, var(--gold), var(--pepper), transparent);
+}
+.round-event__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--gold);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .17em;
+}
+.round-event__top span:last-child {
+  font-size: 17px;
+  line-height: 1;
+  opacity: .8;
+}
+.round-event h2 {
+  margin: 7px 0 6px;
+  font-family: var(--font-display);
+  font-size: clamp(20px, 3vw, 25px);
+  font-weight: 500;
+}
+.round-event p {
+  max-width: 68ch;
+  margin: 0;
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 1.65;
+}
+.round-event > small {
+  display: block;
+  margin-top: 9px;
+  color: var(--ink-mute);
+  font-size: 10px;
+  letter-spacing: .025em;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .round-event { animation: round-event-enter .42s ease-out both; }
+  @keyframes round-event-enter {
+    from { opacity: 0; transform: translateY(7px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
+
+.duo-cross-role {
+  margin: 12px 0 16px;
+  padding: 13px 16px;
+  border: 1px solid rgba(211, 158, 99, .25);
+  border-radius: 14px;
+  background: linear-gradient(120deg, rgba(211, 158, 99, .08), rgba(17, 12, 15, .42));
+}
+.duo-cross-role > span {
+  color: var(--gold);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .16em;
+}
+.duo-cross-role p {
+  margin: 6px 0 0;
+  font-size: 13px;
+  line-height: 1.55;
+}
+.duo-cross-role small {
+  display: block;
+  margin-top: 7px;
+  color: var(--ink-mute);
+  font-size: 10px;
+}
