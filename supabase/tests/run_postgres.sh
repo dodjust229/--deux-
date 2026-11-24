@@ -116,9 +116,6 @@ SQL
 echo "Running level engine integration recipe"
 "${PSQL[@]}" -d "$DB" -f supabase/tests/level_engine.sql
 
-echo "Running legacy custom-room integration recipe"
-python3 supabase/tests/custom_room.py
-
 echo "Applying catalog-backed custom engine"
 "${PSQL[@]}" -d "$DB" -f supabase/16_custom_catalog_engine.sql
 
@@ -140,6 +137,10 @@ SQL
 
 echo "Applying invitation finalisation (after 16, 17 and 18)"
 "${PSQL[@]}" -d "$DB" -f "supabase/19_invitation_finalisation.sql"
+
+echo "Running legacy custom-room integration recipe"
+python3 supabase/tests/custom_room.py
+
 
 # La migration doit reconnaître le deck historique et le préserver en Personnalisé.
 "${PSQL[@]}" -d "$DB" <<'SQL'
