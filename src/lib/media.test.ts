@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { MAX_ANSWER_LENGTH, PRIVATE_ANSWER, describeContent, encodeText, parseContent } from "./media.ts";
+import { MAX_ANSWER_LENGTH, PRIVATE_ANSWER, PRIVATE_STORAGE_PREFIX, clearPrivateAnswers, describeContent, encodeText, parseContent } from "./media.ts";
 
 test("texte : compatible tel quel", () => {
   assert.deepEqual(parseContent("Une réponse normale"), { kind: "text", text: "Une réponse normale" });
@@ -27,4 +27,24 @@ test("longueur maximale alignée sur la contrainte serveur (2000)", () => {
   assert.equal(MAX_ANSWER_LENGTH, 2000);
   assert.equal(encodeText("  court  "), "court");
   assert.equal(encodeText("x".repeat(2500)).length, MAX_ANSWER_LENGTH);
+});
+
+
+test("nettoyage de confidentialité : supprime seulement les confidences de la salle quittée", () => {
+  const values = new Map<string, string>([
+    [`${PRIVATE_STORAGE_PREFIX}room-a.q01`, "secret A"],
+    [`${PRIVATE_STORAGE_PREFIX}room-a.q02`, "secret B"],
+    [`${PRIVATE_STORAGE_PREFIX}room-b.q01`, "secret autre salle"],
+    ["adeux_identity", "session"]
+  ]);
+  const storage = {
+    get length() { return values.size; },
+    key(index: number) { return Array.from(values.keys())[index] ?? null; },
+    removeItem(key: string) { values.delete(key); }
+  };
+  assert.equal(clearPrivateAnswers("room-a", storage), 2);
+  assert.equal(values.has(`${PRIVATE_STORAGE_PREFIX}room-a.q01`), false);
+  assert.equal(values.has(`${PRIVATE_STORAGE_PREFIX}room-a.q02`), false);
+  assert.equal(values.get(`${PRIVATE_STORAGE_PREFIX}room-b.q01`), "secret autre salle");
+  assert.equal(values.get("adeux_identity"), "session");
 });

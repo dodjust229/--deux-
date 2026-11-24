@@ -24,6 +24,7 @@ import {
 } from "./api";
 import { extractRoomId, getSelectedInterests, parseError } from "./lib/protocol";
 import { deriveScene } from "./lib/scene";
+import { clearPrivateAnswers } from "./lib/media";
 import { applyPreferences, categoriesForIntensity, readPreferences, writePreferences, type Preferences } from "./lib/prefs";
 import { previewDuoSnapshot, previewSnapshot } from "./lib/preview";
 import { playSound } from "./lib/sound";
@@ -353,6 +354,8 @@ export default function App() {
         /* on quitte quand même */
       }
     }
+    const localStorage = storage();
+    if (identity && localStorage) clearPrivateAnswers(identity.roomId, localStorage);
     dropSession("Tu as quitté la salle.");
   }
 
