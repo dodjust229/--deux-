@@ -119,6 +119,12 @@ python3 supabase/tests/custom_catalog_engine.py
 echo "Applying Palier 4 invitation and permissions rules"
 "${PSQL[@]}" -d "$DB" -f supabase/17_invitation_permissions.sql
 
+echo "Applying level and mode integrity fix (must run after 17)"
+"${PSQL[@]}" -d "$DB" -f supabase/20_level_and_mode_integrity.sql
+
+echo "Re-running level engine recipe against the final schema"
+"${PSQL[@]}" -d "$DB" -f supabase/tests/level_engine.sql
+
 echo "Running Palier 4 invitation and permissions integration recipe"
 python3 supabase/tests/palier4_invitation_permissions.py
 
@@ -133,3 +139,6 @@ echo "Running Palier 7 security and privacy regression recipe"
 
 echo "Running invitation permissions and dispatcher recipe"
 "${PSQL[@]}" -d "$DB" -f "supabase/tests/invitation_permissions.sql"
+
+echo "Running level and mode integrity recipe"
+"${PSQL[@]}" -d "$DB" -f "supabase/tests/level_and_mode_integrity.sql"

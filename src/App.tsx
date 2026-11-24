@@ -522,7 +522,7 @@ export default function App() {
       {snapshot && (
         <SalonAmbiance
           salon={identity?.gameMode === "duos" ? "duos" : "couple"}
-          level={(snapshot.interaction?.level ?? 1) as 1 | 2 | 3 | 4}
+          level={(snapshot.room.level ?? snapshot.interaction?.level ?? 1) as 1 | 2 | 3 | 4}
           paused={snapshot.room.status === "paused"}
           waiting={Boolean(snapshot.my_answer && !snapshot.revealed)}
         />

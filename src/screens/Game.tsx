@@ -106,16 +106,20 @@ export function Game({
 }: GameProps) {
   const [curtain, setCurtain] = useState<1 | 2 | 3 | 4 | null>(null);
   const lastLevel = useRef<number | null>(null);
+  // Palier de SESSION (persistant, non décroissant), pas celui de la carte tirée :
+  // en mode Personnalisé le paquet mélange plusieurs paliers, et lire la carte
+  // faisait sauter l'affichage de 3 à 2 puis à 1.
+  const sessionLevel = (snap.room.level ?? interaction.level) as 1 | 2 | 3 | 4;
 
   useEffect(() => {
     const previous = lastLevel.current;
-    lastLevel.current = interaction.level;
-    if (previous === null || previous === interaction.level) return;
-    setCurtain(interaction.level);
+    lastLevel.current = sessionLevel;
+    if (previous === null || previous === sessionLevel) return;
+    setCurtain(sessionLevel);
     if (document.documentElement.dataset.motion !== "reduced") navigator.vibrate?.(28);
     const timer = window.setTimeout(() => setCurtain(null), 1800);
     return () => window.clearTimeout(timer);
-  }, [interaction.id, interaction.level]);
+  }, [interaction.id, sessionLevel]);
   const nameOf = (id: string) => snap.players.find((player) => player.id === id)?.nickname ?? "Joueur";
   const position = snap.room.current_index + 1;
   const progress = Math.min(100, Math.round((position / Math.max(1, snap.room.total)) * 100));
