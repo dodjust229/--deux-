@@ -26,7 +26,13 @@ L'utilisateur ne peut pas joindre de fichiers dans cette conversation. Travaille
 | 4 | Invitations, rôles, intérêts individuels | Livré côté code | `docs/QSPICY_PALIER_4_REPRISE_IA.md` ; PR #20 fusionnée, migration 17 appliquée, Render live. Tests réels à 2/4 appareils encore à faire. |
 | 5 | Confidentialité et photos personnelles depuis la galerie | Livré côté code et infrastructure | `docs/QSPICY_PALIER_5_REPRISE_IA.md` ; PR #21, #22, #23 fusionnées ; migration 18 et Edge Function déployées ; Render live. Recette photo multi-appareils restante. |
 | 6 | Musique et ambiance | Livré code et déployé | PR #24 fusionnée ; CI #45372319685 réussie ; Render `dep-dc2m65ss728c73b0u7c0` live. Recette audio réelle mobile/desktop restante. |
-| 7 | Tests globaux, bugs et stabilisation | À faire | Recette Couple/DUOS, appareils, permissions, sessions longues et sécurité. |
+| 7 | Tests globaux, bugs et stabilisation | En cours de livraison | Course réseau entre salles corrigée ; tests de régression de sécurité/DUOS ajoutés à la CI. CI, fusion, Render et recette terrain à confirmer. Voir `docs/QSPICY_PALIER_7_REPRISE_IA.md`. |
+
+## Palier 7 — stabilisation finale
+- Correctif de course réseau : les réponses tardives d'une ancienne salle ne peuvent plus écraser la session courante ; isolation par salle/jeton/mode.
+- Nouvelle recette PostgreSQL Palier 7 : accès directs, privilèges RPC, jetons, hôte, confidentialité des réponses DUOS et retrait du consentement croisé.
+- CI, fusion et déploiement à confirmer ; recette terrain sur deux/quatre appareils encore nécessaire.
+- Voir `docs/QSPICY_PALIER_7_REPRISE_IA.md`.
 
 ## Éléments encore ouverts
 
