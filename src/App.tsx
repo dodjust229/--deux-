@@ -20,7 +20,8 @@ import {
   submitDuoAnswer,
   setDuoPermissions,
   sendDuoMessage,
-  restartDuoGame
+  restartDuoGame,
+  setRoomMediaPermission
 } from "./api";
 import { extractRoomId, getSelectedInterests, parseError } from "./lib/protocol";
 import { deriveScene } from "./lib/scene";
@@ -33,6 +34,7 @@ import { interactions } from "./content";
 import { explainCustomError, resolveCustomInteraction } from "./lib/custom";
 import { Wordmark } from "./components/Brand";
 import { Icon } from "./components/Icon";
+import { PhotoShare } from "./components/PhotoShare";
 import { Settings } from "./components/Settings";
 import { Safety } from "./components/Safety";
 import { Guide } from "./components/Guide";
@@ -702,6 +704,16 @@ export default function App() {
           />
           <p className="muted">La partie se prépare…</p>
         </main>
+      )}
+
+      {identity && snapshot && (
+        <PhotoShare
+          roomId={identity.roomId}
+          token={identity.token}
+          myPlayerId={snapshot.my_player_id}
+          mode={identity.gameMode === "duos" ? "duos" : "couple"}
+          onPermissionChange={(allow) => void run(() => setRoomMediaPermission(identity.roomId, identity.token, allow), false)}
+        />
       )}
 
       <footer className="footer">
