@@ -45,6 +45,9 @@ as $$
 declare me public.players;
 begin
   me := public._player_for(p_room_id,p_player_token);
+  if (select mode from public.rooms where id=p_room_id) <> 'couple' then
+    raise exception 'E_MODE: Cette autorisation est gérée par les réglages DUOS.';
+  end if;
   insert into public.duo_permissions(player_id,receive_media,updated_at)
   values (me.id,coalesce(p_receive_media,false),now())
   on conflict (player_id) do update
