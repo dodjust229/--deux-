@@ -46,6 +46,9 @@ check("le snapshot expose l'identifiant canonique et le bon niveau",snap.get("in
 rpc("set_adult_consent",f"'{rid}','{host}',false")
 after=json.loads(rpc("get_room_snapshot",f"'{rid}','{guest}'"))
 check("le retrait du consentement masque la carte adulte et saute les suivantes",after.get("interaction_id")=="p01",str(after.get("interaction_id")))
+# Restore both agreements so the anti-repeat assertion reaches the history guard, not the earlier consent guard.
+rpc("set_adult_consent",f"'{rid}','{host}',true")
+rpc("set_adult_consent",f"'{rid}','{guest}',true")
 # The previous selection has been recorded in the room history; with enough unseen cards, reuse is rejected.
 sql(f"update public.rooms set status='waiting' where id='{rid}'")
 check("une sélection déjà jouée est refusée tant qu'il reste assez de cartes inédites",expect("start_custom_game",f"'{rid}','{host}',{ids}","E_CUSTOM_REPEAT"))
