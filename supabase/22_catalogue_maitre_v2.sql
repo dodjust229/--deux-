@@ -4,6 +4,7 @@ alter table public.catalog add column if not exists intensity integer;
 update public.catalog set intensity = least(5, greatest(1, coalesce(intensity, level))) where intensity is null;
 alter table public.catalog alter column intensity set default 1;
 alter table public.catalog alter column intensity set not null;
+alter table public.catalog alter column explicit_rank set default 1;
 do $$ begin
   if not exists (select 1 from pg_constraint where conname='catalog_intensity_check') then
     alter table public.catalog add constraint catalog_intensity_check check (intensity between 1 and 5);
