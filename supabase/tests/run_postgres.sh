@@ -124,3 +124,6 @@ echo "Applying Palier 5 private gallery photo rules"
 
 echo "Running Palier 5 private gallery photo integration recipe"
 "${PSQL[@]}" -d "$DB" -f "supabase/tests/photo_sharing.sql"
+
+echo "Running Palier 7 security and privacy regression recipe"
+"${PSQL[@]}" -d "$DB" -f "supabase/tests/palier7_security_regression.sql"
