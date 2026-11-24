@@ -40,6 +40,34 @@ export function previewSnapshot(kind: string): Snapshot {
   const free = interactions.find((item) => item.kind === "free")!;
   const reward = interactions.find((item) => item.kind === "prediction") ?? free;
 
+  if (kind === "zone2-lobby") {
+    const snapshot = base("waiting");
+    snapshot.room.current_index = 0;
+    snapshot.players[0].adult_consent = true;
+    snapshot.players[0].selected_categories = ["decouverte"];
+    snapshot.players[1].adult_consent = true;
+    snapshot.players[1].selected_categories = ["audacieux"];
+    snapshot.my_categories = ["decouverte"];
+    snapshot.other_categories = ["audacieux"];
+    return snapshot;
+  }
+  if (kind === "zone2-level-regression") {
+    const audacious = interactions.find((item) => item.category === "audacieux" && item.level === 3)
+      ?? interactions.find((item) => item.category === "audacieux");
+    if (!audacious) throw new Error("Aucune carte Audacieux disponible pour l'aperçu Zone 2.");
+    const snapshot = base("playing");
+    snapshot.room.current_index = 0;
+    snapshot.room.level = 4;
+    snapshot.room.selected_level = 2;
+    snapshot.room.adult_enabled = true;
+    snapshot.players[0].adult_consent = true;
+    snapshot.players[1].adult_consent = true;
+    snapshot.my_categories = ["audacieux"];
+    snapshot.other_categories = ["audacieux"];
+    snapshot.interaction_id = audacious.id;
+    snapshot.interaction = audacious;
+    return snapshot;
+  }
   if (kind === "lobby") {
     const snapshot = base("waiting");
     snapshot.room.current_index = 0;
