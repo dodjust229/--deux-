@@ -128,9 +128,6 @@ python3 supabase/tests/custom_catalog_engine.py
 echo "Applying Palier 4 invitation and permissions rules"
 "${PSQL[@]}" -d "$DB" -f supabase/17_invitation_permissions.sql
 
-echo "Running Palier 4 invitation and permissions integration recipe"
-python3 supabase/tests/palier4_invitation_permissions.py
-
 echo "Applying Palier 5 private gallery photo rules"
 "${PSQL[@]}" -d "$DB" -f "supabase/18_room_photo_sharing.sql"
 
@@ -156,6 +153,9 @@ END
 $legacy$;
 DELETE FROM public.rooms WHERE id = '00000000-0000-4000-8000-000000000019';
 SQL
+
+echo "Running Palier 4 invitation and permissions integration recipe"
+python3 supabase/tests/palier4_invitation_permissions.py
 
 echo "Applying level and mode integrity fix (after 19)"
 "${PSQL[@]}" -d "$DB" -f supabase/20_level_and_mode_integrity.sql
