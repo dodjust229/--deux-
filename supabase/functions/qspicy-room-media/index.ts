@@ -20,12 +20,28 @@ function json(req: Request, status: number, body: Record<string, unknown>) {
 function validUuid(value: string | null): value is string {
   return Boolean(value && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value));
 }
-function detectImage(bytes: Uint8Array): "image/jpeg" | "image/png" | "image/webp" | null {
-  if (bytes.length >= 3 && bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return "image/jpeg";
-  if (bytes.length >= 8 && bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47 &&
-      bytes[4] === 0x0d && bytes[5] === 0x0a && bytes[6] === 0x1a && bytes[7] === 0x0a) return "image/png";
-  if (bytes.length >= 12 && String.fromCharCode(...bytes.slice(0, 4)) === "RIFF" &&
-      String.fromCharCode(...bytes.slice(8, 12)) === "WEBP") return "image/webp";
+function detectImage(bytes: Uint8Array): "image/jpeg" | null {
+  return bytes.length >= 3 && bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff
+    ? "image/jpeg"
+    : null;
+}
+function jpegDimensions(bytes: Uint8Array): { width: number; height: number } | null {
+  let offset = 2;
+  const sof = new Set([0xc0, 0xc1, 0xc2, 0xc3, 0xc5, 0xc6, 0xc7, 0xc9, 0xca, 0xcb, 0xcd, 0xce, 0xcf]);
+  while (offset + 8 < bytes.length) {
+    if (bytes[offset] !== 0xff) return null;
+    while (bytes[offset] === 0xff) offset += 1;
+    const marker = bytes[offset++];
+    if (marker === 0xd8 || marker === 0xd9 || marker === 0x01 || (marker >= 0xd0 && marker <= 0xd7)) continue;
+    const length = (bytes[offset] << 8) | bytes[offset + 1];
+    if (length < 2 || offset + length > bytes.length) return null;
+    if (sof.has(marker)) {
+      const height = (bytes[offset + 3] << 8) | bytes[offset + 4];
+      const width = (bytes[offset + 5] << 8) | bytes[offset + 6];
+      return width > 0 && height > 0 ? { width, height } : null;
+    }
+    offset += length;
+  }
   return null;
 }
 function errorMessage(error: unknown) {
@@ -53,14 +69,18 @@ Deno.serve(async (req: Request) => {
       const raw = new Uint8Array(await req.arrayBuffer());
       if (raw.byteLength < 1 || raw.byteLength > MAX_BYTES) return json(req, 413, { error: "La photo doit peser 5 Mo maximum." });
       const actualType = detectImage(raw);
-      if (!actualType || actualType !== declaredType) return json(req, 415, { error: "Format refusé. Utilise une photo JPEG, PNG ou WebP." });
+      if (!actualType || actualType !== declaredType) return json(req, 415, { error: "La photo doit être réencodée en JPEG avant son envoi." });
+      const dimensions = jpegDimensions(raw);
+      if (!dimensions || dimensions.width > 4000 || dimensions.height > 4000 || dimensions.width * dimensions.height > 16000000) {
+        return json(req, 415, { error: "Dimensions de photo invalides ou trop importantes." });
+      }
 
       const { error: authError } = await admin.rpc("qspicy_media_targets", {
         p_room_id: roomId, p_player_token: token, p_scope: scope,
       });
       if (authError) return json(req, 403, { error: errorMessage(authError) });
 
-      const extension = actualType === "image/jpeg" ? "jpg" : actualType === "image/png" ? "png" : "webp";
+      const extension = "jpg";
       const path = `${roomId}/${crypto.randomUUID()}.${extension}`;
       const { error: uploadError } = await admin.storage.from(BUCKET).upload(path, raw.buffer as ArrayBuffer, {
         contentType: actualType, cacheControl: "60", upsert: false,
