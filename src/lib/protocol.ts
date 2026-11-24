@@ -32,9 +32,3 @@ export function getSharedCategories<T extends string>(selected: readonly T[], ot
   const otherSet = new Set(other ?? []);
   return selected.filter(category => otherSet.has(category));
 }
-
-/** Identifie une session sans confondre deux salles ou deux jetons du même appareil. */
-export function sessionFingerprint(identity: { roomId: string; token: string; gameMode?: string } | null): string | null {
-  if (!identity?.roomId || !identity.token) return null;
-  return `${identity.roomId}:${identity.token}:${identity.gameMode ?? "couple"}`;
-}
