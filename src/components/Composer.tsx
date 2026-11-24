@@ -7,6 +7,8 @@ interface ComposerProps {
   interaction: Interaction;
   busy: boolean;
   alreadyAnswered: boolean;
+  /** La réponse vient d'être enregistrée : on joue le feedback de validation. */
+  justSent?: boolean;
   canSend: boolean;
   hint: string;
   onSubmit: (payload: string) => void;
@@ -16,9 +18,10 @@ interface ComposerProps {
 
 const EMOJIS = ["❤️", "😏", "🔥", "🌙", "😅", "🤫", "✨", "🫦"];
 
-export function Composer({ interaction, busy, alreadyAnswered, canSend, hint, onSubmit, onPass, lang = "fr" }: ComposerProps) {
+export function Composer({ interaction, busy, alreadyAnswered, justSent = false, canSend, hint, onSubmit, onPass, lang = "fr" }: ComposerProps) {
   const [text, setText] = useState("");
   const [guess, setGuess] = useState("");
+  const [popped, setPopped] = useState<string | null>(null);
 
   const options = interaction.options ?? [];
   const isSecret = interaction.kind === "secret";
@@ -56,11 +59,14 @@ export function Composer({ interaction, busy, alreadyAnswered, canSend, hint, on
 
   const addEmoji = (emoji: string) => {
     setText((current) => (current + emoji).slice(0, MAX_ANSWER_LENGTH));
+    // Micro-animation : l'émoji choisi « saute » une fois.
+    setPopped(emoji);
+    window.setTimeout(() => setPopped((current) => (current === emoji ? null : current)), 420);
   };
 
   if (alreadyAnswered) {
     return (
-      <div className="composer composer--locked">
+      <div className={`composer composer--locked${justSent ? " is-just-sent" : ""}`}>
         <p className="composer__locked">
           <Icon name="check" size={16} /> Ta réponse est enregistrée. Elle reste cachée jusqu'à la révélation.
         </p>
@@ -132,7 +138,13 @@ export function Composer({ interaction, busy, alreadyAnswered, canSend, hint, on
           {!isPrivate && (
             <div className="emoji-row" role="group" aria-label={lang === "en" ? "Insert an emoji" : "Insérer un emoji"}>
               {EMOJIS.map((emoji) => (
-                <button key={emoji} type="button" className="emoji" disabled={locked} onClick={() => addEmoji(emoji)}>
+                <button
+                  key={emoji}
+                  type="button"
+                  className={`emoji${popped === emoji ? " is-popped" : ""}`}
+                  disabled={locked}
+                  onClick={() => addEmoji(emoji)}
+                >
                   {emoji}
                 </button>
               ))}

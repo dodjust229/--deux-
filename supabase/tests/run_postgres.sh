@@ -142,3 +142,9 @@ echo "Running invitation permissions and dispatcher recipe"
 
 echo "Running level and mode integrity recipe"
 "${PSQL[@]}" -d "$DB" -f "supabase/tests/level_and_mode_integrity.sql"
+
+echo "Applying explicit content floor fix (must run after 20)"
+"${PSQL[@]}" -d "$DB" -f "supabase/21_explicit_content_floor.sql"
+
+echo "Running explicit content floor recipe"
+"${PSQL[@]}" -d "$DB" -f "supabase/tests/explicit_content_floor.sql"
