@@ -6,12 +6,12 @@ declare
   room uuid;
   owner_token text;
   guest_token text;
-  owner_id uuid;
   guest_id uuid;
   media_id uuid;
   object_path text;
   state jsonb;
   denied boolean := false;
+  deleted_path text;
 begin
   if to_regprocedure('public.set_room_media_permission(uuid,text,boolean)') is null
      or to_regprocedure('public.qspicy_media_targets(uuid,text,text)') is null
@@ -35,7 +35,6 @@ begin
   owner_data := public.create_room('PhotoOwner','masculin');
   room := (owner_data->>'room_id')::uuid;
   owner_token := owner_data->>'player_token';
-  owner_id := (owner_data->>'player_id')::uuid;
   guest_data := public.join_room(room,'PhotoGuest','feminin');
   guest_token := guest_data->>'player_token';
   guest_id := (guest_data->>'player_id')::uuid;
@@ -44,10 +43,8 @@ begin
     perform public.qspicy_media_targets(room,owner_token,'partner');
     raise exception 'Expected photo consent to be required';
   exception when others then
-    if sqlerrm like 'E_MEDIA_CONSENT:%' then
-      denied := true;
-    else
-      raise;
+    if sqlerrm like 'E_MEDIA_CONSENT:%' then denied := true;
+    else raise;
     end if;
   end;
   if not denied then raise exception 'Photo upload was not blocked before consent'; end if;
@@ -70,15 +67,20 @@ begin
     raise exception 'Sender cannot list their own photo';
   end if;
 
-  if public.qspicy_media_delete(room,guest_token,media_id) is not null then
-    raise exception 'Recipient must not delete a photo owned by another player';
+  begin
+    perform public.qspicy_media_delete(room,guest_token,media_id);
+    raise exception 'Recipient unexpectedly deleted another player photo';
+  exception when others then
+    if sqlerrm not like 'E_MEDIA_DELETE:%' then raise; end if;
+  end;
+
+  deleted_path := public.qspicy_media_delete(room,owner_token,media_id);
+  if deleted_path is distinct from object_path then
+    raise exception 'Sender deletion did not return the stored object path';
   end if;
-exception when others then
-  if sqlerrm like 'E_MEDIA_DELETE:%' then
-    -- Expected: only the sender can remove the uploaded object.
-    null;
-  else
-    raise;
+  state := public.qspicy_media_list(room,guest_token);
+  if jsonb_array_length(state->'items') <> 0 then
+    raise exception 'Deleted photo remains visible to its recipient';
   end if;
 end
 $photo_test$;
