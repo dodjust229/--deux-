@@ -9,6 +9,8 @@ import { LevelCurtain } from "../components/LevelCurtain";
 import { MediaView } from "../components/MediaContent";
 import type { Scene } from "../lib/scene";
 import { decodePrediction } from "../lib/protocol";
+import { getRoundMoments } from "../lib/round-moments";
+import { getRoundEvent } from "../lib/round-events";
 import { PRIVATE_STORAGE_PREFIX, parseContent } from "../lib/media";
 import { audienceLabels, categoryLabels, kindLabels, levelLabels } from "../content";
 import type { Lang } from "../lib/i18n";
@@ -106,6 +108,10 @@ export function Game({
   lang
 }: GameProps) {
   const [curtain, setCurtain] = useState<1 | 2 | 3 | 4 | null>(null);
+  const [selectedMoment, setSelectedMoment] = useState<string | null>(null);
+  const roundMoments = getRoundMoments(interaction);
+  const roundEvent = getRoundEvent(snap.room.id, snap.room.current_index, snap.room.total, interaction);
+  useEffect(() => setSelectedMoment(null), [interaction.id]);
   const [justSent, setJustSent] = useState(false);
   const lastLevel = useRef<number | null>(null);
   const lastAnswer = useRef<string | null>(null);
@@ -190,6 +196,15 @@ export function Game({
         )}
       </section>
 
+      {roundEvent && (
+        <aside className="round-event" aria-label="Événement spécial de la manche">
+          <div className="round-event__top"><span>{roundEvent.subtitle}</span><span>✦</span></div>
+          <h2>{roundEvent.title}</h2>
+          <p>{roundEvent.instruction}</p>
+          <small>{roundEvent.cue}</small>
+        </aside>
+      )}
+
       {paused ? (
         <section className="panel panel--pause" role="status">
           <h2>Partie en pause</h2>
@@ -219,6 +234,31 @@ export function Game({
               </article>
             ))}
           </div>
+          <section className="round-moments" aria-labelledby="round-moments-title">
+            <div className="round-moments__intro">
+              <span className="round-moments__eyebrow">APRÈS LA RÉVÉLATION</span>
+              <h3 id="round-moments-title">Ne passez pas trop vite à la suite.</h3>
+              <p>Choisissez ensemble une relance bonus. Elle est facultative et ne bloque jamais la partie.</p>
+            </div>
+            <div className="round-moments__choices">
+              {roundMoments.map((moment, index) => (
+                <button key={moment.id} type="button" className={`round-moment ${selectedMoment === moment.id ? "is-selected" : ""}`}
+                  aria-pressed={selectedMoment === moment.id}
+                  onClick={() => setSelectedMoment(selectedMoment === moment.id ? null : moment.id)}>
+                  <span className="round-moment__number">0{index + 1}</span>
+                  <span className="round-moment__copy"><strong>{moment.title}</strong><small>{moment.label}</small></span>
+                  <span className="round-moment__mark">{selectedMoment === moment.id ? "−" : "+"}</span>
+                </button>
+              ))}
+            </div>
+            {selectedMoment && (
+              <div className="round-moments__prompt" role="status" aria-live="polite">
+                <span>VOTRE RELANCE</span>
+                <p>{roundMoments.find((moment) => moment.id === selectedMoment)?.prompt}</p>
+                <button type="button" className="round-moments__close" onClick={() => setSelectedMoment(null)}>Fermer</button>
+              </div>
+            )}
+          </section>
           <button className="primary full" type="button" data-testid="next" onClick={onNext} disabled={busy || snap.i_acked}>
             {snap.i_acked ? "En attente de l'autre…" : isLast ? "Terminer la partie" : "Question suivante"}
             {!snap.i_acked && <Icon name="arrow" />}
