@@ -48,6 +48,7 @@ npm run pack:source
 - `content/pilot/` — catalogue pilote (30 cartes) en JSON et CSV de relecture ;
 - `supabase/README.md` — ordre des migrations, recette locale obligatoire ;
 - `docs/QSPICY_DUOS_LIFECYCLE.md` — cycle de vie DUOS : pause, révocation, revanche ;
+- `docs/QSPICY_PALIER_2_REPRISE_IA.md` — état du palier 2, vérifications et dossier de reprise pour une autre IA ;
 - `docs/QSPICY_CATALOGUE_SENSUEL.md` — catalogue sensuel (49 cartes) et fonds animés, points à trancher ;
 - `docs/QSPICY_ACCUEIL_SPEC.md` — composition de l'accueil plein cadre et format des images ;
 - `INSTALLATION.md`, `TESTS_A_DEUX.md` — installation et vérification manuelle.
