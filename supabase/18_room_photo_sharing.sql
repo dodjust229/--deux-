@@ -49,6 +49,11 @@ begin
   values (me.id,coalesce(p_receive_media,false),now())
   on conflict (player_id) do update
     set receive_media=excluded.receive_media, updated_at=now();
+  if not coalesce(p_receive_media,false) then
+    update public.room_media
+       set recipient_player_ids=array_remove(recipient_player_ids,me.id)
+     where room_id=p_room_id and me.id=any(recipient_player_ids);
+  end if;
   return true;
 end
 $$;
