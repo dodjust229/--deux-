@@ -135,6 +135,9 @@ SQL
 echo "Applying invitation finalisation (after 16, 17 and 18)"
 "${PSQL[@]}" -d "$DB" -f "supabase/19_invitation_finalisation.sql"
 
+# Isolate rate-limit counters between independent integration recipes.
+"${PSQL[@]}" -d "$DB" -c "TRUNCATE public.rate_events"
+
 echo "Running catalog-backed custom-engine integration recipe"
 python3 supabase/tests/custom_catalog_engine.py
 
@@ -155,6 +158,9 @@ $legacy$;
 DELETE FROM public.rooms WHERE id = '00000000-0000-4000-8000-000000000019';
 SQL
 
+# Isolate rate-limit counters between independent integration recipes.
+"${PSQL[@]}" -d "$DB" -c "TRUNCATE public.rate_events"
+
 echo "Running Palier 4 invitation and permissions integration recipe"
 python3 supabase/tests/palier4_invitation_permissions.py
 
@@ -170,6 +176,9 @@ echo "Running Palier 5 private gallery photo integration recipe"
 
 echo "Running Palier 7 security and privacy regression recipe"
 "${PSQL[@]}" -d "$DB" -f "supabase/tests/palier7_security_regression.sql"
+
+# Isolate rate-limit counters between independent integration recipes.
+"${PSQL[@]}" -d "$DB" -c "TRUNCATE public.rate_events"
 
 echo "Running invitation permissions and dispatcher recipe"
 "${PSQL[@]}" -d "$DB" -f "supabase/tests/invitation_permissions.sql"
