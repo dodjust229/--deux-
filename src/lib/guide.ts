@@ -39,11 +39,11 @@ const FR: GuideSection[] = [
   },
   {
     id: "niveaux",
-    title: "Comprendre les niveaux d'intensité",
+    title: "Comprendre les paliers de jeu",
     body: [
-      "Les cartes suivent quatre paliers : 1 Ça commence à piquer, 2 La tension monte, 3 On se lâche, 4 Ce qu'on n'avoue jamais.",
-      "L'intensité choisie dans les préférences détermine les ambiances proposées par défaut : Soft (découverte et complicité), Hot (confidences et séduction), Very Hot (tout, y compris les cartes 18+).",
-      "Les cartes 18+ ne sortent que si la catégorie Audacieux est choisie et que les deux personnes ont donné leur accord."
+      "Les cartes suivent quatre paliers. Tu peux choisir directement le palier 1, 2, 3 ou 4 : aucun déblocage des précédents n’est nécessaire.",
+      "Les ambiances proposées déterminent les catégories présélectionnées. Aux paliers 3–4, toutes les catégories non exclues sont proposées par défaut pour offrir assez de cartes ; tu peux ensuite ajuster ton choix dans le salon.",
+      "Les paliers 3–4 et la catégorie Audacieux exigent l’accord 18+ de tous les joueurs : deux en Couple, quatre en DUOS."
     ]
   },
   {
@@ -77,7 +77,7 @@ const FR: GuideSection[] = [
     id: "personnalisation",
     title: "Utiliser les options de personnalisation",
     body: [
-      "Préférences : catégories, intensité, exclusions, langue, thème, sons et animations, enregistrés sur ton appareil.",
+      "Préférences : ambiances proposées, palier de jeu, exclusions, langue, thème, sons et animations, enregistrés sur ton appareil.",
       "Salon Personnalisé : tu écris entre 5 et 24 questions, elles se jouent dans l'ordre de ta liste, avec les mêmes réponses cachées, la même révélation et le même bouton Passer.",
       "Ce salon n'ouvre jamais le palier 18+ : une question libre ne peut pas être retirée en cours de partie si un accord change, le 18+ reste donc au catalogue."
     ]
@@ -138,11 +138,11 @@ const EN: GuideSection[] = [
   },
   {
     id: "niveaux",
-    title: "Understanding intensity levels",
+    title: "Understanding game levels",
     body: [
-      "Cards follow four steps: 1 It starts to tingle, 2 The tension rises, 3 We let go, 4 What we never confess.",
-      "This setting chooses the default categories offered in the lobby, independently of the exact game level. Excluded categories stay closed. Levels 3–4 and Audacieux require 18+ consent.",
-      "18+ cards only appear when the Audacieux category is chosen and everyone in the room has agreed: two players in À Deux, four in DUOS."
+      "Cards follow four levels. You can choose level 1, 2, 3 or 4 directly; previous levels do not need to be unlocked.",
+      "Default moods determine which categories are preselected. At levels 3–4, all non-excluded categories are offered by default to provide enough cards; you can adjust your choice in the lobby.",
+      "Levels 3–4 and the Audacieux category require 18+ consent from everyone: two players in Couple, four in DUOS."
     ]
   },
   {
@@ -176,7 +176,7 @@ const EN: GuideSection[] = [
     id: "personnalisation",
     title: "Personalisation options",
     body: [
-      "Preferences: categories, intensity, exclusions, language, theme, sound and motion, stored on your device.",
+      "Preferences: default moods, game level, exclusions, language, theme, sound and motion, stored on your device.",
       "Custom room: you write 5 to 24 questions, played in the order of your list, with the same hidden answers, the same reveal and the same Pass button.",
       "That room never opens the 18+ tier: a free-text question cannot be withdrawn mid-game if a consent changes, so 18+ stays in the catalogue."
     ]
