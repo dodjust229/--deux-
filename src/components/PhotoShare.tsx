@@ -159,7 +159,7 @@ export function PhotoShare({ roomId, token, myPlayerId, mode, onPermissionChange
       )}
 
       <div className="photo-share__send">
-        <input ref={inputRef} className="photo-share__file" type="file" accept="image/jpeg,image/png,image/webp" onChange={(event) => choose(event.target.files?.[0])} />
+        <input ref={inputRef} className="photo-share__file" type="file" accept="image/*" onChange={(event) => choose(event.target.files?.[0])} />
         <button className="secondary" type="button" onClick={() => inputRef.current?.click()} disabled={busy}>
           <Icon name="image" /> Choisir dans ma galerie
         </button>
