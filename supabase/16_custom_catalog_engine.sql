@@ -139,10 +139,8 @@ begin
     from public.catalog c
    where c.category=any(v_categories)
      and not (c.id=any(coalesce(r.played_interaction_ids,'{}'::text[])));
-  if v_unplayed>=cardinality(p_interaction_ids) and exists (
-    select 1 from unnest(p_interaction_ids) as chosen(id)
-     where chosen.id=any(coalesce(r.played_interaction_ids,'{}'::text[]))
-  ) then
+  if v_unplayed>=cardinality(p_interaction_ids)
+     and coalesce(r.played_interaction_ids,'{}'::text[]) && p_interaction_ids then
     raise exception 'E_CUSTOM_REPEAT: Cette sélection contient des questions déjà jouées.';
   end if;
 
