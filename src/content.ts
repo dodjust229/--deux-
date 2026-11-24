@@ -18,6 +18,14 @@ export const categoryDescriptions: Record<string, string> = {
   audacieux: "Défis osés, toujours facultatifs."
 };
 
+export const intensityLabels: Record<number, string> = {
+  1: "Doux · 1",
+  2: "Taquin · 2",
+  3: "Chaud · 3",
+  4: "Très chaud · 4",
+  5: "Extrême · 5"
+};
+
 export const levelLabels: Record<number, string> = {
   1: "Niveau 1",
   2: "Niveau 2",
