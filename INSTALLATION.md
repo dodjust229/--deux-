@@ -3,8 +3,8 @@
 ## 1. Prérequis
 
 - Node.js 22 LTS ou plus récent ;
-- le projet Supabase `xqvxorvvjmwzpcqmqnqv` (schéma `supabase/01_schema.sql` et catalogue
-  `supabase/02_catalog.sql` **déjà installés** — ne pas les réexécuter sans raison) ;
+- le projet Supabase `xqvxorvvjmwzpcqmqnqv` (schéma et migrations historiques installés ; appliquer aussi
+  `supabase/22_catalogue_maitre_v2.sql` avant de servir le nouveau catalogue) ;
 - la clé publique `publishable` du projet (elle est prévue pour le navigateur).
 
 Ne jamais placer de clé `service_role` ni de secret dans l'application ou dans le dépôt.
@@ -39,7 +39,7 @@ propre session et ses propres préférences.
 2. La seconde ouvre le lien, choisit son prénom de jeu et son personnage (Tao ou Naya).
 3. Les deux choisissent les ambiances ; seules les catégories communes sont tirées.
 4. Le mode 18+ est facultatif et exige l'accord explicite des deux joueurs, révocable.
-5. Chaque partie tire jusqu'à 24 interactions parmi les 43 du catalogue.
+5. Chaque partie tire jusqu'à 24 interactions parmi les 220 du catalogue.
 6. Les réponses restent cachées jusqu'à la révélation ; la suite exige l'accord des deux.
 7. Chacun peut passer une question ou quitter la salle à tout moment, sans justification.
 

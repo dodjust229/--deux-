@@ -5,7 +5,7 @@ export type Audience = "partner" | "own_duo" | "other_duo" | "all_players" | "in
 export type Visibility = "partagee" | "anonyme" | "privee";
 export interface Interaction {
   id: string; category: Category; kind: InteractionKind; title: string; prompt: string; options?: string[];
-  level: 1 | 2 | 3 | 4; audience: Audience; visibility: Visibility;
+  level: 1 | 2 | 3 | 4; intensity: 1 | 2 | 3 | 4 | 5; audience: Audience; visibility: Visibility;
 }
 export interface Player { id: string; seat: Seat; duo_no?: 1 | 2; cross_participation?: boolean; receive_media?: boolean; nickname: string; avatar: "masculin" | "feminin"; online: boolean; adult_consent: boolean; selected_categories?: Category[]; replay_vote?: boolean; }
 export interface Answer { player_id: string; answer: string; passed: boolean; visibility?: "private" | "duo" | "group"; }

@@ -5,7 +5,7 @@ import { InfoTip } from "../components/InfoTip";
 import { getRoundMoments } from "../lib/round-moments";
 import { decodePrediction, encodePrediction } from "../lib/protocol";
 import { getRoundEvent } from "../lib/round-events";
-import { categoryLabels, categoryDescriptions, levelLabels, kindLabels, audienceLabels } from "../content";
+import { categoryLabels, categoryDescriptions, intensityLabels, kindLabels, audienceLabels } from "../content";
 import type { Category, DuoPermissions, DuoSnapshot, Interaction } from "../types";
 
 const CATEGORIES: Category[] = ["decouverte", "complicite", "profondeur", "seduction", "audacieux"];
@@ -230,7 +230,7 @@ export function DuoGame({ snap, interaction, busy, onSubmit, onPass, onNext, onS
         <div className="prompt__meta">
           <span className={`tag tag--${interaction.category}`}>{categoryLabels[interaction.category]}</span>
           <span className="tag tag--ghost">{kindLabels[interaction.kind]}</span>
-          <span className="tag tag--level">{levelLabels[interaction.level]}</span>
+          <span className="tag tag--level">{intensityLabels[interaction.intensity]}</span>
         </div>
         <small>Question {snap.room.current_index + 1} / {snap.room.total}</small>
         <h2>{interaction.title}</h2>
