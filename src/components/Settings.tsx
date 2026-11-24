@@ -1,10 +1,10 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Icon } from "./Icon";
 import type { Preferences, Theme, Ambience } from "../lib/prefs";
 import type { Lang } from "../lib/i18n";
 import { translator } from "../lib/i18n";
 import { useFocusTrap } from "../lib/useFocusTrap";
-import { setAmbience, stopAmbience } from "../lib/sound";
+import { getActiveAmbience, setAmbience, stopAmbience } from "../lib/sound";
 
 interface SettingsProps {
   open: boolean;
@@ -37,6 +37,9 @@ export function Settings({
   const [ambienceActive, setAmbienceActive] = useState(false);
 
   useFocusTrap(open, { onClose, container: panelRef, initial: closeRef });
+  useEffect(() => {
+    if (open) setAmbienceActive(getActiveAmbience() !== "off");
+  }, [open]);
   if (!open) return null;
 
   const update = (patch: Partial<Preferences>) => onChange({ ...prefs, ...patch });
