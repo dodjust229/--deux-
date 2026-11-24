@@ -74,6 +74,10 @@ begin
     raise exception 'Photo remains visible after recipient withdraws consent';
   end if;
   perform public.set_room_media_permission(room,guest_token,true);
+  state := public.qspicy_media_list(room,guest_token);
+  if jsonb_array_length(state->'items') <> 0 then
+    raise exception 'Previously revoked photo access returned after consent was re-enabled';
+  end if;
 
   begin
     perform public.qspicy_media_delete_path(room,guest_token,media_id);
