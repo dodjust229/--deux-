@@ -390,7 +390,7 @@ begin
     from public.catalog c
    where c.id = any(p_interaction_ids) and c.category = any(v_categories);
   if v_count <> cardinality(p_interaction_ids) then
-    raise exception 'E_CUSTOM: Une ou plusieurs cartes ne font pas partie du catalogue ou des centres d'intérêt choisis.';
+    raise exception 'E_CUSTOM: Une ou plusieurs cartes ne font pas partie du catalogue ou des centres d''intérêt choisis.';
   end if;
 
   select exists(
