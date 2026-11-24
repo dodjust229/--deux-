@@ -136,7 +136,7 @@ Deno.serve(async (req: Request) => {
         const { data: signed, error: signError } = await admin.storage.from(BUCKET).createSignedUrl(row.object_path, 300);
         if (!signError && signed?.signedUrl) items.push({ ...row, signed_url: signed.signedUrl });
       }
-      const expiredQuery = await admin.from("room_media").select("id,object_path").eq("room_id", roomId).lte("expires_at", new Date().toISOString());
+      const expiredQuery = await admin.from("room_media").select("id,object_path").lte("expires_at", new Date().toISOString());
       if (expiredQuery.data?.length) {
         const { error: expiredRemoveError } = await admin.storage.from(BUCKET).remove(expiredQuery.data.map((row: { object_path: string }) => row.object_path));
         if (!expiredRemoveError) {
