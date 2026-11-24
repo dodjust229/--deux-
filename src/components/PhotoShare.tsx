@@ -13,18 +13,41 @@ type Props = {
 async function preparePhoto(file: File): Promise<Blob> {
   if (!file.type.startsWith("image/")) throw new Error("Choisis une image depuis ta galerie.");
   if (file.size > 20 * 1024 * 1024) throw new Error("La photo originale dépasse 20 Mo.");
-  if (typeof createImageBitmap !== "function") throw new Error("Ce navigateur ne permet pas de préparer cette photo.");
-  const bitmap = await createImageBitmap(file);
+  let bitmap: ImageBitmap | null = null;
+  let imageUrl = "";
+  let source: CanvasImageSource;
+  let width = 0;
+  let height = 0;
   try {
-    const scale = Math.min(1, 1600 / Math.max(bitmap.width, bitmap.height));
+    if (typeof createImageBitmap === "function") {
+      try {
+        bitmap = await createImageBitmap(file);
+        source = bitmap;
+        width = bitmap.width;
+        height = bitmap.height;
+      } catch {
+        bitmap = null;
+      }
+    }
+    if (!bitmap) {
+      imageUrl = URL.createObjectURL(file);
+      const image = new Image();
+      image.src = imageUrl;
+      await image.decode();
+      source = image;
+      width = image.naturalWidth;
+      height = image.naturalHeight;
+    }
+    if (!width || !height) throw new Error("Cette image ne peut pas être lue par le navigateur.");
+    const scale = Math.min(1, 1600 / Math.max(width, height));
     const canvas = document.createElement("canvas");
-    canvas.width = Math.max(1, Math.round(bitmap.width * scale));
-    canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+    canvas.width = Math.max(1, Math.round(width * scale));
+    canvas.height = Math.max(1, Math.round(height * scale));
     const context = canvas.getContext("2d");
     if (!context) throw new Error("Impossible de préparer l'image.");
     context.fillStyle = "#fff";
     context.fillRect(0, 0, canvas.width, canvas.height);
-    context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+    context.drawImage(source, 0, 0, canvas.width, canvas.height);
     let quality = 0.84;
     let blob: Blob | null = null;
     for (let attempt = 0; attempt < 4; attempt += 1) {
@@ -35,7 +58,8 @@ async function preparePhoto(file: File): Promise<Blob> {
     if (!blob || blob.size > 5 * 1024 * 1024) throw new Error("Cette photo reste trop lourde après compression.");
     return blob;
   } finally {
-    bitmap.close();
+    bitmap?.close();
+    if (imageUrl) URL.revokeObjectURL(imageUrl);
   }
 }
 
