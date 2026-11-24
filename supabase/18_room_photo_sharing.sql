@@ -145,6 +145,12 @@ begin
      or p_byte_size is null or p_byte_size not between 1 and 5242880 then
     raise exception 'E_MEDIA_FILE: Fichier non autorisé ou trop volumineux.';
   end if;
+  if (select count(*) from public.room_media where room_id=p_room_id and expires_at>now()) >= 20 then
+    raise exception 'E_MEDIA_LIMIT: Cette salle a atteint sa limite temporaire de photos.';
+  end if;
+  if (select count(*) from public.room_media where room_id=p_room_id and sender_player_id=v_sender and expires_at>now()) >= 8 then
+    raise exception 'E_MEDIA_LIMIT: Tu as atteint ta limite temporaire de photos.';
+  end if;
   perform public._rate_check('room-photo:'||v_sender::text,8,interval '1 minute');
   insert into public.room_media(room_id,sender_player_id,recipient_player_ids,scope,object_path,mime_type,byte_size)
   values(p_room_id,v_sender,v_recipients,p_scope,p_object_path,p_mime_type,p_byte_size)
@@ -202,7 +208,9 @@ begin
       and (
         m.scope<>'group'
         or (
-          select count(*)=4 and bool_and(coalesce(dp.cross_participation,false))
+          select count(*)=4
+            and bool_and(coalesce(dp.cross_participation,false))
+            and bool_and(p.id=m.sender_player_id or coalesce(dp.receive_media,false))
           from public.players p left join public.duo_permissions dp on dp.player_id=p.id
           where p.room_id=p_room_id and p.status='active'
         )
