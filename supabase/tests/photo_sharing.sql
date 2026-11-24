@@ -109,7 +109,7 @@ begin
   ) then
     raise exception 'Room purge removed media metadata before Storage cleanup could process it';
   end if;
-  delete from public.room_media where object_path=orphan_path;
+  delete from public.room_media m where m.object_path=orphan_path;
 end
 $photo_test$;
 
