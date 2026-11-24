@@ -69,6 +69,7 @@ DECLARE
   token_d text := repeat('d',64);
   first_ids text[];
   second_ids text[];
+  third_ids text[];
   ok boolean;
   overlap_count integer;
 BEGIN
@@ -94,7 +95,15 @@ BEGIN
   SELECT interaction_ids INTO second_ids FROM public.rooms WHERE id=room_couple;
   SELECT count(*) INTO overlap_count FROM unnest(second_ids) x WHERE x=ANY(first_ids);
   IF overlap_count<>0 THEN RAISE EXCEPTION 'Couple history repeated % cards before pool exhaustion', overlap_count; END IF;
-  IF cardinality(second_ids)<>24 THEN RAISE EXCEPTION 'Couple history expected the 24 remaining cards, got %', cardinality(second_ids); END IF;
+  IF cardinality(second_ids)<>24 THEN RAISE EXCEPTION 'Couple history expected 24 fresh cards in session two, got %', cardinality(second_ids); END IF;
+  UPDATE public.rooms SET status='finished' WHERE id=room_couple;
+  PERFORM public.restart_game(room_couple,token_a);
+  SELECT public.start_game_by_level(room_couple,token_a,1) INTO ok;
+  IF NOT ok THEN RAISE EXCEPTION 'Couple history third session did not start'; END IF;
+  SELECT interaction_ids INTO third_ids FROM public.rooms WHERE id=room_couple;
+  SELECT count(*) INTO overlap_count FROM unnest(third_ids) x WHERE x=ANY(first_ids) OR x=ANY(second_ids);
+  IF overlap_count<>0 THEN RAISE EXCEPTION 'Couple history repeated % cards in the final pool before reset', overlap_count; END IF;
+  IF cardinality(third_ids)<>2 THEN RAISE EXCEPTION 'Couple history expected the 2 final unused cards, got %', cardinality(third_ids); END IF;
   UPDATE public.rooms SET status='finished' WHERE id=room_couple;
   PERFORM public.restart_game(room_couple,token_a);
   SELECT public.start_game_by_level(room_couple,token_a,1) INTO ok;
@@ -125,7 +134,18 @@ BEGIN
   SELECT interaction_ids INTO second_ids FROM public.rooms WHERE id=room_duos;
   SELECT count(*) INTO overlap_count FROM unnest(second_ids) x WHERE x=ANY(first_ids);
   IF overlap_count<>0 THEN RAISE EXCEPTION 'DUOS history repeated % cards before pool exhaustion', overlap_count; END IF;
-  IF cardinality(second_ids)<>24 THEN RAISE EXCEPTION 'DUOS history expected the 24 remaining cards, got %', cardinality(second_ids); END IF;
+  IF cardinality(second_ids)<>24 THEN RAISE EXCEPTION 'DUOS history expected 24 fresh cards in session two, got %', cardinality(second_ids); END IF;
+  UPDATE public.rooms SET status='finished' WHERE id=room_duos;
+  PERFORM public.restart_duo_game(room_duos,token_a);
+  PERFORM public.restart_duo_game(room_duos,token_b);
+  PERFORM public.restart_duo_game(room_duos,token_c);
+  PERFORM public.restart_duo_game(room_duos,token_d);
+  SELECT public.start_duo_game_by_level(room_duos,token_a,1) INTO ok;
+  IF NOT ok THEN RAISE EXCEPTION 'DUOS history third session did not start'; END IF;
+  SELECT interaction_ids INTO third_ids FROM public.rooms WHERE id=room_duos;
+  SELECT count(*) INTO overlap_count FROM unnest(third_ids) x WHERE x=ANY(first_ids) OR x=ANY(second_ids);
+  IF overlap_count<>0 THEN RAISE EXCEPTION 'DUOS history repeated % cards in the final pool before reset', overlap_count; END IF;
+  IF cardinality(third_ids)<>2 THEN RAISE EXCEPTION 'DUOS history expected the 2 final unused cards, got %', cardinality(third_ids); END IF;
   UPDATE public.rooms SET status='finished' WHERE id=room_duos;
   PERFORM public.restart_duo_game(room_duos,token_a);
   PERFORM public.restart_duo_game(room_duos,token_b);
