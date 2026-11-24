@@ -14,8 +14,7 @@ def base():
 def sql(statement):
     p=subprocess.run(base()+["-d",DB,"-c",statement],capture_output=True,text=True)
     if p.returncode:
-        message=(p.stderr or p.stdout).strip().splitlines()
-        raise RuntimeError(message[-1] if message else "PostgreSQL query failed")
+        raise RuntimeError((p.stderr or p.stdout).strip() or "PostgreSQL query failed")
     return (p.stdout or "").strip()
 
 def rpc(name,args):
@@ -71,7 +70,7 @@ room,host,guest=room_pair("HoteCustomP4","InviteCustomP4")
 rpc("set_player_categories",f"'{room}','{host}',array['decouverte']::text[]")
 rpc("set_player_categories",f"'{room}','{guest}',array['complicite']::text[]")
 # Parenthesize each UNION arm to keep LIMIT scoped to its own category.
-ids=sql("select string_agg(quote_literal(id),',') from ((select id from public.catalog where category='decouverte' and level=1 order by id limit 3) union all (select id from public.catalog where category='complicite' and level=1 order by id limit 2)) cards")
+ids=sql("with ranked as (select id,category,row_number() over (partition by category order by id) as rn from public.catalog where category in ('decouverte','complicite') and level=1) select string_agg(quote_literal(id),',') from ranked where (category='decouverte' and rn<=3) or (category='complicite' and rn<=2)")
 rpc("start_custom_game",f"'{room}','{host}',array[{ids}]::text[]")
 custom_categories=sql(f"select string_agg(distinct c.category,',' order by c.category) from public.rooms r cross join unnest(r.interaction_ids) i(id) join public.catalog c on c.id=i.id where r.id='{room}'")
 check("le Personnalisé accepte les cartes des deux intérêts",custom_categories=="complicite,decouverte",custom_categories)
