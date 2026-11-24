@@ -58,6 +58,41 @@ begin
 end
 $$;
 
+-- La révocation d'une permission DUOS retire aussi l'accès aux photos déjà reçues.
+create or replace function public.set_duo_permissions(
+  p_room_id uuid,
+  p_player_token text,
+  p_cross_participation boolean,
+  p_receive_media boolean,
+  p_share_answers boolean
+)
+returns boolean
+language plpgsql
+security definer
+set search_path = public, extensions, pg_temp
+as $
+declare me public.players;
+begin
+  me := public._player_for(p_room_id,p_player_token);
+  if (select mode from public.rooms where id=p_room_id) <> 'duos' then
+    raise exception 'E_MODE: Salon non DUOS.';
+  end if;
+  insert into public.duo_permissions(player_id,cross_participation,receive_media,share_answers,updated_at)
+  values (me.id,coalesce(p_cross_participation,false),coalesce(p_receive_media,false),coalesce(p_share_answers,false),now())
+  on conflict (player_id) do update set
+    cross_participation=excluded.cross_participation,
+    receive_media=excluded.receive_media,
+    share_answers=excluded.share_answers,
+    updated_at=now();
+  if not coalesce(p_cross_participation,false) or not coalesce(p_receive_media,false) then
+    update public.room_media
+       set recipient_player_ids=array_remove(recipient_player_ids,me.id)
+     where room_id=p_room_id and me.id=any(recipient_player_ids);
+  end if;
+  return true;
+end
+$;
+
 create or replace function public.qspicy_media_targets(
   p_room_id uuid,
   p_player_token text,
@@ -278,12 +313,14 @@ end
 $$;
 
 revoke execute on function public.set_room_media_permission(uuid,text,boolean) from public, authenticated;
+revoke execute on function public.set_duo_permissions(uuid,text,boolean,boolean,boolean) from public, authenticated;
 revoke execute on function public.qspicy_media_targets(uuid,text,text) from public, authenticated;
 revoke execute on function public.qspicy_media_register(uuid,text,text,text,text,integer) from public, authenticated;
 revoke execute on function public.qspicy_media_list(uuid,text) from public, authenticated;
 revoke execute on function public.qspicy_media_delete(uuid,text,uuid) from public, authenticated;
 revoke execute on function public.qspicy_media_delete_path(uuid,text,uuid) from public, authenticated;
 grant execute on function public.set_room_media_permission(uuid,text,boolean) to anon, service_role;
+grant execute on function public.set_duo_permissions(uuid,text,boolean,boolean,boolean) to anon;
 grant execute on function public.qspicy_media_targets(uuid,text,text) to service_role;
 grant execute on function public.qspicy_media_register(uuid,text,text,text,text,integer) to service_role;
 grant execute on function public.qspicy_media_list(uuid,text) to service_role;
