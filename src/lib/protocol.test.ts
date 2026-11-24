@@ -1,5 +1,5 @@
 import test from "node:test"; import assert from "node:assert/strict";
-import { parseError, encodePrediction, decodePrediction, extractRoomId, speakerSeat, getSharedCategories } from "./protocol.ts";
+import { parseError, encodePrediction, decodePrediction, extractRoomId, speakerSeat, getSharedCategories, getSelectedInterests } from "./protocol.ts";
 test("erreurs serveur fatales vs transitoires", () => {
   assert.equal(parseError(new Error("E_REPLACED: Ta place a été reprise.")).fatal, true);
   assert.equal(parseError(new Error("E_ROOM_FULL: Salle complète.")).fatal, false);
@@ -20,4 +20,9 @@ test("catégories communes : intersection stricte des deux choix", () => {
   assert.deepEqual(getSharedCategories(["decouverte", "audacieux"], ["decouverte", "profondeur"]), ["decouverte"]);
   assert.deepEqual(getSharedCategories(["decouverte"], ["profondeur"]), []);
   assert.deepEqual(getSharedCategories(["decouverte"], null), []);
+});
+
+test("les centres d'intérêt individuels sont réunis sans exiger un choix commun", () => {
+  assert.deepEqual(getSelectedInterests(["decouverte"], [["seduction"], ["profondeur"], ["decouverte"]]), ["decouverte", "seduction", "profondeur"]);
+  assert.deepEqual(getSelectedInterests([], [[], null]), []);
 });
