@@ -44,6 +44,29 @@ function jpegDimensions(bytes: Uint8Array): { width: number; height: number } | 
   }
   return null;
 }
+async function readBodyLimited(req: Request): Promise<Uint8Array> {
+  const reader = req.body?.getReader();
+  if (!reader) return new Uint8Array();
+  const chunks: Uint8Array[] = [];
+  let total = 0;
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    total += value.byteLength;
+    if (total > MAX_BYTES) {
+      await reader.cancel();
+      throw new Error("PHOTO_TOO_LARGE");
+    }
+    chunks.push(value);
+  }
+  const output = new Uint8Array(total);
+  let offset = 0;
+  for (const chunk of chunks) {
+    output.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  return output;
+}
 function errorMessage(error: unknown) {
   const message = error instanceof Error ? error.message : "Opération impossible.";
   return message.length > 220 ? "Opération impossible. Vérifie les autorisations et réessaie." : message;
@@ -66,8 +89,13 @@ Deno.serve(async (req: Request) => {
     if (req.method === "POST" && action === "upload") {
       const scope = new URL(req.url).searchParams.get("scope") ?? "";
       const declaredType = req.headers.get("Content-Type")?.split(";")[0].trim() ?? "";
-      const raw = new Uint8Array(await req.arrayBuffer());
-      if (raw.byteLength < 1 || raw.byteLength > MAX_BYTES) return json(req, 413, { error: "La photo doit peser 5 Mo maximum." });
+      let raw: Uint8Array;
+      try {
+        raw = await readBodyLimited(req);
+      } catch {
+        return json(req, 413, { error: "La photo doit peser 5 Mo maximum." });
+      }
+      if (raw.byteLength < 1) return json(req, 400, { error: "Photo vide." });
       const actualType = detectImage(raw);
       if (!actualType || actualType !== declaredType) return json(req, 415, { error: "La photo doit être réencodée en JPEG avant son envoi." });
       const dimensions = jpegDimensions(raw);
