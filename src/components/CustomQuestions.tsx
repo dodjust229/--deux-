@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Icon } from "./Icon";
+import { intensityLabels } from "../content";
 import type { Lang } from "../lib/i18n";
 import { CUSTOM, buildCustomDeck } from "../lib/custom";
 import type { Category, Interaction } from "../types";
@@ -46,7 +47,7 @@ export function CustomQuestions({ lang, catalog, selectedCategories, onLaunch, i
         {generated && <ol className="custom-list" aria-label={en ? "Selected questions" : "Questions sélectionnées"}>
           {deck.map((card, index) => <li key={card.id} className="custom-list__row">
             <span className="custom-list__num" aria-hidden="true">{index + 1}</span>
-            <div><p className="custom-list__preview">{card.prompt}</p><small className="muted">{card.title} · {({ free: en ? "Open question" : "Question ouverte", secret: en ? "Secret choice" : "Choix secret", prediction: en ? "Prediction" : "Prédiction", challenge: en ? "Challenge" : "Défi", cross: en ? "Cross-question" : "Question croisée" })[card.kind]} · {en ? "Level" : "Palier"} {card.level}</small></div>
+            <div><p className="custom-list__preview">{card.prompt}</p><small className="muted">{card.title} · {({ free: en ? "Open question" : "Question ouverte", secret: en ? "Secret choice" : "Choix secret", prediction: en ? "Prediction" : "Prédiction", challenge: en ? "Challenge" : "Défi", cross: en ? "Cross-question" : "Question croisée" })[card.kind]} · {intensityLabels[card.intensity]}</small></div>
           </li>)}
         </ol>}
         {serverError && <p className="custom-errors" role="alert" data-testid="custom-server-error">{serverError}</p>}
