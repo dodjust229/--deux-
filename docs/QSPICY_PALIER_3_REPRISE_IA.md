@@ -95,5 +95,28 @@ Avant toute migration, lire la documentation Supabase à jour, créer une migrat
 - Vérifier explicitement les droits `EXECUTE` après toute modification de RPC.
 - Le test de révocation doit couvrir une carte personnalisée 18+ actuellement affichée, pas uniquement les cartes du catalogue standard.
 
-## État de reprise
-Le prochain agent peut reprendre directement à l'étape A. Le palier 3 n'est pas déclaré livré : il est audité et spécifié, mais non codé, non migré et non déployé.
+## État de reprise — mise à jour du 24 novembre 2026
+
+L'audit initial et son plan ci-dessus sont historiques. L'implémentation a depuis été réalisée et fusionnée.
+
+### Livré dans GitHub
+- PR #19 fusionnée dans `main` : commit `2c73cac7ccedb431ecb6e6a23aa37a6af4424aaa`.
+- Mode Personnalisé basé sur les IDs canoniques de `public.catalog`, avec les cinq types de cartes, niveaux, options et comportements d'origine.
+- Contrôles serveur : hôte, deux joueurs actifs, catégories communes, IDs uniques et valides.
+- Consentement 18+ des deux joueurs lorsque la sélection contient une carte de niveau 3–4 ou Audacieux.
+- Révocation : suppression des réponses de la carte adulte courante et saut des cartes adultes suivantes.
+- Historique anti-répétition réutilisé par les sessions Personnalisées.
+- Anciennes salles déjà en cours avec IDs `perso-N` conservées via `get_custom_deck`.
+- Ancien RPC de texte libre supprimé pour éviter une surcharge PostgREST ambiguë.
+
+### Vérifications
+- GitHub Actions run `45361919599` : succès complet — TypeScript, tests unitaires/catalogue, build de production et recette PostgreSQL 16.
+- Migration `supabase/16_custom_catalog_engine.sql` appliquée au projet Supabase de production.
+- Vérification production : ancien RPC absent ; nouveau RPC présent ; exécution autorisée à `anon` uniquement (authentification par jeton dans la fonction) ; `authenticated` non autorisé ; catalogue toujours à 192 cartes ; historique de session présent.
+
+### Déploiement et reste à faire
+- Déploiement Render `dep-dc2l7r68bjmc73823420`, commit `2c73cac7...` : statut observé au dernier contrôle `build_in_progress`. Ne pas annoncer le mode Personnalisé comme disponible en production tant que ce déploiement n'est pas confirmé `live`.
+- Les tests automatisés PostgreSQL couvrent la sélection, le contrôle d'hôte, les IDs canoniques, le consentement, la révocation et l'anti-répétition.
+- Il reste une recette manuelle sur deux appareils réels pour vérifier le parcours visuel, les cinq types de cartes, la reconnexion et la synchronisation des consentements. Aucun test réel sur deux appareils n'a été effectué par l'agent.
+
+Le prochain agent doit reprendre à la vérification finale Render puis à la recette manuelle ; ne pas refaire l'audit ni réécrire la migration 16 sans raison technique démontrée.
