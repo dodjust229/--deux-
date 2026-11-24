@@ -636,6 +636,7 @@ export default function App() {
             busy={busy}
             kind={identity.gameMode === "custom" ? "custom" : "couple"}
             customCatalog={interactions}
+            selectedCategories={shared}
             onLaunchCustom={launchCustom}
             customError={customError}
             isHost={snapshot.my_seat === 1}
