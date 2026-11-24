@@ -551,7 +551,7 @@
   },
   {
     "id": "a11",
-    "category": "audacieux",
+    "category": "seduction",
     "kind": "secret",
     "title": "Le détail qui te fait craquer",
     "prompt": "🫦 Quel détail chez moi te donne le plus envie de te rapprocher ? Choisis sans réfléchir.",
@@ -567,7 +567,7 @@
   },
   {
     "id": "a12",
-    "category": "audacieux",
+    "category": "profondeur",
     "kind": "free",
     "title": "Sans détour",
     "prompt": "🔥 Qu'est-ce qui t'excite le plus dans ma façon de te séduire, et qu'aimerais-tu que je fasse plus souvent ? Sois franc·he.",
@@ -577,7 +577,7 @@
   },
   {
     "id": "a13",
-    "category": "audacieux",
+    "category": "seduction",
     "kind": "challenge",
     "title": "Le murmure",
     "prompt": "🤫 Approche-toi et murmure à mon oreille une phrase que tu n'oserais pas dire devant les autres. Tu peux aussi l'écrire si tu préfères.",
@@ -587,7 +587,7 @@
   },
   {
     "id": "a14",
-    "category": "audacieux",
+    "category": "complicite",
     "kind": "prediction",
     "title": "Ce que tu aimerais ce soir",
     "prompt": "🌙 Écris ce que tu aimerais que je fasse pour te séduire ce soir, puis devine ce que j'ai écrit. Comparez vos réponses.",
@@ -597,7 +597,7 @@
   },
   {
     "id": "a15",
-    "category": "audacieux",
+    "category": "seduction",
     "kind": "free",
     "title": "Le baiser que tu réclames",
     "prompt": "💋 Quel type de baiser aimerais-tu recevoir de moi maintenant : tendre, long, fougueux, surprenant… ou autre chose ? Décris-le.",
@@ -623,7 +623,7 @@
   },
   {
     "id": "a17",
-    "category": "audacieux",
+    "category": "profondeur",
     "kind": "cross",
     "title": "Une envie, deux versions",
     "prompt": "🔥 Le premier décrit une envie qu'il aimerait partager avec l'autre en trois phrases. Le second dit ce qui lui plaît dans cette idée et ce qu'il changerait. Chacun peut passer.",
@@ -633,7 +633,7 @@
   },
   {
     "id": "a18",
-    "category": "audacieux",
+    "category": "profondeur",
     "kind": "free",
     "title": "La question interdite",
     "prompt": "😈 Quelle question intime as-tu toujours voulu me poser, mais que tu as retenue jusqu'ici ? Pose-la maintenant, sans obligation de réponse.",
@@ -643,7 +643,7 @@
   },
   {
     "id": "a19",
-    "category": "audacieux",
+    "category": "seduction",
     "kind": "challenge",
     "title": "Le regard qui insiste",
     "prompt": "👀 Pendant dix secondes, regarde-moi comme si tu avais quelque chose de très osé à me dire. Ensuite, dis ce qui te traversait l'esprit. Aucun contact n'est imposé.",
@@ -653,7 +653,7 @@
   },
   {
     "id": "a20",
-    "category": "audacieux",
+    "category": "complicite",
     "kind": "secret",
     "title": "L'ambiance qui te fait basculer",
     "prompt": "🕯️ Choisis l'ambiance qui te donnerait le plus envie de prolonger la soirée à deux.",
@@ -679,7 +679,7 @@
   },
   {
     "id": "a22",
-    "category": "audacieux",
+    "category": "complicite",
     "kind": "prediction",
     "title": "Qui osera le premier pas ?",
     "prompt": "😏 Selon toi, lequel de nous deux osera lancer le prochain geste de séduction ? Écris ton choix, puis découvre celui de l'autre.",
@@ -689,7 +689,7 @@
   },
   {
     "id": "a23",
-    "category": "audacieux",
+    "category": "seduction",
     "kind": "challenge",
     "title": "Le compliment sans filtre",
     "prompt": "🔥 Fais-moi un compliment physique très précis, sans formule toute faite. Dis exactement ce qui t'attire chez moi.",
@@ -699,7 +699,7 @@
   },
   {
     "id": "a24",
-    "category": "audacieux",
+    "category": "profondeur",
     "kind": "free",
     "title": "La limite et l'envie",
     "prompt": "🔒 Quelle envie aimerais-tu explorer avec moi, et quelle limite veux-tu qu'on respecte absolument pour que tu te sentes libre et en confiance ?",
