@@ -105,13 +105,13 @@ begin
     raise exception 'E_CUSTOM: Sélection invalide (5 à 24 cartes uniques attendues).';
   end if;
 
-  select array_agg(c order by c) into v_categories
-    from unnest(me.selected_categories) c
-   where exists (
-     select 1 from public.players other
-      where other.room_id=p_room_id and other.status='active'
-        and other.id<>me.id and c=any(other.selected_categories)
-   );
+  -- Le mode Personnalisé propose les intérêts choisis par l'un OU l'autre joueur.
+  -- Chaque participant choisit son propre centre d'intérêt ; l'intersection viderait
+  -- systématiquement le catalogue lorsque les deux choix sont différents.
+  select array_agg(distinct c order by c) into v_categories
+    from public.players participant
+    cross join lateral unnest(participant.selected_categories) as chosen(c)
+   where participant.room_id=p_room_id and participant.status='active';
   if coalesce(cardinality(v_categories),0)=0 then
     raise exception 'E_CATEGORIES: Choisissez au moins une catégorie en commun.';
   end if;
