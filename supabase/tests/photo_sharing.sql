@@ -104,8 +104,8 @@ begin
   perform public.qspicy_media_register(room,owner_token,'partner',orphan_path,'image/jpeg',1024);
   delete from public.rooms where id=room;
   if not exists (
-    select 1 from public.room_media
-    where object_path=orphan_path and room_id is null and sender_player_id is null
+    select 1 from public.room_media m
+    where m.object_path=orphan_path and m.room_id is null and m.sender_player_id is null
   ) then
     raise exception 'Room purge removed media metadata before Storage cleanup could process it';
   end if;
