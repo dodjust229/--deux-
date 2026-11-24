@@ -21,7 +21,8 @@ import {
   setDuoPermissions,
   sendDuoMessage,
   restartDuoGame,
-  setRoomMediaPermission
+  setRoomMediaPermission,
+  clearRoomPhotos
 } from "./api";
 import { extractRoomId, getSelectedInterests, parseError } from "./lib/protocol";
 import { deriveScene } from "./lib/scene";
@@ -159,6 +160,7 @@ export default function App() {
 
   /* ---------- Session ---------- */
   const dropSession = useCallback((message: string) => {
+    if (identity) void clearRoomPhotos(identity.roomId, identity.token).catch(() => undefined);
     const localStorage = storage();
     if (identity && localStorage) clearPrivateAnswers(identity.roomId, localStorage);
     saveIdentity(null);
@@ -352,6 +354,11 @@ export default function App() {
   async function exitRoom() {
     setPartnerLeft(null);
     if (identity) {
+      try {
+        await clearRoomPhotos(identity.roomId, identity.token);
+      } catch {
+        /* la sortie reste possible même si le nettoyage photo échoue */
+      }
       try {
         await leaveRoom(identity.roomId, identity.token);
       } catch {
