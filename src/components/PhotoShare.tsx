@@ -7,6 +7,7 @@ type Props = {
   token: string;
   myPlayerId: string;
   mode: "couple" | "duos";
+  lang?: "fr" | "en";
   onPermissionChange?: (allow: boolean) => void;
 };
 
@@ -63,7 +64,8 @@ async function preparePhoto(file: File): Promise<Blob> {
   }
 }
 
-export function PhotoShare({ roomId, token, myPlayerId, mode, onPermissionChange }: Props) {
+export function PhotoShare({ roomId, token, myPlayerId, mode, lang = "fr", onPermissionChange }: Props) {
+  const en = lang === "en";
   const [state, setState] = useState<RoomPhotoState | null>(null);
   const [scope, setScope] = useState<"partner" | "duo" | "group">(mode === "duos" ? "duo" : "partner");
   const [selected, setSelected] = useState<File | null>(null);
@@ -158,27 +160,27 @@ export function PhotoShare({ roomId, token, myPlayerId, mode, onPermissionChange
   return (
     <details className="panel photo-share">
       <summary>
-        <span><Icon name="image" size={17} /> Photos personnelles</span>
-        <small>Galerie · partage privé</small>
+        <span><Icon name="image" size={17} /> {en ? "Personal photos" : "Photos personnelles"}</span>
+        <small>{en ? "Gallery · private sharing" : "Galerie · partage privé"}</small>
       </summary>
-      <p className="muted small">Choisis une photo dans la galerie de ton téléphone ou de ton ordinateur. Elle est compressée avant l'envoi et n'est visible que par les destinataires autorisés.</p>
+      <p className="muted small">{en ? "Choose a photo from your phone or computer gallery. It is compressed before sending and visible only to authorized recipients." : "Choisis une photo dans la galerie de ton téléphone ou de ton ordinateur. Elle est compressée avant l'envoi et n'est visible que par les destinataires autorisés."}</p>
 
       {mode === "couple" ? (
         <label className="duo-toggle photo-share__permission">
           <input type="checkbox" checked={Boolean(state?.my_receive_media)} disabled={!state || busy}
             onChange={(event) => onPermissionChange?.(event.target.checked)} />
-          <span>J'accepte de recevoir les photos de mon partenaire.</span>
+          <span>{en ? "I agree to receive photos from my partner." : "J'accepte de recevoir les photos de mon partenaire."}</span>
         </label>
       ) : (
-        <p className="muted small">Réception des photos : {state?.my_receive_media ? "autorisée" : "désactivée"}. Tu peux modifier cette autorisation dans « Mes autorisations ».</p>
+        <p className="muted small">{en ? `Photo reception: ${state?.my_receive_media ? "on" : "off"}. Change this in “My permissions”.` : `Réception des photos : ${state?.my_receive_media ? "autorisée" : "désactivée"}. Tu peux modifier cette autorisation dans « Mes autorisations ».`}</p>
       )}
 
       {mode === "duos" && (
         <label className="field photo-share__scope">
-          <span>Envoyer à</span>
+          <span>{en ? "Send to" : "Envoyer à"}</span>
           <select value={scope} onChange={(event) => setScope(event.target.value as "duo" | "group")} disabled={busy}>
-            <option value="duo">Mon duo</option>
-            <option value="group" disabled={!groupAllowed}>Les quatre joueurs · accord collectif requis</option>
+            <option value="duo">{en ? "My duo" : "Mon duo"}</option>
+            <option value="group" disabled={!groupAllowed}>{en ? "All four players · group consent required" : "Les quatre joueurs · accord collectif requis"}</option>
           </select>
         </label>
       )}
@@ -186,18 +188,18 @@ export function PhotoShare({ roomId, token, myPlayerId, mode, onPermissionChange
       <div className="photo-share__send">
         <input ref={inputRef} className="photo-share__file" type="file" accept="image/*" onChange={(event) => choose(event.target.files?.[0])} />
         <button className="secondary" type="button" onClick={() => inputRef.current?.click()} disabled={busy}>
-          <Icon name="image" /> Choisir dans ma galerie
+          <Icon name="image" /> {en ? "Choose from my gallery" : "Choisir dans ma galerie"}
         </button>
         {selected && (
           <div className="photo-share__preview">
-            <img src={preview} alt="Aperçu de la photo à envoyer" />
+            <img src={preview} alt={en ? "Preview of the photo to send" : "Aperçu de la photo à envoyer"} />
             <div className="photo-share__preview-actions">
-              <button className="secondary" type="button" onClick={() => setSelected(null)} disabled={busy}>Annuler</button>
+              <button className="secondary" type="button" onClick={() => setSelected(null)} disabled={busy}>{en ? "Cancel" : "Annuler"}</button>
               <button className="primary" type="button" onClick={send} disabled={busy || !canSend}>
-                {busy ? "Envoi…" : "Confirmer l'envoi"} <Icon name="send" />
+                {busy ? (en ? "Sending…" : "Envoi…") : (en ? "Confirm send" : "Confirmer l'envoi")} <Icon name="send" />
               </button>
             </div>
-            {!canSend && <small className="muted">Le destinataire doit d'abord autoriser la réception des photos.</small>}
+            {!canSend && <small className="muted">{en ? "The recipient must first allow photo reception." : "Le destinataire doit d'abord autoriser la réception des photos."}</small>}
           </div>
         )}
       </div>
@@ -211,18 +213,18 @@ export function PhotoShare({ roomId, token, myPlayerId, mode, onPermissionChange
           return (
             <figure key={photo.id}>
               <a href={photo.signed_url} target="_blank" rel="noreferrer">
-                <img src={photo.signed_url} alt={`Photo partagée par ${sender?.nickname ?? "un joueur"}`} loading="lazy" />
+                <img src={photo.signed_url} alt={en ? `Photo shared by ${sender?.nickname ?? "a player"}` : `Photo partagée par ${sender?.nickname ?? "un joueur"}`} loading="lazy" />
               </a>
               <figcaption>
-                <span>{mine ? "Envoyée par toi" : sender?.nickname ?? "Joueur"}</span>
+                <span>{mine ? (en ? "Sent by you" : "Envoyée par toi") : sender?.nickname ?? (en ? "Player" : "Joueur")}</span>
                 {mine && <button type="button" className="photo-share__delete" onClick={() => void remove(photo.id)} disabled={busy} aria-label="Supprimer cette photo"><Icon name="close" size={14} /></button>}
               </figcaption>
             </figure>
           );
         })}
-        {state && state.items.length === 0 && <p className="muted small">Aucune photo partagée pour le moment.</p>}
+        {state && state.items.length === 0 && <p className="muted small">{en ? "No shared photos yet." : "Aucune photo partagée pour le moment."}</p>}
       </div>
-      <p className="muted small">Les photos restent privées, expirent après 6 heures et sont nettoyées à la fin de la partie ou au départ. Si tous les navigateurs se ferment brutalement, le nettoyage physique est déclenché à la prochaine ouverture de QSPICY. Une capture d'écran reste toujours possible sur l'appareil du destinataire.</p>
+      <p className="muted small">{en ? "Photos stay private, expire after 6 hours and are cleaned up when the game ends or someone leaves. If all browsers close unexpectedly, physical cleanup runs the next time QSPICY opens. Screenshots are still possible on the recipient’s device." : "Les photos restent privées, expirent après 6 heures et sont nettoyées à la fin de la partie ou au départ. Si tous les navigateurs se ferment brutalement, le nettoyage physique est déclenché à la prochaine ouverture de QSPICY. Une capture d'écran reste toujours possible sur l'appareil du destinataire."}</p>
     </details>
   );
 }
