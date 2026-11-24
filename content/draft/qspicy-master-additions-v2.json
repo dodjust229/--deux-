@@ -1,0 +1,289 @@
+{
+  "title": "QSPICY — lot additionnel V2 ciblé",
+  "status": "draft_not_integrated",
+  "created_at": "2026-11-24",
+  "purpose": "40 propositions ciblées sur des thèmes sous-représentés dans les 192 cartes existantes. Ce lot remplace les propositions redondantes du V1 pour la suite de la revue éditoriale.",
+  "note": "Brouillon éditorial uniquement. Les intensités 1 à 5 sont distinctes du champ technique level 1 à 4. Aucune carte n'est chargée dans l'application. Les références à des expériences sont formulées pour des joueurs adultes.",
+  "cards": [
+    {
+      "id": "int-001",
+      "intensity": 1,
+      "category": "relations",
+      "format": "question",
+      "prompt": "Quel a été ton premier vrai coup de cœur, et qu'est-ce qui t'avait attiré chez cette personne ?"
+    },
+    {
+      "id": "int-002",
+      "intensity": 1,
+      "category": "histoire_personnelle",
+      "format": "question",
+      "prompt": "Quel souvenir de ton premier amour te revient encore, même si cette histoire appartient au passé ?"
+    },
+    {
+      "id": "int-003",
+      "intensity": 1,
+      "category": "relations",
+      "format": "question",
+      "prompt": "Aujourd'hui, tu te considères célibataire, en flirt, en couple ou dans une situation difficile à définir ?"
+    },
+    {
+      "id": "int-004",
+      "intensity": 1,
+      "category": "personnalite",
+      "format": "question",
+      "prompt": "Quelle erreur passée t'a appris une leçon que tu appliques encore aujourd'hui ?"
+    },
+    {
+      "id": "int-005",
+      "intensity": 1,
+      "category": "souvenirs",
+      "format": "question",
+      "prompt": "Quel est le dernier baiser dont tu te souviens vraiment bien, et qu'est-ce qui l'a rendu mémorable ?"
+    },
+    {
+      "id": "int-006",
+      "intensity": 1,
+      "category": "personnalite",
+      "format": "question",
+      "prompt": "De quel talent ou de quelle capacité es-tu fier, même si les autres ne le remarquent pas toujours ?"
+    },
+    {
+      "id": "int-007",
+      "intensity": 1,
+      "category": "relations",
+      "format": "question",
+      "prompt": "Qu'est-ce qui te fait perdre confiance dans une personne, même lorsque tu l'apprécies beaucoup ?"
+    },
+    {
+      "id": "int-008",
+      "intensity": 1,
+      "category": "confidences",
+      "format": "question",
+      "prompt": "Quelle chose importante sur ton passé les gens découvrent-ils rarement au premier abord ?"
+    },
+    {
+      "id": "int-009",
+      "intensity": 2,
+      "category": "relations",
+      "format": "question",
+      "prompt": "As-tu déjà gardé des sentiments pour un ex alors que tu savais que l'histoire était terminée ?"
+    },
+    {
+      "id": "int-010",
+      "intensity": 2,
+      "category": "jalousie",
+      "format": "question",
+      "prompt": "Qu'est-ce qui déclenche le plus facilement ta jalousie : les messages, les regards, les souvenirs d'un ex ou les ambiguïtés ?"
+    },
+    {
+      "id": "int-011",
+      "intensity": 2,
+      "category": "crush",
+      "format": "question",
+      "prompt": "Quand quelqu'un te plaît, quel comportement adoptes-tu sans même t'en rendre compte ?"
+    },
+    {
+      "id": "int-012",
+      "intensity": 2,
+      "category": "relations",
+      "format": "question",
+      "prompt": "Pourrais-tu reprendre une histoire avec un ex si la personne avait réellement changé ? Qu'est-ce qui te ferait hésiter ?"
+    },
+    {
+      "id": "int-013",
+      "intensity": 2,
+      "category": "attirance",
+      "format": "question",
+      "prompt": "Quel détail dans la voix d'une personne peut te séduire avant même que tu voies son visage ?"
+    },
+    {
+      "id": "int-014",
+      "intensity": 2,
+      "category": "provocation",
+      "format": "question",
+      "prompt": "Si je te plaisais davantage que tu ne veux l'avouer, quel indice finirait par te trahir ?"
+    },
+    {
+      "id": "int-015",
+      "intensity": 2,
+      "category": "relations",
+      "format": "question",
+      "prompt": "Quelle situation te ferait immédiatement comprendre qu'une relation n'est pas faite pour toi ?"
+    },
+    {
+      "id": "int-016",
+      "intensity": 2,
+      "category": "communication",
+      "format": "question",
+      "prompt": "As-tu déjà fouillé dans le téléphone ou les réseaux d'un partenaire par jalousie ? Qu'est-ce qui t'avait poussé à le faire ?"
+    },
+    {
+      "id": "int-017",
+      "intensity": 3,
+      "category": "experiences",
+      "format": "question",
+      "prompt": "Quelle expérience avec un ex t'a appris ce que tu ne veux plus jamais revivre dans une relation ?"
+    },
+    {
+      "id": "int-018",
+      "intensity": 3,
+      "category": "relations",
+      "format": "question",
+      "prompt": "As-tu déjà embrassé quelqu'un sans être amoureux ? Comment as-tu vécu ce moment après coup ?"
+    },
+    {
+      "id": "int-019",
+      "intensity": 3,
+      "category": "sexualite_communication",
+      "format": "question",
+      "prompt": "Est-ce que tu arrives à parler franchement de masturbation, ou est-ce encore un sujet gênant pour toi ? Pourquoi ?"
+    },
+    {
+      "id": "int-020",
+      "intensity": 3,
+      "category": "sexualite",
+      "format": "question",
+      "prompt": "Quelle place la pornographie a-t-elle eue dans ta découverte de la sexualité, et ton regard dessus a-t-il changé ?"
+    },
+    {
+      "id": "int-021",
+      "intensity": 3,
+      "category": "preferences_intimes",
+      "format": "question",
+      "prompt": "Qu'est-ce qui transforme un simple baiser en un baiser dont tu as encore envie longtemps après ?"
+    },
+    {
+      "id": "int-022",
+      "intensity": 3,
+      "category": "relations",
+      "format": "question",
+      "prompt": "As-tu déjà comparé un nouveau partenaire à un ex ? Sur quel point, même si tu ne l'as jamais avoué ?"
+    },
+    {
+      "id": "int-023",
+      "intensity": 3,
+      "category": "jalousie",
+      "format": "question",
+      "prompt": "Quelle est la chose la plus jalouse ou la plus irrationnelle que tu aies faite par peur de perdre quelqu'un ?"
+    },
+    {
+      "id": "int-024",
+      "intensity": 3,
+      "category": "sexualite_communication",
+      "format": "question",
+      "prompt": "Quel sujet lié à ta vie sexuelle serait le plus difficile à raconter à quelqu'un qui te connaît très bien ?"
+    },
+    {
+      "id": "int-025",
+      "intensity": 4,
+      "category": "sexualite",
+      "format": "question",
+      "prompt": "À quelle fréquence la masturbation fait-elle partie de ta vie, et qu'est-ce qui influence le plus ton envie ?"
+    },
+    {
+      "id": "int-026",
+      "intensity": 4,
+      "category": "sexualite",
+      "format": "question",
+      "prompt": "As-tu déjà regardé du porno en couple ou avec un partenaire ? Est-ce une expérience qui t'attire ou qui te met mal à l'aise ?"
+    },
+    {
+      "id": "int-027",
+      "intensity": 4,
+      "category": "preferences_intimes",
+      "format": "question",
+      "prompt": "Quelles positions sexuelles préfères-tu, et qu'est-ce qui fait vraiment la différence pour toi : la proximité, le rythme ou les sensations ?"
+    },
+    {
+      "id": "int-028",
+      "intensity": 4,
+      "category": "sexualite",
+      "format": "question",
+      "prompt": "Le sexe oral fait-il partie de tes plaisirs, de tes curiosités ou de tes limites ? Dis clairement ce que tu apprécies ou non."
+    },
+    {
+      "id": "int-029",
+      "intensity": 4,
+      "category": "preferences_intimes",
+      "format": "question",
+      "prompt": "Tu préfères prendre les commandes au lit, recevoir les initiatives de l'autre ou changer de rôle selon l'envie ?"
+    },
+    {
+      "id": "int-030",
+      "intensity": 4,
+      "category": "experiences",
+      "format": "question",
+      "prompt": "As-tu déjà vécu un rapport sexuel improvisé ou particulièrement spontané ? Qu'est-ce qui l'a rendu marquant ?"
+    },
+    {
+      "id": "int-031",
+      "intensity": 4,
+      "category": "sexualite_communication",
+      "format": "question",
+      "prompt": "Quel mot, quelle phrase ou quel type de parole aimerais-tu entendre pendant le sexe, et qu'est-ce qui te ferait immédiatement décrocher ?"
+    },
+    {
+      "id": "int-032",
+      "intensity": 4,
+      "category": "fantasmes",
+      "format": "question",
+      "prompt": "As-tu déjà eu envie d'essayer un jeu de rôle sexuel ? Quel personnage ou quelle situation t'intriguerait le plus ?"
+    },
+    {
+      "id": "int-033",
+      "intensity": 5,
+      "category": "sexualite",
+      "format": "question",
+      "prompt": "As-tu déjà eu une expérience sexuelle à plusieurs, ou est-ce un fantasme que tu aimerais explorer en pensée ? Qu'est-ce qui t'attire ou te freine ?"
+    },
+    {
+      "id": "int-034",
+      "intensity": 5,
+      "category": "fantasmes",
+      "format": "question",
+      "prompt": "Quel fantasme impliquant le fait d'être observé ou de risquer d'être surpris t'a déjà traversé l'esprit ? Raconte ce qui t'attire dans l'idée."
+    },
+    {
+      "id": "int-035",
+      "intensity": 5,
+      "category": "preferences_intimes",
+      "format": "question",
+      "prompt": "Les accessoires ou jouets sexuels t'intriguent-ils ? Lesquels as-tu déjà essayés ou aimerais-tu découvrir ?"
+    },
+    {
+      "id": "int-036",
+      "intensity": 5,
+      "category": "sexualite",
+      "format": "question",
+      "prompt": "As-tu déjà exploré une dynamique de domination ou de soumission dans l'intimité ? Qu'est-ce qui t'attire dans ce jeu de rôles ?"
+    },
+    {
+      "id": "int-037",
+      "intensity": 5,
+      "category": "experiences",
+      "format": "question",
+      "prompt": "Quelle expérience sexuelle passée t'a demandé le plus d'audace, et qu'est-ce que tu n'avais jamais osé raconter dessus ?"
+    },
+    {
+      "id": "int-038",
+      "intensity": 5,
+      "category": "fantasmes",
+      "format": "scenario",
+      "prompt": "Imagine un scénario érotique où tu choisis entièrement le décor, les rôles et l'ambiance : quelle situation proposes-tu sans l'adoucir ?"
+    },
+    {
+      "id": "int-039",
+      "intensity": 5,
+      "category": "sexualite_communication",
+      "format": "question",
+      "prompt": "Y a-t-il une pratique sexuelle que tu refuses catégoriquement, une autre que tu adores, et une troisième qui t'intrigue encore ?"
+    },
+    {
+      "id": "int-040",
+      "intensity": 5,
+      "category": "provocation",
+      "format": "question",
+      "prompt": "Quelle vérité sur tes envies sexuelles surprendrait le plus la personne assise en face de toi ?"
+    }
+  ]
+}
