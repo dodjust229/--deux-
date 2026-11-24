@@ -1,9 +1,9 @@
 # QSPICY — dossier de reprise IA · Palier 5
 
 Date : 24 novembre 2026  
-Branche active : `qspicy/palier-5-gallery-photos`  
-Base : `main`  
-Statut : nettoyage des confidences fusionné ; partage de photos depuis la galerie en cours de validation. Aucun déploiement de la nouvelle fonction photo ni migration de production effectué.
+Branche livrée : `qspicy/palier-5-gallery-photos` (fusionnée dans `main`)  
+Commit de livraison : `6bdfb67a522e1a0c8b625d3ddf9d3a8102cefb42`  
+Statut : code, migration Supabase, Edge Function et déploiement Render livrés ; recette manuelle multi-appareils encore requise.
 
 ## 1. Décision produit confirmée
 
@@ -68,7 +68,7 @@ Le nouveau test SQL `supabase/tests/photo_sharing.sql` vérifie :
 - refus de suppression par un destinataire non propriétaire ;
 - suppression par l'expéditeur et disparition de la liste.
 
-Le script `supabase/tests/run_postgres.sh` applique maintenant la migration 18 et exécute ce test. La CI de la branche doit encore confirmer la migration, TypeScript, les tests et le build.
+Le script `supabase/tests/run_postgres.sh` applique la migration 18 et exécute les recettes Couple + DUOS. CI GitHub Actions réussie sur le commit final : TypeScript, tests unitaires, build et intégration PostgreSQL 16 (run `45370514524`).
 
 Recette manuelle multi-appareils encore requise :
 - choisir une photo dans la galerie mobile et sur ordinateur ;
@@ -81,9 +81,27 @@ Recette manuelle multi-appareils encore requise :
 
 ## 7. État exact de production
 
-- Les PR #21 et #22 sont fusionnées.
-- La nouvelle migration 18 n'a pas encore été appliquée au projet Supabase de production.
-- Le bucket privé n'a pas encore été créé en production.
-- L'Edge Function `qspicy-room-media` n'a pas encore été déployée.
-- Le partage photo n'est donc pas encore disponible sur l'application publique.
-- Ne pas déclarer le Palier 5 terminé avant CI verte, migration et Edge Function déployées, vérification Render et recette réelle sur plusieurs appareils.
+- PR #21 : https://github.com/dodjust229/--deux-/pull/21 — fusionnée.
+- PR #22 : https://github.com/dodjust229/--deux-/pull/22 — fusionnée.
+- PR #23 : https://github.com/dodjust229/--deux-/pull/23 — fusionnée.
+- Migration Supabase `qspicy_room_photo_sharing` appliquée au projet de production.
+- Vérification production : bucket `qspicy-private-media` présent, `public=false`, JPEG uniquement, limite 5 242 880 octets ; RLS activée sur `public.room_media` ; 0 média stocké à la livraison.
+- RPC sensibles : lecture/enregistrement/suppression réservés à `service_role` ; seules les fonctions de consentement tokenisées sont accessibles à `anon`.
+- Edge Function `qspicy-room-media` : ACTIVE, version 1, `verify_jwt=false` car les RPC valident le jeton de joueur. L'action publique `cleanup_expired` ne fait que supprimer les médias expirés et ne retourne aucun média.
+- Render : déploiement `dep-dc2m1ee8bjmc738425s0`, commit `6bdfb67a522e1a0c8b625d3ddf9d3a8102cefb42`, statut `live`.
+- Application : https://a-deux-jeu.onrender.com
+
+## 8. Recette manuelle restant à faire
+
+Le code et l'infrastructure sont en production, mais aucune vraie photo n'a encore été envoyée depuis deux appareils dans cette session. À vérifier sur téléphone + ordinateur ou deux téléphones :
+- Couple : consentement du partenaire, sélection galerie, aperçu, envoi et affichage.
+- DUOS : envoi au duo privé ; vérifier qu'un joueur de l'autre duo ne voit rien.
+- Espace commun : vérifier le blocage sans les quatre consentements.
+- Retrait du consentement : l'accès aux anciennes photos ne doit pas revenir après réactivation.
+- Suppression par l'expéditeur.
+- Fin de partie et départ volontaire : les médias sont nettoyés.
+- Ouverture de QSPICY : le nettoyage des photos expirées est déclenché.
+
+Limite connue : si tous les navigateurs ferment brutalement, les photos restent dans le bucket privé jusqu'au prochain démarrage de l'application ou à une prochaine consultation photo. Les URL signées expirent après cinq minutes et les médias ne sont plus listés après six heures. Aucun cron externe de nettoyage n'est configuré à ce stade.
+
+Ne pas refaire l'audit initial : reprendre directement à cette recette manuelle, puis passer au Palier 6.
