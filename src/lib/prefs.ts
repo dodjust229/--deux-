@@ -6,12 +6,14 @@ import type { Lang } from "./i18n";
 export type Theme = "dark" | "light";
 export type Intensity = "soft" | "hot" | "veryHot";
 export type GameLevel = 1 | 2 | 3 | 4;
+export type Ambience = "off" | "lounge" | "velvet" | "rain";
 
 export interface Preferences {
   theme: Theme;
   reducedMotion: boolean;
   sound: boolean;
   volume: number;
+  ambience: Ambience;
   language: Lang;
   intensity: Intensity;
   /** Palier exact joué pendant la partie (indépendant des catégories). */
@@ -28,6 +30,7 @@ export const DEFAULT_PREFERENCES: Preferences = {
   reducedMotion: false,
   sound: false,
   volume: 0.4,
+  ambience: "off",
   language: "fr",
   intensity: "hot",
   gameLevel: 2,
@@ -36,7 +39,6 @@ export const DEFAULT_PREFERENCES: Preferences = {
 
 const CATEGORIES: Category[] = ["decouverte", "complicite", "profondeur", "seduction", "audacieux"];
 
-/** Catégories proposées par défaut selon l'intensité choisie, exclusions retirées. */
 export function categoriesForIntensity(intensity: Intensity, exclusions: Category[] = []): Category[] {
   const base: Record<Intensity, Category[]> = {
     soft: ["decouverte", "complicite"],
@@ -56,13 +58,17 @@ export function clampVolume(value: unknown): number {
 export function sanitizePreferences(raw: unknown): Preferences {
   const source = raw && typeof raw === "object" ? (raw as Record<string, unknown>) : {};
   const exclusions = Array.isArray(source.exclusions)
-    ? (source.exclusions.filter((value): value is Category => CATEGORIES.includes(value as Category)))
+    ? source.exclusions.filter((value): value is Category => CATEGORIES.includes(value as Category))
     : [];
+  const ambience: Ambience = source.ambience === "lounge" || source.ambience === "velvet" || source.ambience === "rain"
+    ? source.ambience
+    : "off";
   return {
     theme: source.theme === "light" ? "light" : "dark",
     reducedMotion: source.reducedMotion === true,
     sound: source.sound === true,
     volume: clampVolume(source.volume),
+    ambience,
     language: source.language === "en" ? "en" : "fr",
     intensity: source.intensity === "soft" || source.intensity === "veryHot" ? source.intensity : "hot",
     gameLevel: source.gameLevel === 1 || source.gameLevel === 3 || source.gameLevel === 4 ? source.gameLevel : 2,
@@ -70,7 +76,6 @@ export function sanitizePreferences(raw: unknown): Preferences {
   };
 }
 
-/** Lit les préférences ; reprend l'ancien réglage « réduire les animations » s'il existe. */
 export function readPreferences(storage: Pick<Storage, "getItem"> | null): Preferences {
   if (!storage) return { ...DEFAULT_PREFERENCES };
   try {
@@ -93,7 +98,6 @@ export function writePreferences(storage: Pick<Storage, "setItem"> | null, prefs
   }
 }
 
-/** Applique thème et réduction de mouvement sur <html> (les deux sont indépendants du thème). */
 export function applyPreferences(root: HTMLElement, prefs: Preferences): void {
   root.dataset.theme = prefs.theme;
   root.dataset.motion = prefs.reducedMotion ? "reduced" : "full";
