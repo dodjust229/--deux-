@@ -40,6 +40,7 @@ def room_pair(host_name, guest_name):
 # Couple: one interest per person, host-only start, and union of interests.
 room,host,guest=room_pair("HoteP4","InviteP4")
 check("un joueur ne peut pas enregistrer plusieurs centres d'intérêt",expect("set_player_categories",f"'{room}','{host}',array['decouverte','seduction']::text[]","E_INTEREST"))
+check("un centre d'intérêt nul est refusé",expect("set_player_categories",f"'{room}','{host}',array[null]::text[]","E_INTEREST"))
 rpc("set_player_categories",f"'{room}','{host}',array['decouverte']::text[]")
 rpc("set_player_categories",f"'{room}','{guest}',array['complicite']::text[]")
 stored=sql(f"select (select cardinality(selected_categories) from public.players where room_id='{room}' and seat=1)||'|'||(select cardinality(selected_categories) from public.players where room_id='{room}' and seat=2)")
