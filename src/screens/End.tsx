@@ -51,8 +51,9 @@ export function End({ snap, me, other, busy, onRestart, onLeave }: EndProps) {
           </dl>
         )}
 
+        <p className="muted">Les cartes déjà jouées dans cette salle sont mises de côté jusqu'à épuisement du palier et des catégories sélectionnées.</p>
         <button className="primary full" type="button" onClick={onRestart} disabled={busy}>
-          <Icon name="rotate" /> Rejouer une partie
+          <Icon name="rotate" /> Nouvelle partie
         </button>
         <button className="secondary full" type="button" onClick={onLeave}>
           <Icon name="log-out" /> Quitter la salle
