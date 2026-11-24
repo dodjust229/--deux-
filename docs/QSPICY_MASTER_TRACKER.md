@@ -25,10 +25,15 @@ L'utilisateur ne peut pas joindre de fichiers dans cette conversation. Travaille
 | 3 | Mode Personnalisé | Livré | `docs/QSPICY_PALIER_3_REPRISE_IA.md` ; moteur de catalogue et garde-fous serveur déployés. |
 | 4 | Invitations, rôles, intérêts individuels | Livré côté code | `docs/QSPICY_PALIER_4_REPRISE_IA.md` ; PR #20 fusionnée, migration 17 appliquée, Render live. Tests réels à 2/4 appareils encore à faire. |
 | 5 | Confidentialité et photos personnelles depuis la galerie | Livré côté code et infrastructure | `docs/QSPICY_PALIER_5_REPRISE_IA.md` ; PR #21, #22, #23 fusionnées ; migration 18 et Edge Function déployées ; Render live. Recette photo multi-appareils restante. |
-| 6 | Musique et ambiance | À faire | Ne pas commencer avant la recette manuelle prioritaire du Palier 5, sauf demande contraire. |
+| 6 | Musique et ambiance | En cours de livraison | `docs/QSPICY_PALIER_6_REPRISE_IA.md` ; nappes Web Audio locales, choix manuel, volume et arrêt en fin de session ; CI/déploiement/recette appareil à confirmer. |
 | 7 | Tests globaux, bugs et stabilisation | À faire | Recette Couple/DUOS, appareils, permissions, sessions longues et sécurité. |
 
 ## Éléments encore ouverts
+
+### Palier 6 — recette audio après déploiement
+- Vérifier Lounge, Velours et Pluie sur mobile et ordinateur ; lecture uniquement après clic.
+- Vérifier volume, arrêt manuel, fin de partie, sortie et absence d'autoplay après rechargement.
+- Voir `docs/QSPICY_PALIER_6_REPRISE_IA.md`.
 
 ### Priorité immédiate — recette Palier 5
 - Tester l'envoi d'une vraie photo depuis la galerie sur deux appareils.
