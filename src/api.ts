@@ -102,3 +102,15 @@ export const setRoomMediaPermission = (r: string, t: string, allow: boolean) =>
 
 export const clearRoomPhotos = (r: string, t: string) =>
   photoRequest<{ cleaned: boolean }>(r, t, "cleanup_room", { method: "DELETE" });
+
+export async function cleanupExpiredRoomPhotos(): Promise<void> {
+  const url = import.meta.env.VITE_SUPABASE_URL as string | undefined;
+  const key = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
+  if (!url || !key) return;
+  const endpoint = `${url.endsWith("/") ? url.slice(0, -1) : url}/functions/v1/qspicy-room-media?action=cleanup_expired`;
+  await fetch(endpoint, {
+    method: "POST",
+    headers: { apikey: key, Authorization: `Bearer ${key}` },
+    cache: "no-store",
+  });
+}
