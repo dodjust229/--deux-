@@ -222,7 +222,7 @@ export function PhotoShare({ roomId, token, myPlayerId, mode, onPermissionChange
         })}
         {state && state.items.length === 0 && <p className="muted small">Aucune photo partagée pour le moment.</p>}
       </div>
-      <p className="muted small">Les photos restent privées, expirent après 6 heures et sont nettoyées à la fin de la partie ou au départ. Si tous les navigateurs se ferment brutalement, le nettoyage physique intervient à la prochaine ouverture de la salle. Une capture d'écran reste toujours possible sur l'appareil du destinataire.</p>
+      <p className="muted small">Les photos restent privées, expirent après 6 heures et sont nettoyées à la fin de la partie ou au départ. Si tous les navigateurs se ferment brutalement, le nettoyage physique est déclenché à la prochaine activité photo sur QSPICY. Une capture d'écran reste toujours possible sur l'appareil du destinataire.</p>
     </details>
   );
 }
