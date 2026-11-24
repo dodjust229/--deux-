@@ -90,3 +90,9 @@ echo "Applying catalog-backed custom engine"
 
 echo "Running catalog-backed custom-engine integration recipe"
 python3 supabase/tests/custom_catalog_engine.py
+
+echo "Applying Palier 4 invitation and permissions rules"
+"${PSQL[@]}" -d "$DB" -f supabase/17_invitation_permissions.sql
+
+echo "Running Palier 4 invitation and permissions integration recipe"
+python3 supabase/tests/palier4_invitation_permissions.py
