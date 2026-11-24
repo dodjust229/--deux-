@@ -110,7 +110,7 @@ export function Game({
   const [curtain, setCurtain] = useState<1 | 2 | 3 | 4 | null>(null);
   const [selectedMoment, setSelectedMoment] = useState<string | null>(null);
   const roundMoments = getRoundMoments(interaction);
-  const roundEvent = getRoundEvent(snap.room.id, snap.room.current_index, snap.room.total, interaction);
+  const roundEvent = getRoundEvent(snap.room.id, snap.room.current_index, snap.room.total, interaction, lang === "en" ? "en" : "fr");
   useEffect(() => setSelectedMoment(null), [interaction.id]);
   const [justSent, setJustSent] = useState(false);
   const lastLevel = useRef<number | null>(null);
