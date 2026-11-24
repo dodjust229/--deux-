@@ -81,8 +81,8 @@ BEGIN
   INSERT INTO public.rooms(status,selected_level) VALUES ('waiting',1) RETURNING id INTO room_couple;
   INSERT INTO public.players(room_id,seat,nickname,avatar,token_hash,adult_consent,selected_categories)
   VALUES
-    (room_couple,1,'History A','masculin',encode(extensions.digest(token_a,'sha256'),'hex'),true,ARRAY['decouverte']),
-    (room_couple,2,'History B','feminin',encode(extensions.digest(token_b,'sha256'),'hex'),true,ARRAY['decouverte']);
+    (room_couple,1,'History A','masculin',encode(extensions.digest(token_a,'sha256'),'hex'),true,ARRAY['decouverte','complicite','profondeur','seduction','audacieux']),
+    (room_couple,2,'History B','feminin',encode(extensions.digest(token_b,'sha256'),'hex'),true,ARRAY['decouverte','complicite','profondeur','seduction','audacieux']);
 
   SELECT public.start_game_by_level(room_couple,token_a,1) INTO ok;
   IF NOT ok THEN RAISE EXCEPTION 'Couple history first session did not start'; END IF;
@@ -105,10 +105,10 @@ BEGIN
   INSERT INTO public.rooms(mode,status,selected_level) VALUES ('duos','waiting',1) RETURNING id INTO room_duos;
   INSERT INTO public.players(room_id,seat,nickname,avatar,token_hash,adult_consent,selected_categories,duo_no)
   VALUES
-    (room_duos,1,'History A','masculin',encode(extensions.digest(token_a,'sha256'),'hex'),true,ARRAY['decouverte'],1),
-    (room_duos,2,'History B','feminin',encode(extensions.digest(token_b,'sha256'),'hex'),true,ARRAY['decouverte'],1),
-    (room_duos,3,'History C','masculin',encode(extensions.digest(token_c,'sha256'),'hex'),true,ARRAY['decouverte'],2),
-    (room_duos,4,'History D','feminin',encode(extensions.digest(token_d,'sha256'),'hex'),true,ARRAY['decouverte'],2);
+    (room_duos,1,'History A','masculin',encode(extensions.digest(token_a,'sha256'),'hex'),true,ARRAY['decouverte','complicite','profondeur','seduction','audacieux'],1),
+    (room_duos,2,'History B','feminin',encode(extensions.digest(token_b,'sha256'),'hex'),true,ARRAY['decouverte','complicite','profondeur','seduction','audacieux'],1),
+    (room_duos,3,'History C','masculin',encode(extensions.digest(token_c,'sha256'),'hex'),true,ARRAY['decouverte','complicite','profondeur','seduction','audacieux'],2),
+    (room_duos,4,'History D','feminin',encode(extensions.digest(token_d,'sha256'),'hex'),true,ARRAY['decouverte','complicite','profondeur','seduction','audacieux'],2);
 
   SELECT public.start_duo_game_by_level(room_duos,token_a,1) INTO ok;
   IF NOT ok THEN RAISE EXCEPTION 'DUOS history first session did not start'; END IF;
