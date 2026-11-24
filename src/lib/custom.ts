@@ -1,5 +1,5 @@
 import type { Lang } from "./i18n";
-import type { Interaction } from "../types";
+import type { Category, Interaction } from "../types";
 
 export const CUSTOM = { min: 5, max: 24, minChars: 5, maxChars: 280 } as const;
 
@@ -133,10 +133,11 @@ export function resolveCustomInteraction(interactionId: string | null, deck: rea
 export function buildCustomDeck(
   catalog: readonly Interaction[],
   requestedCount: number,
-  random: () => number = Math.random
+  random: () => number = Math.random,
+  categories?: readonly Category[]
 ): string[] {
   const eligible = catalog.filter(
-    (card) => card.level <= 2 && card.kind === "free" && card.prompt.trim().length >= CUSTOM.minChars
+    (card) => card.level <= 2 && card.kind === "free" && card.prompt.trim().length >= CUSTOM.minChars && (!categories?.length || categories.includes(card.category))
   );
   const pool = [...eligible];
   // Fisher–Yates : chaque partie obtient un ordre aléatoire sans doublon.
