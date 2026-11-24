@@ -1,0 +1,359 @@
+{
+  "title": "QSPICY — lot éditorial additionnel V1 (brouillon)",
+  "status": "draft_not_integrated",
+  "created_at": "2026-11-24",
+  "purpose": "50 propositions de questions supplémentaires, classées par intensité éditoriale. À relire et dédupliquer sémantiquement avec src/catalog.json avant toute intégration.",
+  "note": "Le champ intensity (1-5) est éditorial et ne remplace pas le level technique actuel (1-4). Aucun item de ce fichier n'est encore chargé dans l'application.",
+  "cards": [
+    {
+      "id": "draft-001",
+      "intensity": 1,
+      "category": "personnalite",
+      "format": "question",
+      "prompt": "Quelle habitude chez toi surprendrait quelqu'un qui pense déjà bien te connaître ?"
+    },
+    {
+      "id": "draft-002",
+      "intensity": 1,
+      "category": "decouverte",
+      "format": "question",
+      "prompt": "Quel petit plaisir pourrais-tu difficilement abandonner, même pour un mois ?"
+    },
+    {
+      "id": "draft-003",
+      "intensity": 1,
+      "category": "confidences",
+      "format": "question",
+      "prompt": "Quelle bêtise de ton enfance te fait encore rire quand tu y repenses ?"
+    },
+    {
+      "id": "draft-004",
+      "intensity": 1,
+      "category": "relations",
+      "format": "question",
+      "prompt": "Quel genre de personne te met immédiatement à l'aise ?"
+    },
+    {
+      "id": "draft-005",
+      "intensity": 1,
+      "category": "personnalite",
+      "format": "question",
+      "prompt": "Quelle qualité aimerais-tu développer davantage chez toi ?"
+    },
+    {
+      "id": "draft-006",
+      "intensity": 1,
+      "category": "communication",
+      "format": "question",
+      "prompt": "Quand quelque chose te blesse, tu en parles directement ou tu attends que l'autre le remarque ?"
+    },
+    {
+      "id": "draft-007",
+      "intensity": 1,
+      "category": "souvenirs",
+      "format": "question",
+      "prompt": "Quel souvenir aimerais-tu revivre exactement comme la première fois ?"
+    },
+    {
+      "id": "draft-008",
+      "intensity": 1,
+      "category": "reve",
+      "format": "question",
+      "prompt": "Quel rêve personnel refuses-tu d'abandonner, même si le chemin paraît compliqué ?"
+    },
+    {
+      "id": "draft-009",
+      "intensity": 1,
+      "category": "gouts",
+      "format": "question",
+      "prompt": "Quelle chanson, quel film ou quelle série te représente le mieux, et pourquoi ?"
+    },
+    {
+      "id": "draft-010",
+      "intensity": 1,
+      "category": "complicite",
+      "format": "question",
+      "prompt": "Quel détail dans ma façon d'être t'a déjà fait sourire sans que je le sache ?"
+    },
+    {
+      "id": "draft-011",
+      "intensity": 2,
+      "category": "crush",
+      "format": "question",
+      "prompt": "Quel est le signe qui te trahit quand quelqu'un te plaît vraiment ?"
+    },
+    {
+      "id": "draft-012",
+      "intensity": 2,
+      "category": "attirance",
+      "format": "question",
+      "prompt": "Quel détail non physique peut te rendre quelqu'un irrésistible ?"
+    },
+    {
+      "id": "draft-013",
+      "intensity": 2,
+      "category": "seduction",
+      "format": "question",
+      "prompt": "Tu préfères qu'on te séduise avec des mots, des gestes ou de l'assurance ?"
+    },
+    {
+      "id": "draft-014",
+      "intensity": 2,
+      "category": "jalousie",
+      "format": "question",
+      "prompt": "As-tu déjà prétendu ne pas être jaloux alors que ça te travaillait vraiment ?"
+    },
+    {
+      "id": "draft-015",
+      "intensity": 2,
+      "category": "relations",
+      "format": "question",
+      "prompt": "Pourrais-tu tomber amoureux d'une personne qui était d'abord ton ami ?"
+    },
+    {
+      "id": "draft-016",
+      "intensity": 2,
+      "category": "provocation",
+      "format": "question",
+      "prompt": "Quelle question aimerais-tu me poser pour savoir si je suis attiré par toi ?"
+    },
+    {
+      "id": "draft-017",
+      "intensity": 2,
+      "category": "attirance",
+      "format": "question",
+      "prompt": "Qu'est-ce qui te donne envie de revoir quelqu'un après un premier rendez-vous ?"
+    },
+    {
+      "id": "draft-018",
+      "intensity": 2,
+      "category": "couple",
+      "format": "question",
+      "prompt": "Tu préfères une relation très fusionnelle ou deux personnes proches qui gardent chacune leur espace ?"
+    },
+    {
+      "id": "draft-019",
+      "intensity": 2,
+      "category": "complicite",
+      "format": "question",
+      "prompt": "Quelle chose chez moi pourrait te faire développer un crush ?"
+    },
+    {
+      "id": "draft-020",
+      "intensity": 2,
+      "category": "seduction",
+      "format": "defi",
+      "prompt": "Fais-moi un compliment précis que tu n'aurais normalement pas osé formuler."
+    },
+    {
+      "id": "draft-021",
+      "intensity": 3,
+      "category": "confidences",
+      "format": "question",
+      "prompt": "Quelle vérité sur ta vie amoureuse as-tu longtemps eu du mal à reconnaître ?"
+    },
+    {
+      "id": "draft-022",
+      "intensity": 3,
+      "category": "experiences",
+      "format": "question",
+      "prompt": "Quelle expérience sentimentale t'a le plus appris sur ce que tu veux vraiment ?"
+    },
+    {
+      "id": "draft-023",
+      "intensity": 3,
+      "category": "sexualite_communication",
+      "format": "question",
+      "prompt": "Est-ce facile pour toi de dire clairement ce que tu aimes et ce que tu n'aimes pas dans l'intimité ?"
+    },
+    {
+      "id": "draft-024",
+      "intensity": 3,
+      "category": "preferences_intimes",
+      "format": "question",
+      "prompt": "Tu préfères une intimité tendre, joueuse, passionnée ou un mélange des trois ? Explique."
+    },
+    {
+      "id": "draft-025",
+      "intensity": 3,
+      "category": "desirs",
+      "format": "question",
+      "prompt": "Quel geste affectueux peut rapidement devenir très troublant pour toi ?"
+    },
+    {
+      "id": "draft-026",
+      "intensity": 3,
+      "category": "fantasmes",
+      "format": "question",
+      "prompt": "Y a-t-il un fantasme que tu aimerais au moins pouvoir raconter sans être jugé ?"
+    },
+    {
+      "id": "draft-027",
+      "intensity": 3,
+      "category": "couple",
+      "format": "question",
+      "prompt": "Quelle place le désir physique occupe-t-il dans une relation qui dure ?"
+    },
+    {
+      "id": "draft-028",
+      "intensity": 3,
+      "category": "provocation",
+      "format": "question",
+      "prompt": "As-tu déjà imaginé m'embrasser ? Qu'est-ce qui t'a traversé l'esprit ?"
+    },
+    {
+      "id": "draft-029",
+      "intensity": 3,
+      "category": "experiences",
+      "format": "question",
+      "prompt": "Quelle expérience intime t'a appris quelque chose d'important sur ton propre plaisir ?"
+    },
+    {
+      "id": "draft-030",
+      "intensity": 3,
+      "category": "scenario",
+      "format": "scenario",
+      "prompt": "Imagine que je te demande de me révéler une envie que tu n'oses pas exprimer : laquelle pourrais-tu me confier ?"
+    },
+    {
+      "id": "draft-031",
+      "intensity": 4,
+      "category": "preferences_intimes",
+      "format": "question",
+      "prompt": "Qu'est-ce qui te plaît le plus dans les préliminaires : les baisers, les caresses, les mots, le rythme ou autre chose ?"
+    },
+    {
+      "id": "draft-032",
+      "intensity": 4,
+      "category": "sexualite",
+      "format": "question",
+      "prompt": "Quelle pratique sexuelle apprécies-tu particulièrement, et qu'est-ce qui la rend agréable pour toi ?"
+    },
+    {
+      "id": "draft-033",
+      "intensity": 4,
+      "category": "experiences",
+      "format": "question",
+      "prompt": "Raconte une expérience sexuelle qui t'a marqué par son intensité ou par la connexion avec l'autre."
+    },
+    {
+      "id": "draft-034",
+      "intensity": 4,
+      "category": "fantasmes",
+      "format": "question",
+      "prompt": "Quel fantasme as-tu déjà envisagé de partager avec un partenaire, mais jamais formulé clairement ?"
+    },
+    {
+      "id": "draft-035",
+      "intensity": 4,
+      "category": "desirs",
+      "format": "question",
+      "prompt": "Tu préfères guider l'autre, te laisser guider ou alterner les rôles pendant un moment intime ?"
+    },
+    {
+      "id": "draft-036",
+      "intensity": 4,
+      "category": "sexualite_communication",
+      "format": "question",
+      "prompt": "Quels mots ou quelles paroles te plaisent pendant le sexe, et lesquels te coupent complètement l'envie ?"
+    },
+    {
+      "id": "draft-037",
+      "intensity": 4,
+      "category": "preferences_intimes",
+      "format": "question",
+      "prompt": "Qu'est-ce qui te procure le plus de plaisir : la lenteur, l'intensité, la spontanéité ou la variété ?"
+    },
+    {
+      "id": "draft-038",
+      "intensity": 4,
+      "category": "provocation",
+      "format": "question",
+      "prompt": "Quelle partie de mon corps te donne le plus envie de te rapprocher de moi ? Sois précis."
+    },
+    {
+      "id": "draft-039",
+      "intensity": 4,
+      "category": "scenario",
+      "format": "scenario",
+      "prompt": "Imagine que nous parlions sans gêne de nos envies sexuelles : quelle serait la première chose que tu voudrais me demander ?"
+    },
+    {
+      "id": "draft-040",
+      "intensity": 4,
+      "category": "experiences",
+      "format": "question",
+      "prompt": "Quelle chose as-tu découverte sur ta sexualité avec le temps et que tu ignorais au départ ?"
+    },
+    {
+      "id": "draft-041",
+      "intensity": 5,
+      "category": "fantasmes",
+      "format": "question",
+      "prompt": "Quel est le fantasme le plus audacieux que tu serais prêt à me raconter sans l'édulcorer ?"
+    },
+    {
+      "id": "draft-042",
+      "intensity": 5,
+      "category": "sexualite",
+      "format": "question",
+      "prompt": "Quelle envie sexuelle précise aimerais-tu explorer avec un partenaire, et qu'est-ce qui te donnerait réellement envie de passer de l'idée à la discussion ?"
+    },
+    {
+      "id": "draft-043",
+      "intensity": 5,
+      "category": "experiences",
+      "format": "question",
+      "prompt": "Raconte le rapport sexuel qui t'a le plus marqué : qu'est-ce qui l'a rendu si différent des autres ?"
+    },
+    {
+      "id": "draft-044",
+      "intensity": 5,
+      "category": "provocation",
+      "format": "question",
+      "prompt": "As-tu déjà eu un désir sexuel pour moi que tu as volontairement caché ? Raconte ce que tu peux en dire."
+    },
+    {
+      "id": "draft-045",
+      "intensity": 5,
+      "category": "preferences_intimes",
+      "format": "question",
+      "prompt": "Quelle préférence sexuelle assumes-tu pleinement aujourd'hui, même si tu n'oses pas toujours en parler ?"
+    },
+    {
+      "id": "draft-046",
+      "intensity": 5,
+      "category": "fantasmes",
+      "format": "scenario",
+      "prompt": "Imagine que nous écrivions ensemble un scénario érotique fictif : quelle situation audacieuse voudrais-tu proposer pour commencer ?"
+    },
+    {
+      "id": "draft-047",
+      "intensity": 5,
+      "category": "sexualite_communication",
+      "format": "question",
+      "prompt": "Quelle demande sexuelle as-tu déjà eu peur de formuler, par crainte de la réaction de l'autre ?"
+    },
+    {
+      "id": "draft-048",
+      "intensity": 5,
+      "category": "provocation",
+      "format": "question",
+      "prompt": "Si tu devais me faire une confession sexuelle totalement franche, laquelle choisirais-tu ?"
+    },
+    {
+      "id": "draft-049",
+      "intensity": 5,
+      "category": "desirs",
+      "format": "question",
+      "prompt": "Quelle envie intime te semble particulièrement audacieuse, mais reste une vraie curiosité pour toi ?"
+    },
+    {
+      "id": "draft-050",
+      "intensity": 5,
+      "category": "scenario",
+      "format": "scenario",
+      "prompt": "Dans un scénario fictif où nous assumons pleinement notre attirance, quelle serait la première initiative que tu imaginerais prendre ?"
+    }
+  ]
+}
