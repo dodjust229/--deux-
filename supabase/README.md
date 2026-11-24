@@ -78,12 +78,10 @@ La migration est additive et ne supprime aucune donnée. La recette locale couvr
 deux sessions successives sans recouvrement, puis la remise à zéro du cycle après
 épuisement du pool, dans les deux modes.
 
-**Limite de contenu à garder en tête :** le catalogue actuel contient 24 cartes par
-palier. Une partie peut donc consommer tout le pool d'un palier en une session si
-les catégories communes couvrent toutes ses cartes. Pour offrir plusieurs sessions
-complètes sans répétition, il faudra augmenter le catalogue au-delà de 24 cartes
-par palier. L'historique fonctionne déjà pour des pools plus larges et pour les
-sélections de catégories plus restreintes.
+Le catalogue compte maintenant 48 cartes par palier. Avec une sélection couvrant tout
+le pool du palier, deux sessions complètes de 24 questions peuvent être jouées sans
+répétition. Si les catégories communes ne couvrent qu'une partie du pool, le nombre
+de sessions inédites dépend du nombre de cartes restantes dans ces catégories.
 
 
 ### Extension du catalogue — 48 cartes par palier
