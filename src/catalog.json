@@ -1356,16 +1356,6 @@
     ]
   },
   {
-    "id": "b25",
-    "category": "complicite",
-    "kind": "free",
-    "title": "Le merci précis",
-    "prompt": "💛 Pour quelle chose concrète que j’ai faite aimerais-tu me remercier davantage ?",
-    "level": 1,
-    "audience": "partner",
-    "visibility": "partagee"
-  },
-  {
     "id": "e01",
     "category": "seduction",
     "kind": "free",
