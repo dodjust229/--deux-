@@ -78,14 +78,23 @@ Deno.serve(async (req: Request) => {
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
   if (!url || !serviceKey) return json(req, 503, { error: "Stockage photo non configuré côté serveur." });
 
-  const roomId = new URL(req.url).searchParams.get("room_id");
-  const action = new URL(req.url).searchParams.get("action") ?? (req.method === "GET" ? "list" : "");
+  const params = new URL(req.url).searchParams;
+  const roomId = params.get("room_id");
+  const action = params.get("action") ?? (req.method === "GET" ? "list" : "");
   const token = req.headers.get("x-player-token") ?? "";
-  if (!validUuid(roomId) || token.length !== 64) return json(req, 400, { error: "Session ou salle invalide." });
-
   const admin = createClient(url, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
 
   try {
+    if (req.method === "POST" && action === "cleanup_expired") {
+      const expired = await admin.from("room_media").select("id,object_path").lte("expires_at", new Date().toISOString());
+      if (expired.data?.length) {
+        const { error: removeError } = await admin.storage.from(BUCKET).remove(expired.data.map((row: { object_path: string }) => row.object_path));
+        if (!removeError) await admin.from("room_media").delete().in("id", expired.data.map((row: { id: string }) => row.id));
+      }
+      return json(req, 200, { cleaned: expired.data?.length ?? 0 });
+    }
+
+    if (!validUuid(roomId) || token.length !== 64) return json(req, 400, { error: "Session ou salle invalide." });
     if (req.method === "POST" && action === "upload") {
       const scope = new URL(req.url).searchParams.get("scope") ?? "";
       const declaredType = req.headers.get("Content-Type")?.split(";")[0].trim() ?? "";
