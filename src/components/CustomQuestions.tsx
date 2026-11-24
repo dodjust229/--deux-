@@ -15,7 +15,7 @@ export function CustomQuestions({ lang, catalog, selectedCategories, onLaunch, i
   const [generated, setGenerated] = useState(false);
   const categoryKey = [...selectedCategories].sort().join("|");
   const eligibleCount = catalog.filter(card => selectedCategories.includes(card.category)).length;
-  const needsAdult = deck.some(card => card.level >= 3 || card.category === "audacieux");
+  const needsAdult = deck.some(card => card.intensity >= 3 || card.category === "audacieux");
   const consentReady = !needsAdult || (myConsent && otherConsent);
   useEffect(() => { setDeck([]); setGenerated(false); }, [categoryKey]);
   const generate = () => { setDeck(buildCustomDeck(catalog, count, Math.random, selectedCategories)); setGenerated(true); };
