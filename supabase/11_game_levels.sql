@@ -224,4 +224,6 @@ end
 $$;
 
 revoke execute on function public.start_game_by_level(uuid,text,integer) from public, authenticated;
-grant execute on function public.start_game_by_level(uuid,text,text[],integer) to anon;
+revoke execute on function public.start_duo_game_by_level(uuid,text,integer) from public, authenticated;
+grant execute on function public.start_game_by_level(uuid,text,integer) to anon;
+grant execute on function public.start_duo_game_by_level(uuid,text,integer) to anon;
