@@ -180,6 +180,10 @@ export default function App() {
     if (identity) void clearRoomPhotos(identity.roomId, identity.token).catch(() => undefined);
     const localStorage = storage();
     if (identity && localStorage) clearPrivateAnswers(identity.roomId, localStorage);
+    activeSession.current = null;
+    previous.current = null;
+    lastQuestion.current = null;
+    failures.current = 0;
     saveIdentity(null);
     setIdentity(null);
     setSnapshot(null);
@@ -341,6 +345,7 @@ export default function App() {
       const gameMode: GameMode = entry?.gameMode === "custom" ? "custom" : (result.mode ?? entry?.gameMode ?? "couple");
       const nextIdentity: Identity = { roomId: result.room_id, token: result.player_token, nickname: name, avatar: persona, gameMode };
       saveIdentity(nextIdentity);
+      activeSession.current = sessionFingerprint(nextIdentity);
       lastQuestion.current = null;
       previous.current = null;
       activeSession.current = sessionFingerprint(nextIdentity);
