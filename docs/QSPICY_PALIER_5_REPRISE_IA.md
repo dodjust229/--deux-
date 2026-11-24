@@ -22,7 +22,7 @@ Parcours prévu :
 - Couple : envoi au partenaire uniquement ; le partenaire doit avoir activé « J'accepte de recevoir les photos de mon partenaire ».
 - DUOS : envoi dans son propre duo ; le destinataire doit avoir activé la réception des médias.
 - Espace commun DUOS : disponible uniquement si les quatre participants ont autorisé les interactions croisées et si tous les destinataires acceptent les photos.
-- L'accord de réception peut être retiré à tout moment ; les photos reçues ne sont alors plus listées pour la personne qui a retiré son accord.
+- L'accord de réception peut être retiré à tout moment ; les destinataires sont alors retirés définitivement des photos déjà partagées. Réactiver l'autorisation ne fait pas réapparaître les anciens médias.
 - Une photo est un partage volontaire : l'aperçu et le bouton de confirmation précèdent l'envoi.
 - Une capture d'écran ou une photographie de l'écran du destinataire ne peut pas être empêchée de façon garantie par une application web.
 
