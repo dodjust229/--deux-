@@ -15,8 +15,8 @@ BEGIN
   INSERT INTO public.rooms(status,selected_level) VALUES ('waiting',4) RETURNING id INTO room_couple;
   INSERT INTO public.players(room_id,seat,nickname,avatar,token_hash,adult_consent,selected_categories)
   VALUES
-    (room_couple,1,'Test A','masculin',encode(digest(token_a,'sha256'),'hex'),true,ARRAY['decouverte','complicite','profondeur','seduction','audacieux']),
-    (room_couple,2,'Test B','feminin',encode(digest(token_b,'sha256'),'hex'),true,ARRAY['decouverte','complicite','profondeur','seduction','audacieux']);
+    (room_couple,1,'Test A','masculin',encode(extensions.digest(token_a,'sha256'),'hex'),true,ARRAY['decouverte','complicite','profondeur','seduction','audacieux']),
+    (room_couple,2,'Test B','feminin',encode(extensions.digest(token_b,'sha256'),'hex'),true,ARRAY['decouverte','complicite','profondeur','seduction','audacieux']);
   FOR level_no IN 1..4 LOOP
     UPDATE public.rooms SET status='waiting' WHERE id=room_couple;
     SELECT public.start_game_by_level(room_couple,token_a,level_no) INTO ok;
@@ -35,10 +35,10 @@ BEGIN
   INSERT INTO public.rooms(mode,status,selected_level) VALUES ('duos','waiting',4) RETURNING id INTO room_duos;
   INSERT INTO public.players(room_id,seat,nickname,avatar,token_hash,adult_consent,selected_categories,duo_no)
   VALUES
-    (room_duos,1,'Test A','masculin',encode(digest(token_a,'sha256'),'hex'),true,ARRAY['decouverte','complicite','profondeur','seduction','audacieux'],1),
-    (room_duos,2,'Test B','feminin',encode(digest(token_b,'sha256'),'hex'),true,ARRAY['decouverte','complicite','profondeur','seduction','audacieux'],1),
-    (room_duos,3,'Test C','masculin',encode(digest(token_c,'sha256'),'hex'),true,ARRAY['decouverte','complicite','profondeur','seduction','audacieux'],2),
-    (room_duos,4,'Test D','feminin',encode(digest(token_d,'sha256'),'hex'),true,ARRAY['decouverte','complicite','profondeur','seduction','audacieux'],2);
+    (room_duos,1,'Test A','masculin',encode(extensions.digest(token_a,'sha256'),'hex'),true,ARRAY['decouverte','complicite','profondeur','seduction','audacieux'],1),
+    (room_duos,2,'Test B','feminin',encode(extensions.digest(token_b,'sha256'),'hex'),true,ARRAY['decouverte','complicite','profondeur','seduction','audacieux'],1),
+    (room_duos,3,'Test C','masculin',encode(extensions.digest(token_c,'sha256'),'hex'),true,ARRAY['decouverte','complicite','profondeur','seduction','audacieux'],2),
+    (room_duos,4,'Test D','feminin',encode(extensions.digest(token_d,'sha256'),'hex'),true,ARRAY['decouverte','complicite','profondeur','seduction','audacieux'],2);
   FOR level_no IN 1..4 LOOP
     UPDATE public.rooms SET status='waiting' WHERE id=room_duos;
     SELECT public.start_duo_game_by_level(room_duos,token_a,level_no) INTO ok;
