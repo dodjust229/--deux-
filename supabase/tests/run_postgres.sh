@@ -44,7 +44,8 @@ for migration in \
   09_duo_replay \
   10_custom_room \
   11_game_levels \
-  12_level_consent_guard
+  12_level_consent_guard \
+  13_expand_balanced_catalog
 do
   echo "Applying supabase/${migration}.sql"
   "${PSQL[@]}" -d "$DB" -f "supabase/${migration}.sql"
@@ -54,8 +55,11 @@ echo "Checking level-aware catalog and RPCs"
 "${PSQL[@]}" -d "$DB" <<'SQL'
 DO $qspicy$
 BEGIN
-  IF (SELECT count(*) FROM public.catalog) <> 63 THEN
-    RAISE EXCEPTION 'Expected 63 catalog cards after level migration';
+  IF (SELECT count(*) FROM public.catalog) <> 96 THEN
+    RAISE EXCEPTION 'Expected 96 catalog cards after level migration';
+  END IF;
+  IF EXISTS (SELECT 1 FROM public.catalog GROUP BY level HAVING count(*) <> 24) THEN
+    RAISE EXCEPTION 'Expected exactly 24 cards in each game level';
   END IF;
   IF (SELECT count(DISTINCT level) FROM public.catalog) <> 4 THEN
     RAISE EXCEPTION 'Expected all four game levels in catalog';
