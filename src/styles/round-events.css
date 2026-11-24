@@ -59,3 +59,28 @@
     to { opacity: 1; transform: translateY(0); }
   }
 }
+
+.duo-cross-role {
+  margin: 12px 0 16px;
+  padding: 13px 16px;
+  border: 1px solid rgba(211, 158, 99, .25);
+  border-radius: 14px;
+  background: linear-gradient(120deg, rgba(211, 158, 99, .08), rgba(17, 12, 15, .42));
+}
+.duo-cross-role > span {
+  color: var(--gold);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .16em;
+}
+.duo-cross-role p {
+  margin: 6px 0 0;
+  font-size: 13px;
+  line-height: 1.55;
+}
+.duo-cross-role small {
+  display: block;
+  margin-top: 7px;
+  color: var(--ink-mute);
+  font-size: 10px;
+}
