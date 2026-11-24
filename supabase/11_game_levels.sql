@@ -119,7 +119,7 @@ begin
     raise exception 'E_CATEGORIES: Choisissez au moins une catégorie en commun.';
   end if;
 
-  v_adult := 'audacieux' = any(v_categories);
+  v_adult := ('audacieux'=any(v_categories)) or p_level>=3;
   if v_adult and not (
     select count(*)=2 and bool_and(adult_consent)
       from public.players
