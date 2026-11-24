@@ -131,6 +131,30 @@ export function Lobby({
       ) : (
         <>
           {custom ? (
+            <>
+            <section className="panel" aria-labelledby="custom-interest">
+              <div className="panel__head">
+                <h2 id="custom-interest">Ton centre d'intérêt <InfoTip tip="categories" lang={lang} /></h2>
+                <span className="muted small">Sélection combinée : {shared.map((category) => categoryLabels[category]).join(" · ") || "en attente des choix"}</span>
+              </div>
+              <div className="chips" role="radiogroup" aria-label="Ton centre d'intérêt">
+                {CATEGORIES.map((category) => {
+                  const on = selected.includes(category);
+                  const refused = excluded.includes(category);
+                  return (
+                    <button key={category} type="button" role="radio" aria-checked={on} aria-disabled={refused}
+                      title={refused ? "Exclu dans tes préférences" : undefined}
+                      className={`chip chip--${category} ${on ? "is-on" : ""} ${refused ? "is-off" : ""}`}
+                      disabled={busy || refused} onClick={() => onToggleCategory(category)}>
+                      <span className="chip__check" aria-hidden="true">{on ? "✓" : "+"}</span>
+                      <strong>{categoryLabels[category]}</strong>
+                      <small>{categoryDescriptions[category]}</small>
+                    </button>
+                  );
+                })}
+              </div>
+              <p className="muted small">Chaque joueur choisit un seul intérêt. QSPICY combine vos choix.</p>
+            </section>
             <CustomQuestions
               lang={lang}
               catalog={customCatalog}
@@ -144,6 +168,7 @@ export function Lobby({
               otherConsent={otherConsent}
               onToggleConsent={onToggleConsent}
             />
+            </>
           ) : (
           <>
           <section className="panel" aria-labelledby="ambiances">
