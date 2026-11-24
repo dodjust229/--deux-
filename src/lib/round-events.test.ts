@@ -37,6 +37,13 @@ test("event selection changes across rooms instead of showing a fixed surprise",
   assert.ok(ids.size > 1);
 });
 
+test("English sessions receive translated event copy", () => {
+  const event = getRoundEvent("room-a", 2, 8, interaction, "en");
+  assert.ok(event);
+  assert.match(event.subtitle, /SURPRISE/);
+  assert.notEqual(event.title, getRoundEvent("room-a", 2, 8, interaction, "fr")?.title);
+});
+
 test("invalid round coordinates never produce an event", () => {
   assert.equal(getRoundEvent("room-a", -1, 8, interaction), null);
   assert.equal(getRoundEvent("room-a", 8, 8, interaction), null);
