@@ -27,13 +27,35 @@ BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'authenticated') THEN
     CREATE ROLE authenticated NOLOGIN;
   END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'service_role') THEN
+    CREATE ROLE service_role NOLOGIN BYPASSRLS;
+  END IF;
 END
 $$;
+CREATE SCHEMA IF NOT EXISTS storage;
+CREATE TABLE IF NOT EXISTS storage.buckets (
+  id text primary key,
+  name text not null,
+  public boolean not null default false,
+  file_size_limit bigint,
+  allowed_mime_types text[]
+);
 SQL
 
 if ! "${PSQL[@]}" -d postgres -Atqc "SELECT 1 FROM pg_database WHERE datname = '$DB'" | grep -q 1; then
   "${CREATEDB[@]}" "$DB"
 fi
+
+"${PSQL[@]}" -d "$DB" <<'SQL'
+CREATE SCHEMA IF NOT EXISTS storage;
+CREATE TABLE IF NOT EXISTS storage.buckets (
+  id text primary key,
+  name text not null,
+  public boolean not null default false,
+  file_size_limit bigint,
+  allowed_mime_types text[]
+);
+SQL
 
 for migration in \
   01_schema \
@@ -96,3 +118,9 @@ echo "Applying Palier 4 invitation and permissions rules"
 
 echo "Running Palier 4 invitation and permissions integration recipe"
 python3 supabase/tests/palier4_invitation_permissions.py
+
+echo "Applying Palier 5 private gallery photo rules"
+"${PSQL[@]}" -d "$DB" -f "supabase/18_room_photo_sharing.sql"
+
+echo "Running Palier 5 private gallery photo integration recipe"
+"${PSQL[@]}" -d "$DB" -f "supabase/tests/photo_sharing.sql"

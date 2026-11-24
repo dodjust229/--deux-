@@ -20,7 +20,10 @@ import {
   submitDuoAnswer,
   setDuoPermissions,
   sendDuoMessage,
-  restartDuoGame
+  restartDuoGame,
+  setRoomMediaPermission,
+  clearRoomPhotos,
+  cleanupExpiredRoomPhotos
 } from "./api";
 import { extractRoomId, getSelectedInterests, parseError } from "./lib/protocol";
 import { deriveScene } from "./lib/scene";
@@ -33,6 +36,7 @@ import { interactions } from "./content";
 import { explainCustomError, resolveCustomInteraction } from "./lib/custom";
 import { Wordmark } from "./components/Brand";
 import { Icon } from "./components/Icon";
+import { PhotoShare } from "./components/PhotoShare";
 import { Settings } from "./components/Settings";
 import { Safety } from "./components/Safety";
 import { Guide } from "./components/Guide";
@@ -155,8 +159,13 @@ export default function App() {
     writePreferences(storage(), prefs);
   }, [prefs, systemReduced]);
 
+  useEffect(() => {
+    void cleanupExpiredRoomPhotos().catch(() => undefined);
+  }, []);
+
   /* ---------- Session ---------- */
   const dropSession = useCallback((message: string) => {
+    if (identity) void clearRoomPhotos(identity.roomId, identity.token).catch(() => undefined);
     const localStorage = storage();
     if (identity && localStorage) clearPrivateAnswers(identity.roomId, localStorage);
     saveIdentity(null);
@@ -254,6 +263,11 @@ export default function App() {
     };
   }, [identity, refresh, previewMode]);
 
+  useEffect(() => {
+    if (!identity || previewMode || snapshot?.room.status !== "finished") return;
+    void clearRoomPhotos(identity.roomId, identity.token).catch(() => undefined);
+  }, [identity, snapshot?.room.status, previewMode]);
+
   /* Mode Personnalisé : la séquence appartient à la salle, l'écran ne fait que la relire. */
   useEffect(() => {
     if (previewMode || !identity || identity.gameMode !== "custom") return;
@@ -350,6 +364,11 @@ export default function App() {
   async function exitRoom() {
     setPartnerLeft(null);
     if (identity) {
+      try {
+        await clearRoomPhotos(identity.roomId, identity.token);
+      } catch {
+        /* la sortie reste possible même si le nettoyage photo échoue */
+      }
       try {
         await leaveRoom(identity.roomId, identity.token);
       } catch {
@@ -702,6 +721,17 @@ export default function App() {
           />
           <p className="muted">La partie se prépare…</p>
         </main>
+      )}
+
+      {!previewMode && identity && snapshot && snapshot.room.status !== "finished" && (
+        <PhotoShare
+          roomId={identity.roomId}
+          token={identity.token}
+          myPlayerId={snapshot.my_player_id}
+          mode={identity.gameMode === "duos" ? "duos" : "couple"}
+          lang={prefs.language}
+          onPermissionChange={(allow) => void run(() => setRoomMediaPermission(identity.roomId, identity.token, allow), false)}
+        />
       )}
 
       <footer className="footer">
