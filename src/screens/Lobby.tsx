@@ -140,6 +140,9 @@ export function Lobby({
               partnerHere={bothPresent}
               busy={busy}
               serverError={customError}
+              myConsent={myConsent}
+              otherConsent={otherConsent}
+              onToggleConsent={onToggleConsent}
             />
           ) : (
           <>
