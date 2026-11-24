@@ -70,7 +70,6 @@ check("le moteur DUOS accepte quatre intérêts différents",bool(duo_categories
 room,host,guest=room_pair("HoteCustomP4","InviteCustomP4")
 rpc("set_player_categories",f"'{room}','{host}',array['decouverte']::text[]")
 rpc("set_player_categories",f"'{room}','{guest}',array['complicite']::text[]")
-ids=sql("select string_agg(quote_literal(id),',') from (select id from public.catalog where category='decouverte' and level=1 order by id limit 3 union all select id from public.catalog where category='complicite' and level=1 order by id limit 2) cards")
 # Parenthesize each UNION arm to keep LIMIT scoped to its own category.
 ids=sql("select string_agg(quote_literal(id),',') from ((select id from public.catalog where category='decouverte' and level=1 order by id limit 3) union all (select id from public.catalog where category='complicite' and level=1 order by id limit 2)) cards")
 rpc("start_custom_game",f"'{room}','{host}',array[{ids}]::text[]")
