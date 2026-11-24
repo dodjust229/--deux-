@@ -17,7 +17,8 @@ begin
      or to_regprocedure('public.qspicy_media_targets(uuid,text,text)') is null
      or to_regprocedure('public.qspicy_media_register(uuid,text,text,text,text,integer)') is null
      or to_regprocedure('public.qspicy_media_list(uuid,text)') is null
-     or to_regprocedure('public.qspicy_media_delete(uuid,text,uuid)') is null then
+     or to_regprocedure('public.qspicy_media_delete(uuid,text,uuid)') is null
+     or to_regprocedure('public.qspicy_media_delete_path(uuid,text,uuid)') is null then
     raise exception 'Palier 5 photo RPCs are missing';
   end if;
   if not exists (
@@ -75,12 +76,16 @@ begin
   perform public.set_room_media_permission(room,guest_token,true);
 
   begin
-    perform public.qspicy_media_delete(room,guest_token,media_id);
-    raise exception 'Recipient unexpectedly deleted another player photo';
+    perform public.qspicy_media_delete_path(room,guest_token,media_id);
+    raise exception 'Recipient unexpectedly obtained deletion access to another player photo';
   exception when others then
     if sqlerrm not like 'E_MEDIA_DELETE:%' then raise; end if;
   end;
 
+  deleted_path := public.qspicy_media_delete_path(room,owner_token,media_id);
+  if deleted_path is distinct from object_path then
+    raise exception 'Owner could not obtain the authorized object path';
+  end if;
   deleted_path := public.qspicy_media_delete(room,owner_token,media_id);
   if deleted_path is distinct from object_path then
     raise exception 'Sender deletion did not return the stored object path';
