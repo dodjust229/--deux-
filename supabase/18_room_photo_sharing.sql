@@ -73,7 +73,7 @@ returns boolean
 language plpgsql
 security definer
 set search_path = public, extensions, pg_temp
-as $
+as $$
 declare me public.players;
 begin
   me := public._player_for(p_room_id,p_player_token);
@@ -94,7 +94,7 @@ begin
   end if;
   return true;
 end
-$;
+$$;
 
 create or replace function public.qspicy_media_targets(
   p_room_id uuid,
@@ -282,7 +282,7 @@ returns text
 language plpgsql
 security definer
 set search_path = public, extensions, pg_temp
-as $
+as $$
 declare me public.players; v_path text;
 begin
   me := public._player_for(p_room_id,p_player_token);
@@ -292,7 +292,7 @@ begin
   if v_path is null then raise exception 'E_MEDIA_DELETE: Photo introuvable ou suppression non autorisée.'; end if;
   return v_path;
 end
-$;
+$$;
 
 create or replace function public.qspicy_media_delete(
   p_room_id uuid,
