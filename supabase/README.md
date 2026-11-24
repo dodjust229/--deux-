@@ -109,3 +109,30 @@ historiques `perso-N` et leur `custom_deck`. L'ancien RPC de création à partir
 est révoqué pour les clients ; le nouveau RPC n'accepte que les IDs du catalogue.
 La recette PostgreSQL exécute l'ancien parcours de compatibilité avant la migration 16,
 puis les tests du nouveau moteur après celle-ci.
+
+
+## Palier 4 — invitations, rôles et centres d'intérêt individuels
+
+Appliquer ensuite `17_invitation_permissions.sql`. Le siège 1 est l'hôte ; les autres sièges
+sont les invités. Seul l'hôte peut lancer une partie Couple, DUOS ou Personnalisée. Les
+invités ne peuvent pas modifier le niveau ni les paramètres de lancement ; chacun choisit
+son propre centre d'intérêt, exactement un. Le moteur combine les intérêts des participants
+au lieu d'exiger une intersection identique, ce qui évite de bloquer une salle quand les
+joueurs ont des goûts différents.
+
+La migration :
+- donne `decouverte` comme intérêt initial par défaut ;
+- normalise les salons encore en attente en conservant le premier intérêt déjà choisi ;
+- ne modifie aucune partie en cours ;
+- impose exactement un intérêt par appel à `set_player_categories` ;
+- protège les trois RPC de lancement par le rôle hôte côté serveur ;
+- ferme l'ancien RPC `start_game` non gradué, qui n'est plus utilisé par l'application ;
+- conserve les règles de consentement 18+ et l'historique anti-répétition.
+
+Les notifications d'arrivée, de départ et de retour sont déjà présentes dans l'interface
+(toasts issus de l'état de salle). Elles ne sont pas des notifications push en arrière-plan.
+
+Le statut VIP 1 / Pass Hôte n'est pas activé par cette migration : l'application actuelle
+n'a pas encore d'identité de compte persistante ni de preuve de paiement serveur. Ne jamais
+remplacer cette vérification par un simple booléen côté navigateur. Voir
+`docs/QSPICY_PALIER_4_REPRISE_IA.md` pour les prérequis et la reprise.
