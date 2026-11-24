@@ -62,7 +62,7 @@ Deno.serve(async (req: Request) => {
 
       const extension = actualType === "image/jpeg" ? "jpg" : actualType === "image/png" ? "png" : "webp";
       const path = `${roomId}/${crypto.randomUUID()}.${extension}`;
-      const { error: uploadError } = await admin.storage.from(BUCKET).upload(path, raw, {
+      const { error: uploadError } = await admin.storage.from(BUCKET).upload(path, raw.buffer as ArrayBuffer, {
         contentType: actualType, cacheControl: "60", upsert: false,
       });
       if (uploadError) return json(req, 502, { error: "La photo n'a pas pu être enregistrée. Réessaie." });
