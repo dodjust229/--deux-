@@ -122,7 +122,7 @@
     "category": "decouverte",
     "kind": "cross",
     "title": "Ce que tu ne sais pas",
-    "prompt": "Le premier avoue un détail de l'autre qui le ou la trouble sans que l'autre le sache. Le second dit s'il s'en doutait.",
+    "prompt": "🫣 Le premier peut-il avouer un détail de l’autre qui le trouble sans que l’autre le sache ? Le second peut-il dire s’il s’en doutait ?",
     "level": 1,
     "audience": "partner",
     "visibility": "partagee"
@@ -148,7 +148,7 @@
     "category": "complicite",
     "kind": "challenge",
     "title": "Le compliment précis",
-    "prompt": "Dis à l'autre ce qui te plaît physiquement chez lui ou elle, avec des mots précis. Pas un compliment général.",
+    "prompt": "💬 Peux-tu dire à l’autre ce qui te plaît physiquement chez lui ou elle, avec des mots précis plutôt qu’un compliment général ?",
     "level": 2,
     "audience": "partner",
     "visibility": "partagee"
@@ -178,7 +178,7 @@
     "category": "complicite",
     "kind": "challenge",
     "title": "L'effet de la proximité",
-    "prompt": "En une phrase, dis l'effet que l'autre te fait quand il ou elle s'approche trop près.",
+    "prompt": "🔥 Peux-tu dire en une phrase l’effet que l’autre te fait quand il ou elle s’approche trop près ?",
     "level": 2,
     "audience": "partner",
     "visibility": "partagee"
@@ -214,7 +214,7 @@
     "category": "complicite",
     "kind": "challenge",
     "title": "Trois mots",
-    "prompt": "Décris l'effet que l'autre te fait en trois mots, puis explique celui qui te brûle le plus.",
+    "prompt": "✨ Peux-tu décrire l’effet que l’autre te fait en trois mots, puis expliquer celui qui te brûle le plus ?",
     "level": 2,
     "audience": "partner",
     "visibility": "partagee"
@@ -244,7 +244,7 @@
     "category": "complicite",
     "kind": "cross",
     "title": "Raconte, je réagis",
-    "prompt": "Le premier raconte un souvenir sensuel entre vous. Le second répond avec sa propre version de la même scène.",
+    "prompt": "💭 Le premier peut-il raconter un souvenir sensuel entre vous ? Le second peut-il répondre avec sa propre version de la même scène ?",
     "level": 2,
     "audience": "partner",
     "visibility": "partagee"
@@ -356,7 +356,7 @@
     "category": "profondeur",
     "kind": "cross",
     "title": "Ce qui m'a changé",
-    "prompt": "Le premier dit ce qu'un geste de l'autre a changé dans sa façon de désirer. Le second répond par ce que cela lui évoque.",
+    "prompt": "🫦 Le premier peut-il dire ce qu’un geste de l’autre a changé dans sa façon de désirer ? Le second peut-il répondre par ce que cela lui évoque ?",
     "level": 3,
     "audience": "partner",
     "visibility": "partagee"
@@ -376,7 +376,7 @@
     "category": "seduction",
     "kind": "challenge",
     "title": "La phrase qui fait rougir",
-    "prompt": "Adresse à l'autre une phrase de séduction qui fait rougir. Une seule, sans cliché.",
+    "prompt": "😏 Peux-tu adresser à l’autre une phrase de séduction qui fait rougir, sans utiliser de cliché ?",
     "level": 2,
     "audience": "partner",
     "visibility": "partagee"
@@ -438,7 +438,7 @@
     "category": "seduction",
     "kind": "cross",
     "title": "Le compliment osé",
-    "prompt": "Le premier dit ce qu'il aime physiquement chez l'autre. Le second répond avec un compliment qu'il n'a jamais osé faire.",
+    "prompt": "❤️ Le premier peut-il dire ce qu’il aime physiquement chez l’autre ? Le second peut-il répondre avec un compliment qu’il n’a jamais osé faire ?",
     "level": 2,
     "audience": "partner",
     "visibility": "partagee"
@@ -474,7 +474,7 @@
     "category": "audacieux",
     "kind": "challenge",
     "title": "La première minute",
-    "prompt": "Propose à l'autre un moment imaginaire. Décris la première minute, pas plus. L'autre est libre de refuser.",
+    "prompt": "🌶️ Peux-tu proposer à l’autre un moment imaginaire et décrire uniquement la première minute ? L’autre reste libre de refuser.",
     "level": 4,
     "audience": "partner",
     "visibility": "partagee"
@@ -504,7 +504,7 @@
     "category": "audacieux",
     "kind": "challenge",
     "title": "Dix secondes",
-    "prompt": "Dis à l'autre ce que tu ferais s'il ou elle te laissait dix secondes de plus ce soir. Un seul souffle. L'autre est libre de refuser.",
+    "prompt": "😈 Que ferais-tu si l’autre te laissait dix secondes de plus ce soir ? Décris ton idée en une seule phrase ; l’autre reste libre de refuser.",
     "level": 4,
     "audience": "partner",
     "visibility": "partagee"
@@ -534,7 +534,7 @@
     "category": "audacieux",
     "kind": "cross",
     "title": "Raconte, je prolonge",
-    "prompt": "Le premier commence une scène en deux phrases. Le second la continue, sans la corriger. Chacun peut s'arrêter quand il le souhaite.",
+    "prompt": "🎭 Êtes-vous prêts à commencer une scène en deux phrases, puis à laisser le second la continuer sans la corriger ? Chacun peut s’arrêter quand il le souhaite.",
     "level": 4,
     "audience": "partner",
     "visibility": "partagee"
