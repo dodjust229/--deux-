@@ -94,17 +94,8 @@ echo "Checking level-aware catalog and RPCs"
 "${PSQL[@]}" -d "$DB" <<'SQL'
 DO $qspicy$
 BEGIN
-  IF (SELECT count(*) FROM public.catalog) <> 220 THEN
-    RAISE EXCEPTION 'Expected 220 catalogue V2 cards';
-  END IF;
-  IF EXISTS (SELECT 1 FROM (VALUES (1,52),(2,53),(3,54),(4,61)) expected(level,total)
-             WHERE (SELECT count(*) FROM public.catalog c WHERE c.level=expected.level) <> expected.total) THEN
-    RAISE EXCEPTION 'Unexpected technical level distribution in catalogue V2';
-  END IF;
-  IF EXISTS (SELECT 1 FROM (VALUES (1,52),(2,53),(3,49),(4,32),(5,34)) expected(intensity,total)
-             WHERE (SELECT count(*) FROM public.catalog c WHERE c.intensity=expected.intensity) <> expected.total) THEN
-    RAISE EXCEPTION 'Unexpected editorial intensity distribution in catalogue V2';
-  END IF;
+  -- Les migrations historiques 13 et 15 peuvent réintroduire des cartes retirées ;
+  -- le catalogue final est vérifié après la migration 22.
   IF (SELECT count(DISTINCT level) FROM public.catalog) <> 4 THEN
     RAISE EXCEPTION 'Expected all four game levels in catalog';
   END IF;
@@ -204,6 +195,14 @@ DO $catalogue$
 BEGIN
   IF (SELECT count(*) FROM public.catalog) <> 220 THEN
     RAISE EXCEPTION 'Catalogue V2 incomplet';
+  END IF;
+  IF EXISTS (SELECT 1 FROM (VALUES (1,52),(2,53),(3,54),(4,61)) expected(level,total)
+             WHERE (SELECT count(*) FROM public.catalog c WHERE c.level=expected.level) <> expected.total) THEN
+    RAISE EXCEPTION 'Répartition des niveaux techniques incorrecte';
+  END IF;
+  IF EXISTS (SELECT 1 FROM (VALUES (1,52),(2,53),(3,49),(4,32),(5,34)) expected(intensity,total)
+             WHERE (SELECT count(*) FROM public.catalog c WHERE c.intensity=expected.intensity) <> expected.total) THEN
+    RAISE EXCEPTION 'Répartition des intensités éditoriales incorrecte';
   END IF;
   IF EXISTS (SELECT 1 FROM public.catalog WHERE intensity NOT BETWEEN 1 AND 5 OR explicit_rank <> least(4,intensity)) THEN
     RAISE EXCEPTION 'Intensité ou explicite incohérent';
