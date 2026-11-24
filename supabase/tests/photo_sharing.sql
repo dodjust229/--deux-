@@ -24,7 +24,7 @@ begin
     select 1 from storage.buckets
     where id='qspicy-private-media' and public=false
       and file_size_limit=5242880
-      and allowed_mime_types @> array['image/jpeg','image/png','image/webp']
+      and allowed_mime_types @> array['image/jpeg'] and cardinality(allowed_mime_types)=1
   ) then
     raise exception 'Private photo bucket restrictions are missing';
   end if;
