@@ -4,6 +4,7 @@ import { Icon } from "../components/Icon";
 import { InfoTip } from "../components/InfoTip";
 import { categoryLabels, categoryDescriptions, levelLabels, kindLabels, audienceLabels } from "../content";
 import { getRoundMoments } from "../lib/round-moments";
+import { getRoundEvent } from "../lib/round-events";
 import type { Category, DuoPermissions, DuoSnapshot, Interaction } from "../types";
 
 const CATEGORIES: Category[] = ["decouverte", "complicite", "profondeur", "seduction", "audacieux"];
@@ -160,6 +161,7 @@ export function DuoGame({ snap, interaction, busy, onSubmit, onPass, onNext, onS
   const [message, setMessage] = useState("");
   const [selectedMoment, setSelectedMoment] = useState<string | null>(null);
   const roundMoments = getRoundMoments(interaction);
+  const roundEvent = getRoundEvent(snap.room.id, snap.room.current_index, snap.room.total, interaction);
   useEffect(() => setSelectedMoment(null), [interaction.id]);
   const ownSpace = snap.my_duo_no === 1 ? "duo_a" : "duo_b";
   const canGroup = snap.players.length === 4 && snap.players.every((p) => p.cross_participation === true);
@@ -221,6 +223,15 @@ export function DuoGame({ snap, interaction, busy, onSubmit, onPass, onNext, onS
         <p>{interaction.prompt}</p>
         <small className="muted">Public : {audienceLabels[interaction.audience]}</small>
       </section>
+
+      {roundEvent && (
+        <aside className="round-event" aria-label="Événement spécial de la manche">
+          <div className="round-event__top"><span>{roundEvent.subtitle}</span><span>✦</span></div>
+          <h2>{roundEvent.title}</h2>
+          <p>{roundEvent.instruction}</p>
+          <small>{roundEvent.cue}</small>
+        </aside>
+      )}
 
       {paused ? (
         <section className="panel">
