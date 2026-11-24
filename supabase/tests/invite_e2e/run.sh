@@ -22,8 +22,18 @@ CACHE="${PGREST_CACHE:-/tmp/qspicy-invite-e2e}"
 JWT_SECRET="invite-e2e-secret-0123456789abcdef"
 OUT="${BUILD_OUT:-/tmp/qspicy-invite-dist}"
 
-if [[ ! "$DB" =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]]; then
-  echo "TEST_DB doit être un nom PostgreSQL simple." >&2
+if [[ ! "$DB" =~ ^(qspicy_test|qspicy_invite_e2e)(_[A-Za-z0-9_]+)?$ ]]; then
+  echo "TEST_DB doit utiliser le préfixe réservé qspicy_test ou qspicy_invite_e2e." >&2
+  exit 2
+fi
+for host in "${PGHOST:-}" "${PGHOSTADDR:-}"; do
+  if [[ -n "$host" && "$host" != "localhost" && "$host" != "127.0.0.1" && "$host" != "::1" ]]; then
+    echo "Connexion PostgreSQL distante interdite pour cette recette (hôte: $host)." >&2
+    exit 2
+  fi
+done
+if [[ -n "${PGSERVICE:-}" || -n "${PGSERVICEFILE:-}" ]]; then
+  echo "Les profils PG service sont interdits pour éviter une cible de base inattendue." >&2
   exit 2
 fi
 
@@ -76,7 +86,7 @@ for migration in \
   09_duo_replay 10_custom_room 11_game_levels 12_level_consent_guard \
   13_expand_balanced_catalog 14_session_question_history 15_expand_session_catalog \
   16_custom_catalog_engine 17_invitation_permissions 18_room_photo_sharing \
-  19_invitation_finalisation
+  19_invitation_finalisation 20_level_and_mode_integrity 21_explicit_content_floor
 do
   echo "   migration $migration"
   "${PSQL[@]}" -d "$DB" -f "supabase/$migration.sql" >/dev/null
