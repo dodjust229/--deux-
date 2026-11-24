@@ -19,7 +19,7 @@ export const setAdultConsent = (r: string, t: string, v: boolean) => rpc<boolean
 export const setPlayerCategories = (r: string, t: string, categories: Category[]) => rpc<boolean>("set_player_categories", { p_room_id: r, p_player_token: t, p_categories: categories });
 export async function startGame(r: string, t: string, categories: Category[], level: 1 | 2 | 3 | 4) {
   await setPlayerCategories(r, t, categories);
-  return rpc<boolean>("start_game_by_level", { p_room_id: r, p_player_token: t, p_categories: categories, p_level: level });
+  return rpc<boolean>("start_game_by_level", { p_room_id: r, p_player_token: t, p_level: level });
 }
 export const submitAnswer = (r: string, t: string, answer: string, pass = false) => rpc<boolean>("submit_answer", { p_room_id: r, p_player_token: t, p_answer: answer, p_pass: pass });
 export const nextInteraction = (r: string, t: string) => rpc<{ advanced: boolean }>("next_interaction", { p_room_id: r, p_player_token: t });
