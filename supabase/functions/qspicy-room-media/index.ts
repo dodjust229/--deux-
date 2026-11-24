@@ -88,8 +88,11 @@ Deno.serve(async (req: Request) => {
     if (req.method === "POST" && action === "cleanup_expired") {
       const expired = await admin.from("room_media").select("id,object_path").lte("expires_at", new Date().toISOString());
       if (expired.data?.length) {
-        const { error: removeError } = await admin.storage.from(BUCKET).remove(expired.data.map((row: { object_path: string }) => row.object_path));
-        if (!removeError) await admin.from("room_media").delete().in("id", expired.data.map((row: { id: string }) => row.id));
+        for (let i = 0; i < expired.data.length; i += 100) {
+          const batch = expired.data.slice(i, i + 100);
+          const { error: removeError } = await admin.storage.from(BUCKET).remove(batch.map((row: { object_path: string }) => row.object_path));
+          if (!removeError) await admin.from("room_media").delete().in("id", batch.map((row: { id: string }) => row.id));
+        }
       }
       return json(req, 200, { cleaned: expired.data?.length ?? 0 });
     }
@@ -147,9 +150,10 @@ Deno.serve(async (req: Request) => {
       }
       const expiredQuery = await admin.from("room_media").select("id,object_path").lte("expires_at", new Date().toISOString());
       if (expiredQuery.data?.length) {
-        const { error: expiredRemoveError } = await admin.storage.from(BUCKET).remove(expiredQuery.data.map((row: { object_path: string }) => row.object_path));
-        if (!expiredRemoveError) {
-          await admin.from("room_media").delete().in("id", expiredQuery.data.map((row: { id: string }) => row.id));
+        for (let i = 0; i < expiredQuery.data.length; i += 100) {
+          const batch = expiredQuery.data.slice(i, i + 100);
+          const { error: expiredRemoveError } = await admin.storage.from(BUCKET).remove(batch.map((row: { object_path: string }) => row.object_path));
+          if (!expiredRemoveError) await admin.from("room_media").delete().in("id", batch.map((row: { id: string }) => row.id));
         }
       }
       if (data.room_status === "finished") {
