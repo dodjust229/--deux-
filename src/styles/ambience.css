@@ -1,0 +1,31 @@
+.ambience-control {
+  margin-top: 22px;
+  padding: 16px;
+  border: 1px solid rgba(200, 164, 92, 0.24);
+  border-radius: 16px;
+  background: linear-gradient(145deg, rgba(92, 21, 38, 0.2), rgba(255,255,255,0.025));
+}
+.ambience-control__intro strong { display: block; color: var(--ink); font-size: 14px; }
+.ambience-control__intro p, .ambience-control__hint {
+  margin-top: 5px;
+  color: var(--ink-mute);
+  font-size: 12px;
+  line-height: 1.5;
+}
+.ambience-control__label {
+  display: block;
+  margin: 14px 0 7px;
+  color: var(--ink-soft);
+  font-size: 12px;
+  font-weight: 600;
+}
+.ambience-control select {
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 11px;
+  background: var(--panel-strong);
+  color: var(--ink);
+}
+.ambience-control__hint { margin-top: 9px; }
