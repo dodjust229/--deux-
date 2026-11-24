@@ -39,7 +39,7 @@ export async function getDuoSnapshot(roomId: string, token: string): Promise<Duo
 export async function getSessionSnapshot(roomId: string, token: string, mode?: "couple" | "duos" | "custom"): Promise<Snapshot> {
   return mode === "duos" ? getDuoSnapshot(roomId, token) : getSnapshot(roomId, token);
 }
-export const startDuoGame = (r: string, t: string) => rpc<boolean>("start_duo_game", { p_room_id: r, p_player_token: t });
+export const startDuoGame = (r: string, t: string, level: 1 | 2 | 3 | 4) => rpc<boolean>("start_duo_game_by_level", { p_room_id: r, p_player_token: t, p_level: level });
 export const nextDuoInteraction = (r: string, t: string) => rpc<{ advanced: boolean }>("next_duo_interaction", { p_room_id: r, p_player_token: t });
 export const submitDuoAnswer = (r: string, t: string, i: string, a: string, pass: boolean, visibility: "private" | "duo" | "group") => rpc<boolean>("submit_duo_answer", { p_room_id: r, p_player_token: t, p_interaction_id: i, p_answer: a, p_pass: pass, p_visibility: visibility });
 export const setDuoPermissions = (r: string, t: string, p: { cross_participation: boolean; receive_media: boolean; share_answers: boolean }) => rpc<boolean>("set_duo_permissions", { p_room_id: r, p_player_token: t, p_cross_participation: p.cross_participation, p_receive_media: p.receive_media, p_share_answers: p.share_answers });
