@@ -25,7 +25,7 @@ import {
   clearRoomPhotos,
   cleanupExpiredRoomPhotos
 } from "./api";
-import { extractRoomId, getSelectedInterests, parseError, sessionFingerprint } from "./lib/protocol";
+import { extractRoomId, getSelectedInterests, parseError } from "./lib/protocol";
 import { deriveScene } from "./lib/scene";
 import { clearPrivateAnswers } from "./lib/media";
 import { applyPreferences, categoriesForIntensity, readPreferences, writePreferences, type Preferences } from "./lib/prefs";
@@ -139,17 +139,9 @@ export default function App() {
   const [copied, setCopied] = useState(false);
 
   const failures = useRef(0);
-  const inFlight = useRef<string | null>(null);
+  const inFlight = useRef(false);
   const lastQuestion = useRef<string | null>(null);
   const previous = useRef<Snapshot | null>(null);
-  const activeSession = useRef<string | null>(null);
-  const currentSession = sessionFingerprint(identity);
-  if (activeSession.current !== currentSession) {
-    activeSession.current = currentSession;
-    previous.current = null;
-    lastQuestion.current = null;
-    failures.current = 0;
-  }
 
   /* ---------- Préférences locales (jamais synchronisées) ---------- */
   useEffect(() => {
