@@ -39,11 +39,11 @@ const FR: GuideSection[] = [
   },
   {
     id: "niveaux",
-    title: "Comprendre les niveaux d'intensité",
+    title: "Comprendre les paliers de jeu",
     body: [
-      "Les cartes suivent quatre paliers : 1 Ça commence à piquer, 2 La tension monte, 3 On se lâche, 4 Ce qu'on n'avoue jamais.",
-      "L'intensité choisie dans les préférences détermine les ambiances proposées par défaut : Soft (découverte et complicité), Hot (confidences et séduction), Very Hot (tout, y compris les cartes 18+).",
-      "Les cartes 18+ ne sortent que si la catégorie Audacieux est choisie et que les deux personnes ont donné leur accord."
+      "Les cartes suivent quatre paliers. Tu peux choisir directement le palier 1, 2, 3 ou 4 : aucun déblocage des précédents n’est nécessaire.",
+      "Les ambiances proposées déterminent les catégories présélectionnées. Aux paliers 3–4, toutes les catégories non exclues sont proposées par défaut pour offrir assez de cartes ; tu peux ensuite ajuster ton choix dans le salon.",
+      "Les paliers 3–4 et la catégorie Audacieux exigent l’accord 18+ de tous les joueurs : deux en Couple, quatre en DUOS."
     ]
   },
   {
@@ -77,7 +77,7 @@ const FR: GuideSection[] = [
     id: "personnalisation",
     title: "Utiliser les options de personnalisation",
     body: [
-      "Préférences : catégories, intensité, exclusions, langue, thème, sons et animations, enregistrés sur ton appareil.",
+      "Préférences : ambiances proposées, palier de jeu, exclusions, langue, thème, sons et animations, enregistrés sur ton appareil.",
       "Salon Personnalisé : tu écris entre 5 et 24 questions, elles se jouent dans l'ordre de ta liste, avec les mêmes réponses cachées, la même révélation et le même bouton Passer.",
       "Ce salon n'ouvre jamais le palier 18+ : une question libre ne peut pas être retirée en cours de partie si un accord change, le 18+ reste donc au catalogue."
     ]
@@ -138,11 +138,11 @@ const EN: GuideSection[] = [
   },
   {
     id: "niveaux",
-    title: "Understanding intensity levels",
+    title: "Understanding game levels",
     body: [
-      "Cards follow four steps: 1 It starts to tingle, 2 The tension rises, 3 We let go, 4 What we never confess.",
-      "The intensity chosen in your preferences sets the default moods: Soft (discovery and banter), Hot (confessions and flirting), Very Hot (everything, including 18+ cards).",
-      "18+ cards only appear when the Audacieux category is chosen and everyone in the room has agreed: two players in À Deux, four in DUOS."
+      "Cards follow four levels. You can choose level 1, 2, 3 or 4 directly; previous levels do not need to be unlocked.",
+      "Default moods determine which categories are preselected. At levels 3–4, all non-excluded categories are offered by default to provide enough cards; you can adjust your choice in the lobby.",
+      "Levels 3–4 and the Audacieux category require 18+ consent from everyone: two players in Couple, four in DUOS."
     ]
   },
   {
@@ -176,7 +176,7 @@ const EN: GuideSection[] = [
     id: "personnalisation",
     title: "Personalisation options",
     body: [
-      "Preferences: categories, intensity, exclusions, language, theme, sound and motion, stored on your device.",
+      "Preferences: default moods, game level, exclusions, language, theme, sound and motion, stored on your device.",
       "Custom room: you write 5 to 24 questions, played in the order of your list, with the same hidden answers, the same reveal and the same Pass button.",
       "That room never opens the 18+ tier: a free-text question cannot be withdrawn mid-game if a consent changes, so 18+ stays in the catalogue."
     ]
@@ -206,26 +206,26 @@ export type TipId = "mode" | "intensity" | "categories" | "prefs" | "invite" | "
 
 const TIPS_FR: Record<TipId, { title: string; body: string }> = {
   mode: { title: "Quel salon ?", body: "À Deux, DUOS et Personnalisé sont jouables. Anonyme, Côte à Côte et Vocal sont verrouillés : leur moteur n'est pas terminé." },
-  intensity: { title: "À quoi sert l'intensité ?", body: "Elle choisit les ambiances proposées par défaut. Very Hot inclut les cartes 18+, toujours soumises à l'accord de tous les joueurs du salon : deux en Couple, quatre en DUOS." },
+  intensity: { title: "À quoi servent les ambiances proposées ?", body: "Elles choisissent les catégories proposées par défaut dans le salon, indépendamment du palier de jeu. Les exclusions restent prioritaires. Les paliers 3–4 et Audacieux exigent l’accord 18+ de tous les joueurs : deux en Couple, quatre en DUOS." },
   categories: { title: "Catégories", body: "Seules les catégories choisies par tout le monde sont tirées. Une catégorie exclue dans tes préférences reste fermée." },
   prefs: { title: "Tes préférences", body: "Elles restent sur cet appareil et ne changent rien pour l'autre personne." },
   invite: { title: "Invitation", body: "Le lien contient l'identifiant de la salle. Sans lui, personne ne peut entrer ; une salle pleine refuse les autres." },
   lobby: { title: "Salle d'attente", body: "La partie démarre quand tout le monde est là, qu'une catégorie est commune et que les accords 18+ nécessaires sont donnés." },
   safe: { title: "SAFE", body: "Pause pour les deux, sortie immédiate ou sortie avec blocage mémorisé sur cet appareil." },
-  levels: { title: "Niveaux", body: "Le niveau indique l'audace de la carte. Un changement de niveau s'annonce par un écran sombre, sans interrompre la partie." },
+  levels: { title: "Paliers de jeu", body: "Choisis directement le palier que tu veux jouer : aucun déblocage des précédents n’est nécessaire. Aux paliers 3–4, toutes les catégories non exclues sont proposées par défaut. Ces paliers exigent l’accord 18+ de tous les joueurs." },
   custom: { title: "Tes questions", body: "Entre 5 et 24 questions, jouées dans l'ordre affiché. Le serveur vérifie la longueur et les doublons au lancement. Pas de palier 18+ ici." },
   duos: { title: "Salon DUOS", body: "Quatre joueurs, deux duos. Chaque réponse choisit qui la voit ; le salon commun n'ouvre que si les quatre l'autorisent." }
 };
 
 const TIPS_EN: Record<TipId, { title: string; body: string }> = {
   mode: { title: "Which room?", body: "À Deux, DUOS and Custom are playable. Anonymous, Side by side and Voice are locked: their engine is unfinished." },
-  intensity: { title: "What does intensity do?", body: "It picks the default moods. Very Hot includes 18+ cards, always subject to everyone in the room: two players in Couple, four in DUOS." },
+  intensity: { title: "What do default moods do?", body: "They choose the default categories offered in the lobby, independently of the game level. Exclusions stay in force. Levels 3–4 and Audacieux require 18+ consent from everyone: two players in Couple, four in DUOS." },
   categories: { title: "Categories", body: "Only the categories chosen by everyone are drawn. A category excluded in your preferences stays closed." },
   prefs: { title: "Your preferences", body: "They stay on this device and change nothing for the other person." },
   invite: { title: "Invitation", body: "The link carries the room id. Without it nobody can enter; a full room refuses newcomers." },
   lobby: { title: "Waiting room", body: "The game starts when everyone is here, one category is shared and the required 18+ consents are given." },
   safe: { title: "SAFE", body: "Pause for both, leave immediately, or leave with a block remembered on this device." },
-  levels: { title: "Levels", body: "The level shows how bold the card is. A level change is announced by a dark screen without stopping the game." },
+  levels: { title: "Game levels", body: "Choose the exact level you want to play; previous levels do not need to be unlocked. At levels 3–4, all non-excluded categories are offered by default. These levels require 18+ consent from everyone." },
   custom: { title: "Your questions", body: "5 to 24 questions, played in the order shown. The server checks length and duplicates when the game starts. No 18+ tier here." },
   duos: { title: "DUOS room", body: "Four players, two duos. Each answer chooses who sees it; the shared room opens only if all four allow it." }
 };

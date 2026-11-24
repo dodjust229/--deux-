@@ -39,6 +39,9 @@ test("préférences : JSON corrompu ou valeurs invalides ne cassent rien", () =>
   assert.equal(sanitized.volume, 1);
   assert.equal(sanitized.language, "fr");
   assert.equal(sanitized.intensity, "hot");
+  assert.equal(sanitized.gameLevel, 2);
+  assert.equal(sanitizePreferences({ gameLevel: 4 }).gameLevel, 4);
+  assert.equal(sanitizePreferences({ gameLevel: 9 }).gameLevel, 2);
   assert.deepEqual(sanitized.exclusions, ["seduction"]);
   assert.deepEqual(categoriesForIntensity("soft"), ["decouverte", "complicite"]);
   assert.deepEqual(categoriesForIntensity("veryHot", ["audacieux"]), ["decouverte", "complicite", "profondeur", "seduction"]);

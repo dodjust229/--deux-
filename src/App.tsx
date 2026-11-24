@@ -119,7 +119,7 @@ export default function App() {
   const [stage, setStage] = useState<FlowStage>(() =>
     new URLSearchParams(location.search).get("room") ? "enter" : "home"
   );
-  const [selected, setSelected] = useState<Category[]>(() => categoriesForIntensity(prefs.intensity, prefs.exclusions));
+  const [selected, setSelected] = useState<Category[]>(() => categoriesForIntensity(prefs.gameLevel >= 3 ? "veryHot" : prefs.intensity, prefs.exclusions));
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [partnerLeft, setPartnerLeft] = useState<string | null>(null);
@@ -298,6 +298,9 @@ export default function App() {
     setError("");
     try {
       const result = mode === "create" ? (entry?.gameMode === "duos" ? await createDuoRoom(name, persona) : await createRoom(name, persona)) : await joinRoom(roomId, name, persona);
+      if (mode === "create" && entry?.gameMode !== "custom") {
+        await setPlayerCategories(result.room_id, result.player_token, selected);
+      }
       // Le salon Personnalisé utilise la salle à deux du serveur : on garde le mode choisi
       // à l'écran, sinon un invité retomberait sur le lobby du catalogue.
       const gameMode: GameMode = entry?.gameMode === "custom" ? "custom" : (result.mode ?? entry?.gameMode ?? "couple");
@@ -567,7 +570,7 @@ export default function App() {
             prefs={prefs}
             onChange={setPrefs}
             onContinue={() => {
-              setSelected(categoriesForIntensity(prefs.intensity, prefs.exclusions));
+              setSelected(categoriesForIntensity(prefs.gameLevel >= 3 ? "veryHot" : prefs.intensity, prefs.exclusions));
               setEntry({ mode: "create", code: "", gameMode: flowMode });
               setError("");
               setStage("enter");
@@ -607,7 +610,8 @@ export default function App() {
             onToggleCategory={toggleCategory}
             onToggleConsent={(value) => identity && void run(() => setAdultConsent(identity.roomId, identity.token, value))}
             onPermissions={(permissions) => identity && void run(() => setDuoPermissions(identity.roomId, identity.token, permissions))}
-            onStart={() => identity && void run(() => startDuoGame(identity.roomId, identity.token))}
+            onStart={() => identity && void run(() => startDuoGame(identity.roomId, identity.token, prefs.gameLevel))}
+            gameLevel={prefs.gameLevel}
             busy={busy}
             onSafe={() => setSafeOpen(true)}
             onOpenGuide={() => setGuideOpen(true)}
@@ -626,8 +630,9 @@ export default function App() {
             onToggleCategory={toggleCategory}
             myConsent={snapshot.my_consent}
             otherConsent={Boolean(otherPlayer?.adult_consent)}
+            gameLevel={prefs.gameLevel}
             onToggleConsent={(value) => identity && void run(() => setAdultConsent(identity.roomId, identity.token, value))}
-            onLaunch={() => identity && void run(() => startGame(identity.roomId, identity.token, selected))}
+            onLaunch={() => identity && void run(() => startGame(identity.roomId, identity.token, selected, prefs.gameLevel))}
             busy={busy}
             kind={identity.gameMode === "custom" ? "custom" : "couple"}
             customQuestions={customQuestions}

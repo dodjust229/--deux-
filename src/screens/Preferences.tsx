@@ -87,6 +87,35 @@ export function Preferences({ lang, prefs, onChange, onContinue, onBack }: Prefe
 
         <div className="prefs-block">
           <span className="prefs-row__label">
+            {lang === "en" ? "Game level" : "Palier de jeu"}
+            <InfoTip tip="levels" lang={lang} />
+          </span>
+          <p className="muted small">
+            {lang === "en"
+              ? "Choose the level you want to play directly. Previous levels do not need to be unlocked. At levels 3–4, all non-excluded categories are offered by default to provide enough cards."
+              : "Choisis directement le palier que tu veux jouer. Aucun passage obligatoire par les niveaux précédents. Aux paliers 3–4, toutes les catégories non exclues sont proposées par défaut pour garantir un choix suffisant de cartes."}
+          </p>
+          <div className="intensity-grid" role="radiogroup" aria-label={lang === "en" ? "Game level" : "Palier de jeu"}>
+            {([1, 2, 3, 4] as const).map((value) => (
+              <button
+                key={value}
+                type="button"
+                role="radio"
+                aria-checked={prefs.gameLevel === value}
+                className={`intensity ${prefs.gameLevel === value ? "is-selected" : ""} intensity--${value === 4 ? "veryHot" : value === 1 ? "soft" : "hot"}`}
+                onClick={() => set({ gameLevel: value })}
+              >
+                <strong>{lang === "en" ? `Level ${value}` : `Palier ${value}`}</strong>
+                <small>{lang === "en"
+                  ? ["Warm-up", "Growing tension", "Bold", "No holding back"][value - 1]
+                  : ["Découverte", "La tension monte", "Audacieux", "Très audacieux"][value - 1]}</small>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="prefs-block">
+          <span className="prefs-row__label">
             {t("prefs.exclusions")} <InfoTip tip="categories" lang={lang} />
           </span>
           <p className="muted small">{t("prefs.exclusions.desc")}</p>

@@ -17,9 +17,9 @@ export async function getSnapshot(roomId: string, token: string): Promise<Snapsh
 }
 export const setAdultConsent = (r: string, t: string, v: boolean) => rpc<boolean>("set_adult_consent", { p_room_id: r, p_player_token: t, p_value: v });
 export const setPlayerCategories = (r: string, t: string, categories: Category[]) => rpc<boolean>("set_player_categories", { p_room_id: r, p_player_token: t, p_categories: categories });
-export async function startGame(r: string, t: string, categories: Category[]) {
+export async function startGame(r: string, t: string, categories: Category[], level: 1 | 2 | 3 | 4) {
   await setPlayerCategories(r, t, categories);
-  return rpc<boolean>("start_game", { p_room_id: r, p_player_token: t, p_categories: categories });
+  return rpc<boolean>("start_game_by_level", { p_room_id: r, p_player_token: t, p_level: level });
 }
 export const submitAnswer = (r: string, t: string, answer: string, pass = false) => rpc<boolean>("submit_answer", { p_room_id: r, p_player_token: t, p_answer: answer, p_pass: pass });
 export const nextInteraction = (r: string, t: string) => rpc<{ advanced: boolean }>("next_interaction", { p_room_id: r, p_player_token: t });
@@ -39,7 +39,7 @@ export async function getDuoSnapshot(roomId: string, token: string): Promise<Duo
 export async function getSessionSnapshot(roomId: string, token: string, mode?: "couple" | "duos" | "custom"): Promise<Snapshot> {
   return mode === "duos" ? getDuoSnapshot(roomId, token) : getSnapshot(roomId, token);
 }
-export const startDuoGame = (r: string, t: string) => rpc<boolean>("start_duo_game", { p_room_id: r, p_player_token: t });
+export const startDuoGame = (r: string, t: string, level: 1 | 2 | 3 | 4) => rpc<boolean>("start_duo_game_by_level", { p_room_id: r, p_player_token: t, p_level: level });
 export const nextDuoInteraction = (r: string, t: string) => rpc<{ advanced: boolean }>("next_duo_interaction", { p_room_id: r, p_player_token: t });
 export const submitDuoAnswer = (r: string, t: string, i: string, a: string, pass: boolean, visibility: "private" | "duo" | "group") => rpc<boolean>("submit_duo_answer", { p_room_id: r, p_player_token: t, p_interaction_id: i, p_answer: a, p_pass: pass, p_visibility: visibility });
 export const setDuoPermissions = (r: string, t: string, p: { cross_participation: boolean; receive_media: boolean; share_answers: boolean }) => rpc<boolean>("set_duo_permissions", { p_room_id: r, p_player_token: t, p_cross_participation: p.cross_participation, p_receive_media: p.receive_media, p_share_answers: p.share_answers });

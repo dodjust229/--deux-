@@ -11,12 +11,15 @@ for (const it of items) {
   if (!cats.includes(it.category)) errors.push(`${it.id} : catégorie inconnue`);
   if (!kinds.includes(it.kind)) errors.push(`${it.id} : type inconnu`);
   if (!it.title || !it.prompt) errors.push(`${it.id} : titre/consigne manquant`);
+  if (it.prompt && !/\p{Extended_Pictographic}/u.test(it.prompt)) errors.push(`${it.id} : emoji manquant dans la question`);
+  if (["challenge","cross"].includes(it.kind) && !it.prompt.includes("?")) errors.push(`${it.id} : un défi doit être formulé comme une question`);
+  if (![1,2,3,4].includes(it.level)) errors.push(`${it.id} : palier invalide (1 à 4)`);
   if (it.kind === "secret" && !(it.options?.length >= 2)) errors.push(`${it.id} : un choix secret exige des options`);
 }
 if (errors.length) { console.error("✗ Catalogue invalide :\n  - " + errors.join("\n  - ")); process.exit(1); }
 const q = v => v.replace(/'/g, "''");
-const rows = items.map(i => `  ('${i.id}','${i.category}','${i.kind}',${i.options ? `'${q(JSON.stringify(i.options))}'::jsonb` : "null"})`).join(",\n");
-const sql = `-- GÉNÉRÉ par scripts/sync-catalog.mjs — ne pas modifier à la main.\ntruncate public.catalog;\ninsert into public.catalog(id,category,kind,options) values\n${rows};\n`;
+const rows = items.map(i => `  ('${i.id}','${i.category}','${i.kind}',${i.options ? `'${q(JSON.stringify(i.options))}'::jsonb` : "null"},${i.level})`).join(",\n");
+const sql = `-- GÉNÉRÉ par scripts/sync-catalog.mjs — ne pas modifier à la main.\ninsert into public.catalog(id,category,kind,options,level) values\n${rows}\non conflict (id) do update set category=excluded.category, kind=excluded.kind, options=excluded.options, level=excluded.level;\n`;
 if (process.argv.includes("--check")) {
   const cur = fs.existsSync("supabase/02_catalog.sql") ? fs.readFileSync("supabase/02_catalog.sql","utf8") : "";
   if (cur !== sql) { console.error("✗ supabase/02_catalog.sql n'est pas synchronisé (npm run catalog:sync)."); process.exit(1); }

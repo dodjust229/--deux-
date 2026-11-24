@@ -4,7 +4,7 @@
     "category": "decouverte",
     "kind": "free",
     "title": "Le premier trouble",
-    "prompt": "Quel est le tout premier moment où tu as senti quelque chose changer entre nous : un regard, un geste, une phrase ? Raconte-le comme une scène.",
+    "prompt": "✨ Quel est le tout premier moment où tu as senti quelque chose changer entre nous : un regard, un geste, une phrase ? Raconte-le comme une scène.",
     "level": 1,
     "audience": "partner",
     "visibility": "partagee"
@@ -14,7 +14,7 @@
     "category": "decouverte",
     "kind": "free",
     "title": "Ce que je n'ai pas vu",
-    "prompt": "Quel détail de moi te donne un petit frisson sans que je m'en rende compte ?",
+    "prompt": "🌱 Quel détail de moi te donne un petit frisson sans que je m'en rende compte ?",
     "level": 1,
     "audience": "partner",
     "visibility": "partagee"
@@ -24,7 +24,7 @@
     "category": "decouverte",
     "kind": "secret",
     "title": "La soirée qui s'allume",
-    "prompt": "Choisissez en secret la soirée qui vous donne le plus envie. On compare.",
+    "prompt": "👀 Choisissez en secret la soirée qui vous donne le plus envie. On compare.",
     "options": [
       "Lumières basses et musique lente",
       "Un dîner qui traîne en longueur",
@@ -40,7 +40,7 @@
     "category": "decouverte",
     "kind": "free",
     "title": "Le souvenir qui chauffe",
-    "prompt": "Quel souvenir de nous deux te fait encore monter un sourire, ou un peu plus de chaleur ?",
+    "prompt": "🧩 Quel souvenir de nous deux te fait encore monter un sourire, ou un peu plus de chaleur ?",
     "level": 1,
     "audience": "partner",
     "visibility": "partagee"
@@ -50,7 +50,7 @@
     "category": "decouverte",
     "kind": "prediction",
     "title": "Le premier geste",
-    "prompt": "Écris ton premier geste si vous étiez seuls dans cinq minutes, puis devine celui de l'autre : un baiser, une main dans le dos, ou un long regard.",
+    "prompt": "🌼 Écris ton premier geste si vous étiez seuls dans cinq minutes, puis devine celui de l'autre : un baiser, une main dans le dos, ou un long regard.",
     "level": 2,
     "audience": "partner",
     "visibility": "partagee"
@@ -60,7 +60,7 @@
     "category": "decouverte",
     "kind": "free",
     "title": "Le parfum",
-    "prompt": "Quelle odeur chez moi te rend un peu faible ? Peau, parfum, cou… sois précis.",
+    "prompt": "💭 Quelle odeur chez moi te rend un peu faible ? Peau, parfum, cou… sois précis.",
     "level": 1,
     "audience": "partner",
     "visibility": "partagee"
@@ -70,7 +70,7 @@
     "category": "decouverte",
     "kind": "secret",
     "title": "Ce qui te trouble",
-    "prompt": "Choisissez en secret ce qui vous trouble le plus. On verra si vous avez visé juste.",
+    "prompt": "🪞 Choisissez en secret ce qui vous trouble le plus. On verra si vous avez visé juste.",
     "options": [
       "Une main dans mes cheveux",
       "Un baiser dans le cou",
@@ -86,7 +86,7 @@
     "category": "decouverte",
     "kind": "free",
     "title": "Le rêve éveillé",
-    "prompt": "Quel moment avec moi imagines-tu quand ton esprit s'échappe en pleine journée ?",
+    "prompt": "☀️ Quel moment avec moi imagines-tu quand ton esprit s'échappe en pleine journée ?",
     "level": 2,
     "audience": "partner",
     "visibility": "partagee"
@@ -96,7 +96,7 @@
     "category": "decouverte",
     "kind": "free",
     "title": "Le goût qui séduit",
-    "prompt": "Quel plat ou quel goût te met tout de suite dans l'ambiance, et pourquoi ?",
+    "prompt": "🎲 Quel plat ou quel goût te met tout de suite dans l'ambiance, et pourquoi ?",
     "level": 1,
     "audience": "partner",
     "visibility": "partagee"
@@ -106,7 +106,7 @@
     "category": "decouverte",
     "kind": "secret",
     "title": "Le moment du désir",
-    "prompt": "À quel moment de la journée avez-vous le plus envie de l'autre ? Choisissez en secret.",
+    "prompt": "🗝️ À quel moment de la journée avez-vous le plus envie de l'autre ? Choisissez en secret.",
     "options": [
       "Au réveil, encore à moitié endormi",
       "En pleine journée, sans prévenir",
@@ -122,7 +122,7 @@
     "category": "decouverte",
     "kind": "cross",
     "title": "Ce que tu ne sais pas",
-    "prompt": "Le premier avoue un détail de l'autre qui le ou la trouble sans que l'autre le sache. Le second dit s'il s'en doutait.",
+    "prompt": "🫣 Le premier peut-il avouer un détail de l’autre qui le trouble sans que l’autre le sache ? Le second peut-il dire s’il s’en doutait ?",
     "level": 1,
     "audience": "partner",
     "visibility": "partagee"
@@ -132,7 +132,7 @@
     "category": "complicite",
     "kind": "secret",
     "title": "Le prochain moment",
-    "prompt": "Choisissez le prochain moment à vivre ensemble. Êtes-vous sur la même longueur d'onde ?",
+    "prompt": "💞 Choisissez le prochain moment à vivre ensemble. Êtes-vous sur la même longueur d'onde ?",
     "options": [
       "Un massage lent",
       "Une danse très proche",
@@ -148,7 +148,7 @@
     "category": "complicite",
     "kind": "challenge",
     "title": "Le compliment précis",
-    "prompt": "Dis à l'autre ce qui te plaît physiquement chez lui ou elle, avec des mots précis. Pas un compliment général.",
+    "prompt": "💬 Peux-tu dire à l’autre ce qui te plaît physiquement chez lui ou elle, avec des mots précis plutôt qu’un compliment général ?",
     "level": 2,
     "audience": "partner",
     "visibility": "partagee"
@@ -158,7 +158,7 @@
     "category": "complicite",
     "kind": "free",
     "title": "Votre scène de cinéma",
-    "prompt": "Quelle scène de film chargée de tension aimeriez-vous rejouer ensemble ?",
+    "prompt": "🫶 Quelle scène de film chargée de tension aimeriez-vous rejouer ensemble ?",
     "level": 2,
     "audience": "partner",
     "visibility": "partagee"
@@ -168,7 +168,7 @@
     "category": "complicite",
     "kind": "prediction",
     "title": "Le premier qui craque",
-    "prompt": "Qui de vous deux craquerait en premier dans un jeu de séduction silencieux ? Écris, puis devine.",
+    "prompt": "❤️ Qui de vous deux craquerait en premier dans un jeu de séduction silencieux ? Écris, puis devine.",
     "level": 2,
     "audience": "partner",
     "visibility": "partagee"
@@ -178,7 +178,7 @@
     "category": "complicite",
     "kind": "challenge",
     "title": "L'effet de la proximité",
-    "prompt": "En une phrase, dis l'effet que l'autre te fait quand il ou elle s'approche trop près.",
+    "prompt": "🔥 Peux-tu dire en une phrase l’effet que l’autre te fait quand il ou elle s’approche trop près ?",
     "level": 2,
     "audience": "partner",
     "visibility": "partagee"
@@ -188,7 +188,7 @@
     "category": "complicite",
     "kind": "secret",
     "title": "Le rendez-vous idéal",
-    "prompt": "Choisissez le rendez-vous qui vous fait le plus envie. On compare.",
+    "prompt": "🥰 Choisissez le rendez-vous qui vous fait le plus envie. On compare.",
     "options": [
       "Une nuit d'hôtel improvisée",
       "Un dîner puis une longue promenade",
@@ -204,7 +204,7 @@
     "category": "complicite",
     "kind": "free",
     "title": "Le fou rire intime",
-    "prompt": "Raconte un moment intime qui a mal tourné et qui vous a fait rire. Plus c'est vrai, mieux c'est.",
+    "prompt": "💫 Raconte un moment intime qui a mal tourné et qui vous a fait rire. Plus c'est vrai, mieux c'est.",
     "level": 2,
     "audience": "partner",
     "visibility": "partagee"
@@ -214,7 +214,7 @@
     "category": "complicite",
     "kind": "challenge",
     "title": "Trois mots",
-    "prompt": "Décris l'effet que l'autre te fait en trois mots, puis explique celui qui te brûle le plus.",
+    "prompt": "✨ Peux-tu décrire l’effet que l’autre te fait en trois mots, puis expliquer celui qui te brûle le plus ?",
     "level": 2,
     "audience": "partner",
     "visibility": "partagee"
@@ -224,7 +224,7 @@
     "category": "complicite",
     "kind": "prediction",
     "title": "Qui prend l'initiative",
-    "prompt": "Qui de vous deux fait le premier pas quand l'envie monte ? Écris, puis devine.",
+    "prompt": "🧡 Qui de vous deux fait le premier pas quand l'envie monte ? Écris, puis devine.",
     "level": 2,
     "audience": "partner",
     "visibility": "partagee"
@@ -234,7 +234,7 @@
     "category": "complicite",
     "kind": "prediction",
     "title": "Quand l'envie monte",
-    "prompt": "Quand l'envie monte, tu le montres, tu attends ou tu provoques ? Écris ta réponse, puis devine celle de l'autre.",
+    "prompt": "🤝 Quand l'envie monte, tu le montres, tu attends ou tu provoques ? Écris ta réponse, puis devine celle de l'autre.",
     "level": 2,
     "audience": "partner",
     "visibility": "partagee"
@@ -244,7 +244,7 @@
     "category": "complicite",
     "kind": "cross",
     "title": "Raconte, je réagis",
-    "prompt": "Le premier raconte un souvenir sensuel entre vous. Le second répond avec sa propre version de la même scène.",
+    "prompt": "💭 Le premier peut-il raconter un souvenir sensuel entre vous ? Le second peut-il répondre avec sa propre version de la même scène ?",
     "level": 2,
     "audience": "partner",
     "visibility": "partagee"
@@ -254,7 +254,7 @@
     "category": "profondeur",
     "kind": "free",
     "title": "Ce qui me met en confiance",
-    "prompt": "Qu'est-ce qui te permet de te laisser complètement aller avec quelqu'un, et comment le reconnais-tu ?",
+    "prompt": "🌙 Qu'est-ce qui te permet de te laisser complètement aller avec quelqu'un, et comment le reconnais-tu ?",
     "level": 2,
     "audience": "partner",
     "visibility": "partagee"
@@ -264,7 +264,7 @@
     "category": "profondeur",
     "kind": "free",
     "title": "Sans avoir à l'expliquer",
-    "prompt": "Qu'aimerais-tu que je devine de ton corps et de tes envies, sans que tu aies à l'expliquer ?",
+    "prompt": "💬 Qu'aimerais-tu que je devine de ton corps et de tes envies, sans que tu aies à l'expliquer ?",
     "level": 2,
     "audience": "partner",
     "visibility": "partagee"
@@ -274,7 +274,7 @@
     "category": "profondeur",
     "kind": "secret",
     "title": "Ce qui aide à lâcher prise",
-    "prompt": "Qu'est-ce qui t'aide le plus à lâcher prise ? Choisissez en secret.",
+    "prompt": "🧠 Qu'est-ce qui t'aide le plus à lâcher prise ? Choisissez en secret.",
     "options": [
       "Être regardé sans jugement",
       "Entendre ce qui plaît",
@@ -290,7 +290,7 @@
     "category": "profondeur",
     "kind": "free",
     "title": "Après",
-    "prompt": "Qu'aimes-tu le plus juste après un moment intime : le silence, parler, rire ou rester collés ?",
+    "prompt": "🫧 Qu'aimes-tu le plus juste après un moment intime : le silence, parler, rire ou rester collés ?",
     "level": 3,
     "audience": "partner",
     "visibility": "partagee"
@@ -300,7 +300,7 @@
     "category": "profondeur",
     "kind": "free",
     "title": "Ce que je garde pour moi",
-    "prompt": "Quel désir n'as-tu jamais confié à personne ? Ta réponse reste visible par toi seul(e).",
+    "prompt": "🪶 Quel désir n'as-tu jamais confié à personne ? Ta réponse reste visible par toi seul(e).",
     "level": 3,
     "audience": "partner",
     "visibility": "privee"
@@ -310,7 +310,7 @@
     "category": "profondeur",
     "kind": "prediction",
     "title": "Ce qui me fait craquer",
-    "prompt": "Devine ce qui chez toi fait craquer l'autre, et dis si tu en joues.",
+    "prompt": "🔎 Devine ce qui chez toi fait craquer l'autre, et dis si tu en joues.",
     "level": 3,
     "audience": "partner",
     "visibility": "partagee"
@@ -320,7 +320,7 @@
     "category": "profondeur",
     "kind": "free",
     "title": "Dans six mois",
-    "prompt": "Quelle nouvelle expérience sensuelle aimerais-tu tenter avec l'autre d'ici six mois ?",
+    "prompt": "🌊 Quelle nouvelle expérience sensuelle aimerais-tu tenter avec l'autre d'ici six mois ?",
     "level": 3,
     "audience": "partner",
     "visibility": "partagee"
@@ -330,7 +330,7 @@
     "category": "profondeur",
     "kind": "secret",
     "title": "Le rythme",
-    "prompt": "Quel rythme vous ressemble le plus ? Choisissez en secret.",
+    "prompt": "🕯️ Quel rythme vous ressemble le plus ? Choisissez en secret.",
     "options": [
       "Lentement, en prenant son temps",
       "Avec intensité et urgence",
@@ -346,7 +346,7 @@
     "category": "profondeur",
     "kind": "prediction",
     "title": "Ce qui rassure",
-    "prompt": "Écris ce qui te rassure le plus quand l'intimité devient plus forte, puis devine ce qui rassure l'autre.",
+    "prompt": "🫀 Écris ce qui te rassure le plus quand l'intimité devient plus forte, puis devine ce qui rassure l'autre.",
     "level": 3,
     "audience": "partner",
     "visibility": "partagee"
@@ -356,7 +356,7 @@
     "category": "profondeur",
     "kind": "cross",
     "title": "Ce qui m'a changé",
-    "prompt": "Le premier dit ce qu'un geste de l'autre a changé dans sa façon de désirer. Le second répond par ce que cela lui évoque.",
+    "prompt": "🫦 Le premier peut-il dire ce qu’un geste de l’autre a changé dans sa façon de désirer ? Le second peut-il répondre par ce que cela lui évoque ?",
     "level": 3,
     "audience": "partner",
     "visibility": "partagee"
@@ -366,7 +366,7 @@
     "category": "seduction",
     "kind": "free",
     "title": "L'attirance immédiate",
-    "prompt": "Quel comportement te fait basculer immédiatement, et que tu avoues rarement ?",
+    "prompt": "😏 Quel comportement te fait basculer immédiatement, et que tu avoues rarement ?",
     "level": 2,
     "audience": "partner",
     "visibility": "partagee"
@@ -376,7 +376,7 @@
     "category": "seduction",
     "kind": "challenge",
     "title": "La phrase qui fait rougir",
-    "prompt": "Adresse à l'autre une phrase de séduction qui fait rougir. Une seule, sans cliché.",
+    "prompt": "😏 Peux-tu adresser à l’autre une phrase de séduction qui fait rougir, sans utiliser de cliché ?",
     "level": 2,
     "audience": "partner",
     "visibility": "partagee"
@@ -386,7 +386,7 @@
     "category": "seduction",
     "kind": "secret",
     "title": "L'ambiance qui fait basculer",
-    "prompt": "Quelle ambiance vous fait basculer ? Choisissez en secret.",
+    "prompt": "💋 Quelle ambiance vous fait basculer ? Choisissez en secret.",
     "options": [
       "Lumière douce et musique lente",
       "Un parfum et une peau encore chaude",
@@ -402,7 +402,7 @@
     "category": "seduction",
     "kind": "free",
     "title": "Le premier déclic",
-    "prompt": "Qu'est-ce qui allume chez toi le premier déclic : un regard, une voix, un effleurement ?",
+    "prompt": "🔥 Qu'est-ce qui allume chez toi le premier déclic : un regard, une voix, un effleurement ?",
     "level": 2,
     "audience": "partner",
     "visibility": "partagee"
@@ -412,7 +412,7 @@
     "category": "seduction",
     "kind": "prediction",
     "title": "Le geste qui fait effet",
-    "prompt": "Devine le geste qui ferait le plus d'effet à l'autre ce soir. Écris, puis compare.",
+    "prompt": "🫦 Devine le geste qui ferait le plus d'effet à l'autre ce soir. Écris, puis compare.",
     "level": 2,
     "audience": "partner",
     "visibility": "partagee"
@@ -422,7 +422,7 @@
     "category": "seduction",
     "kind": "secret",
     "title": "Le premier effleurement",
-    "prompt": "Choisissez le geste qui vous touche le plus. On verra si vous vous êtes compris.",
+    "prompt": "🥀 Choisissez le geste qui vous touche le plus. On verra si vous vous êtes compris.",
     "options": [
       "Une main qui attrape la mienne",
       "Un baiser dans le cou",
@@ -438,7 +438,7 @@
     "category": "seduction",
     "kind": "cross",
     "title": "Le compliment osé",
-    "prompt": "Le premier dit ce qu'il aime physiquement chez l'autre. Le second répond avec un compliment qu'il n'a jamais osé faire.",
+    "prompt": "❤️ Le premier peut-il dire ce qu’il aime physiquement chez l’autre ? Le second peut-il répondre avec un compliment qu’il n’a jamais osé faire ?",
     "level": 2,
     "audience": "partner",
     "visibility": "partagee"
@@ -448,7 +448,7 @@
     "category": "audacieux",
     "kind": "secret",
     "title": "Le flirt qui allume",
-    "prompt": "Quel flirt vous allume le plus ? Choisissez en secret.",
+    "prompt": "🌶️ Quel flirt vous allume le plus ? Choisissez en secret.",
     "options": [
       "Les taquineries",
       "Les compliments à l'oreille",
@@ -464,7 +464,7 @@
     "category": "audacieux",
     "kind": "free",
     "title": "La limite à tenir",
-    "prompt": "Quelle limite veux-tu toujours voir respectée quand les choses s'accélèrent, et comment le dire sans casser l'instant ?",
+    "prompt": "😈 Quelle limite veux-tu toujours voir respectée quand les choses s'accélèrent, et comment le dire sans casser l'instant ?",
     "level": 4,
     "audience": "partner",
     "visibility": "privee"
@@ -474,7 +474,7 @@
     "category": "audacieux",
     "kind": "challenge",
     "title": "La première minute",
-    "prompt": "Propose à l'autre un moment imaginaire. Décris la première minute, pas plus. L'autre est libre de refuser.",
+    "prompt": "🌶️ Peux-tu proposer à l’autre un moment imaginaire et décrire uniquement la première minute ? L’autre reste libre de refuser.",
     "level": 4,
     "audience": "partner",
     "visibility": "partagee"
@@ -484,7 +484,7 @@
     "category": "audacieux",
     "kind": "free",
     "title": "En confiance",
-    "prompt": "Qu'est-ce qui te permet de te sentir vraiment à l'aise et en confiance quand tout va vite ?",
+    "prompt": "🔥 Qu'est-ce qui te permet de te sentir vraiment à l'aise et en confiance quand tout va vite ?",
     "level": 3,
     "audience": "partner",
     "visibility": "partagee"
@@ -494,7 +494,7 @@
     "category": "audacieux",
     "kind": "free",
     "title": "Ce que je n'ai jamais osé demander",
-    "prompt": "Écris une chose que tu voudrais que l'autre fasse et que tu n'as jamais osé demander. Les réponses sont révélées en même temps. Chacun reste libre de refuser.",
+    "prompt": "🫦 Écris une chose que tu voudrais que l'autre fasse et que tu n'as jamais osé demander. Les réponses sont révélées en même temps. Chacun reste libre de refuser.",
     "level": 4,
     "audience": "partner",
     "visibility": "partagee"
@@ -504,7 +504,7 @@
     "category": "audacieux",
     "kind": "challenge",
     "title": "Dix secondes",
-    "prompt": "Dis à l'autre ce que tu ferais s'il ou elle te laissait dix secondes de plus ce soir. Un seul souffle. L'autre est libre de refuser.",
+    "prompt": "😈 Que ferais-tu si l’autre te laissait dix secondes de plus ce soir ? Décris ton idée en une seule phrase ; l’autre reste libre de refuser.",
     "level": 4,
     "audience": "partner",
     "visibility": "partagee"
@@ -514,7 +514,7 @@
     "category": "audacieux",
     "kind": "free",
     "title": "Le mot de passe",
-    "prompt": "Choisissez chacun un mot qui veut dire « continue » et un mot qui veut dire « doucement ». Écrivez-les, puis découvrez-les ensemble. Chacun peut s'arrêter sans se justifier, à tout moment.",
+    "prompt": "🥵 Choisissez chacun un mot qui veut dire « continue » et un mot qui veut dire « doucement ». Écrivez-les, puis découvrez-les ensemble. Chacun peut s'arrêter sans se justifier, à tout moment.",
     "level": 4,
     "audience": "partner",
     "visibility": "partagee"
@@ -524,7 +524,7 @@
     "category": "audacieux",
     "kind": "free",
     "title": "La scène",
-    "prompt": "Décris, comme au cinéma, la scène où tu voudrais que tout bascule ce soir : le lieu, la lumière, le premier geste. Une envie, pas une promesse : l'autre reste libre de la refuser.",
+    "prompt": "🍒 Décris, comme au cinéma, la scène où tu voudrais que tout bascule ce soir : le lieu, la lumière, le premier geste. Une envie, pas une promesse : l'autre reste libre de la refuser.",
     "level": 4,
     "audience": "partner",
     "visibility": "partagee"
@@ -534,7 +534,7 @@
     "category": "audacieux",
     "kind": "cross",
     "title": "Raconte, je prolonge",
-    "prompt": "Le premier commence une scène en deux phrases. Le second la continue, sans la corriger. Chacun peut s'arrêter quand il le souhaite.",
+    "prompt": "🎭 Êtes-vous prêts à commencer une scène en deux phrases, puis à laisser le second la continuer sans la corriger ? Chacun peut s’arrêter quand il le souhaite.",
     "level": 4,
     "audience": "partner",
     "visibility": "partagee"
@@ -544,7 +544,543 @@
     "category": "audacieux",
     "kind": "prediction",
     "title": "Là où tout bascule",
-    "prompt": "Écris où et quand tu aimerais que tout bascule, puis devine le choix de l'autre : ici ce soir, ailleurs dans la maison, ou dans un lieu inattendu. Rien de tout cela n'engage l'autre.",
+    "prompt": "💣 Écris où et quand tu aimerais que tout bascule, puis devine le choix de l'autre : ici ce soir, ailleurs dans la maison, ou dans un lieu inattendu. Rien de tout cela n'engage l'autre.",
+    "level": 4,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "a11",
+    "category": "seduction",
+    "kind": "secret",
+    "title": "Le détail qui te fait craquer",
+    "prompt": "🫦 Quel détail chez moi te donne le plus envie de te rapprocher ? Choisis sans réfléchir.",
+    "options": [
+      "Ma bouche et ma façon d'embrasser",
+      "Mon regard quand je te fixe",
+      "Ma voix quand je te parle tout près",
+      "Ma façon de te toucher avec douceur"
+    ],
+    "level": 4,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "a12",
+    "category": "profondeur",
+    "kind": "free",
+    "title": "Sans détour",
+    "prompt": "🔥 Qu'est-ce qui t'excite le plus dans ma façon de te séduire, et qu'aimerais-tu que je fasse plus souvent ? Sois franc·he.",
+    "level": 4,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "a13",
+    "category": "seduction",
+    "kind": "challenge",
+    "title": "Le murmure",
+    "prompt": "🤫 Peux-tu t’approcher et me murmurer à l’oreille une phrase que tu n’oserais pas dire devant les autres ? Tu peux aussi me l’écrire si tu préfères.",
+    "level": 4,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "a14",
+    "category": "complicite",
+    "kind": "prediction",
+    "title": "Ce que tu aimerais ce soir",
+    "prompt": "🌙 Écris ce que tu aimerais que je fasse pour te séduire ce soir, puis devine ce que j'ai écrit. Comparez vos réponses.",
+    "level": 4,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "a15",
+    "category": "seduction",
+    "kind": "free",
+    "title": "Le baiser que tu réclames",
+    "prompt": "💋 Quel type de baiser aimerais-tu recevoir de moi maintenant : tendre, long, fougueux, surprenant… ou autre chose ? Décris-le.",
+    "level": 4,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "a16",
+    "category": "audacieux",
+    "kind": "secret",
+    "title": "Ton point faible",
+    "prompt": "🫦 Quel geste de séduction te fait le plus perdre tes moyens ? Choisis celui que tu assumes le plus.",
+    "options": [
+      "Un baiser dans le cou",
+      "Une main posée à la taille",
+      "Des mots soufflés à l'oreille",
+      "Un regard qui ne lâche pas"
+    ],
+    "level": 4,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "a17",
+    "category": "profondeur",
+    "kind": "cross",
+    "title": "Une envie, deux versions",
+    "prompt": "🔥 Êtes-vous prêts à ce que le premier décrive en trois phrases une envie qu’il aimerait partager, puis que le second dise ce qui lui plaît dans cette idée et ce qu’il changerait ? Chacun peut passer.",
+    "level": 4,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "a18",
+    "category": "profondeur",
+    "kind": "free",
+    "title": "La question interdite",
+    "prompt": "😈 Quelle question intime as-tu toujours voulu me poser, mais que tu as retenue jusqu'ici ? Pose-la maintenant, sans obligation de réponse.",
+    "level": 4,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "a19",
+    "category": "seduction",
+    "kind": "challenge",
+    "title": "Le regard qui insiste",
+    "prompt": "👀 Peux-tu me regarder dix secondes comme si tu avais quelque chose de très osé à me dire, puis m’expliquer ce qui te traversait l’esprit ? Aucun contact n’est imposé.",
+    "level": 4,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "a20",
+    "category": "complicite",
+    "kind": "secret",
+    "title": "L'ambiance qui te fait basculer",
+    "prompt": "🕯️ Choisis l'ambiance qui te donnerait le plus envie de prolonger la soirée à deux.",
+    "options": [
+      "Une chambre à la lumière tamisée",
+      "Une douche chaude à deux, si on en a tous les deux envie",
+      "Des baisers qui prennent leur temps",
+      "Une conversation très intime qui dérape en flirt"
+    ],
+    "level": 4,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "a21",
+    "category": "audacieux",
+    "kind": "free",
+    "title": "Dis-moi ce que tu veux",
+    "prompt": "❤️‍🔥 Si tu pouvais me demander une seule chose pour rendre notre prochain moment à deux plus intense, qu'est-ce que tu demanderais ?",
+    "level": 4,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "a22",
+    "category": "complicite",
+    "kind": "prediction",
+    "title": "Qui osera le premier pas ?",
+    "prompt": "😏 Selon toi, lequel de nous deux osera lancer le prochain geste de séduction ? Écris ton choix, puis découvre celui de l'autre.",
+    "level": 4,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "a23",
+    "category": "seduction",
+    "kind": "challenge",
+    "title": "Le compliment sans filtre",
+    "prompt": "🔥 Peux-tu me faire un compliment physique très précis, sans formule toute faite, en me disant exactement ce qui t’attire chez moi ?",
+    "level": 4,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "a24",
+    "category": "profondeur",
+    "kind": "free",
+    "title": "La limite et l'envie",
+    "prompt": "🔒 Quelle envie aimerais-tu explorer avec moi, et quelle limite veux-tu qu'on respecte absolument pour que tu te sentes libre et en confiance ?",
+    "level": 4,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "d12",
+    "category": "decouverte",
+    "kind": "secret",
+    "title": "Votre rendez-vous idéal",
+    "prompt": "🌅 Quel rendez-vous vous ferait le plus plaisir ? Choisissez chacun en secret, puis comparez vos choix.",
+    "options": [
+      "Un dîner tranquille à deux",
+      "Une sortie spontanée sans programme",
+      "Une soirée à la maison, rien que nous",
+      "Une escapade surprise"
+    ],
+    "level": 1,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "d13",
+    "category": "decouverte",
+    "kind": "free",
+    "title": "Le premier détail remarqué",
+    "prompt": "👀 Quel détail de mon apparence ou de ma personnalité as-tu remarqué avant même qu’on se connaisse vraiment ?",
+    "level": 1,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "d14",
+    "category": "decouverte",
+    "kind": "prediction",
+    "title": "Mon petit plaisir",
+    "prompt": "🎯 Devine le petit plaisir tout simple qui pourrait améliorer ma journée en moins de cinq minutes.",
+    "level": 1,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "d15",
+    "category": "decouverte",
+    "kind": "challenge",
+    "title": "Une question inattendue",
+    "prompt": "❓ Peux-tu me poser une question à laquelle tu n’as jamais pensé, mais dont la réponse pourrait te surprendre ?",
+    "level": 1,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "d16",
+    "category": "decouverte",
+    "kind": "free",
+    "title": "La scène qui te ressemble",
+    "prompt": "🎬 Si notre relation était une scène de film, laquelle décrirait le mieux notre énergie actuelle ?",
+    "level": 1,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "d17",
+    "category": "decouverte",
+    "kind": "secret",
+    "title": "Le moment préféré",
+    "prompt": "🕰️ À quel moment de la journée préfères-tu passer du temps avec moi ? Choisissez en secret.",
+    "options": [
+      "Au réveil",
+      "Pendant la journée",
+      "En fin d’après-midi",
+      "Le soir, quand tout ralentit"
+    ],
+    "level": 1,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "d18",
+    "category": "decouverte",
+    "kind": "free",
+    "title": "Un souvenir à revivre",
+    "prompt": "📸 Quel moment récent aimerais-tu revivre exactement de la même façon avec moi ?",
+    "level": 1,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "d19",
+    "category": "decouverte",
+    "kind": "cross",
+    "title": "Deux souvenirs, une histoire",
+    "prompt": "💭 Le premier peut-il raconter un souvenir drôle ou touchant de votre histoire ? Le second peut-il dire ce qu’il en retient, lui aussi ?",
+    "level": 1,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "d20",
+    "category": "decouverte",
+    "kind": "free",
+    "title": "La surprise qui te ferait sourire",
+    "prompt": "🎁 Quelle petite surprise inattendue te ferait sourire cette semaine, même si elle ne coûte presque rien ?",
+    "level": 1,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "c12",
+    "category": "complicite",
+    "kind": "free",
+    "title": "Notre langage secret",
+    "prompt": "🤫 Quel geste, regard ou mot entre nous pourrait devenir notre petit code secret ?",
+    "level": 1,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "c13",
+    "category": "complicite",
+    "kind": "challenge",
+    "title": "Le compliment précis",
+    "prompt": "💞 Peux-tu me faire un compliment sur une qualité que je ne remarque probablement pas assez chez moi ?",
+    "level": 1,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "c14",
+    "category": "complicite",
+    "kind": "secret",
+    "title": "La soirée parfaite",
+    "prompt": "🍿 Quelle soirée vous ferait le plus de bien en ce moment ? Choisissez chacun en secret.",
+    "options": [
+      "Un film et des câlins",
+      "Une longue discussion",
+      "Un jeu et beaucoup de rires",
+      "Sortir découvrir un nouvel endroit"
+    ],
+    "level": 1,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "c15",
+    "category": "complicite",
+    "kind": "prediction",
+    "title": "Ce qui me fait rire",
+    "prompt": "😂 Devine ce qui me fait rire le plus facilement chez toi : une expression, une habitude ou une façon de parler ?",
+    "level": 1,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "c16",
+    "category": "complicite",
+    "kind": "cross",
+    "title": "Le petit rituel à inventer",
+    "prompt": "🫶 Le premier peut-il proposer un petit rituel à faire ensemble chaque semaine ? Le second peut-il l’améliorer avec une idée à lui ?",
+    "level": 1,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "c17",
+    "category": "complicite",
+    "kind": "free",
+    "title": "Le moment sans téléphone",
+    "prompt": "📵 Quel moment aimerais-tu qu’on protège davantage, juste pour être ensemble sans téléphone ni distraction ?",
+    "level": 1,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "c18",
+    "category": "complicite",
+    "kind": "challenge",
+    "title": "Une vérité tendre",
+    "prompt": "❤️ Peux-tu me dire une chose que tu apprécies chez moi mais que tu oublies souvent de formuler ?",
+    "level": 2,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "s07",
+    "category": "seduction",
+    "kind": "free",
+    "title": "Le détail irrésistible",
+    "prompt": "😉 Quel détail dans ma façon de parler ou de bouger te paraît particulièrement séduisant ?",
+    "level": 2,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "p10",
+    "category": "profondeur",
+    "kind": "free",
+    "title": "Le besoin derrière le désir",
+    "prompt": "🌙 Quand tu as envie de te rapprocher de moi, qu’est-ce que tu recherches le plus : du réconfort, de la passion, de la tendresse ou autre chose ?",
+    "level": 3,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "p11",
+    "category": "profondeur",
+    "kind": "secret",
+    "title": "La confiance intime",
+    "prompt": "🔐 Qu’est-ce qui te permet de te sentir pleinement en confiance quand une conversation devient très intime ? Choisissez en secret.",
+    "options": [
+      "Être écouté sans jugement",
+      "Pouvoir dire stop à tout moment",
+      "Recevoir des paroles rassurantes",
+      "Sentir que l’autre se livre aussi"
+    ],
+    "level": 3,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "p12",
+    "category": "profondeur",
+    "kind": "prediction",
+    "title": "Ce que tu n’oses pas demander",
+    "prompt": "🫀 Devine quelle attention intime j’aimerais recevoir plus souvent, mais que je n’ose pas toujours demander.",
+    "level": 3,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "p13",
+    "category": "profondeur",
+    "kind": "challenge",
+    "title": "Une envie à formuler",
+    "prompt": "💬 Peux-tu exprimer une envie que tu aimerais explorer avec moi, en précisant ce qui te mettrait à l’aise ?",
+    "level": 3,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "p14",
+    "category": "profondeur",
+    "kind": "cross",
+    "title": "Écouter avant de répondre",
+    "prompt": "🫂 Le premier peut-il nommer une limite importante pour lui dans l’intimité ? Le second peut-il reformuler ce qu’il a compris avant de partager sa propre limite ?",
+    "level": 3,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "p15",
+    "category": "profondeur",
+    "kind": "free",
+    "title": "Le rythme qui te convient",
+    "prompt": "⏳ Quand l’intimité monte entre nous, qu’est-ce qui t’aide à garder un rythme qui te convient vraiment ?",
+    "level": 3,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "p16",
+    "category": "profondeur",
+    "kind": "secret",
+    "title": "Ton terrain de confiance",
+    "prompt": "🕯️ Dans quel contexte te sentirais-tu le plus libre de parler de tes envies ? Choisissez en secret.",
+    "options": [
+      "Pendant une promenade",
+      "Dans un moment calme à la maison",
+      "Par messages avant de se retrouver",
+      "Après un moment de tendresse"
+    ],
+    "level": 3,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "p17",
+    "category": "profondeur",
+    "kind": "free",
+    "title": "Ce que tu veux mieux comprendre",
+    "prompt": "🧩 Quelle partie de mon rapport à l’intimité aimerais-tu mieux comprendre, sans supposer que tu connais déjà la réponse ?",
+    "level": 3,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "s08",
+    "category": "seduction",
+    "kind": "free",
+    "title": "La tension dans un regard",
+    "prompt": "👁️ Quel regard de ma part pourrait te faire comprendre que j’ai envie de te séduire sans prononcer un seul mot ?",
+    "level": 3,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "s09",
+    "category": "seduction",
+    "kind": "challenge",
+    "title": "La phrase qui trouble",
+    "prompt": "💋 Peux-tu me dire à voix basse une phrase de séduction assez audacieuse pour me faire rougir, tout en restant dans ce que j’aime ?",
+    "level": 3,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "s10",
+    "category": "seduction",
+    "kind": "secret",
+    "title": "Le geste qui attire",
+    "prompt": "🔥 Quel geste de séduction aimerais-tu que je prenne davantage le temps de faire ? Choisissez en secret.",
+    "options": [
+      "Un baiser qui dure",
+      "Une main posée à la taille",
+      "Un regard soutenu",
+      "Des mots murmurés tout près"
+    ],
+    "level": 3,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "a25",
+    "category": "audacieux",
+    "kind": "secret",
+    "title": "L’envie assumée",
+    "prompt": "😈 Quelle proposition te semblerait la plus excitante à explorer à deux, si vous en avez tous les deux envie ?",
+    "options": [
+      "Un jeu de séduction avec des règles",
+      "Une soirée où chacun révèle un fantasme léger",
+      "Un moment où l’on prend le temps de se découvrir",
+      "Une surprise préparée par l’autre"
+    ],
+    "level": 3,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "a26",
+    "category": "audacieux",
+    "kind": "free",
+    "title": "Le désir sans détour",
+    "prompt": "🌶️ Quelle envie sensuelle aimerais-tu me confier franchement, sans la transformer en défi ni te sentir obligé de la réaliser ?",
+    "level": 3,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "a27",
+    "category": "audacieux",
+    "kind": "challenge",
+    "title": "Oser demander",
+    "prompt": "🫦 Peux-tu me demander une attention sensuelle précise que tu aimerais recevoir, en me laissant totalement libre de répondre oui ou non ?",
+    "level": 3,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "a28",
+    "category": "audacieux",
+    "kind": "free",
+    "title": "Le scénario qui t’attire",
+    "prompt": "🔥 Quel scénario de séduction entre adultes consentants aimerais-tu imaginer avec moi, sans obligation de le vivre ?",
+    "level": 4,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "a29",
+    "category": "audacieux",
+    "kind": "secret",
+    "title": "L’audace de la soirée",
+    "prompt": "🍒 Quelle ambiance te donnerait le plus envie de te laisser séduire ce soir ? Choisissez en secret.",
+    "options": [
+      "Lumière tamisée et musique lente",
+      "Une conversation très franche",
+      "Des baisers spontanés",
+      "Un jeu de défis sensuels"
+    ],
     "level": 4,
     "audience": "partner",
     "visibility": "partagee"

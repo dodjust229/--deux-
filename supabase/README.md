@@ -57,3 +57,8 @@ révocation des autorisations en cours de partie (espace commun, médias), avanc
 cloisonnement des modes, revanche à quatre accords, parcours deux joueurs.
 
 **Jamais sur la base de production** : la recette crée des salles et écrit des réponses.
+
+
+## Palier 1 — moteur de niveaux
+
+Après les migrations existantes, appliquer `11_game_levels.sql`, puis `12_level_consent_guard.sql` et `13_expand_balanced_catalog.sql`. Elles ajoutent les paliers au catalogue et aux salles, synchronisent les cartes sans vider la table, filtrent les cartes côté serveur et arrêtent une partie de palier 3–4 si un consentement 18+ est retiré. Elles sont additives et conservent les salles/réponses existantes.

@@ -5,6 +5,7 @@ import type { Lang } from "./i18n";
 
 export type Theme = "dark" | "light";
 export type Intensity = "soft" | "hot" | "veryHot";
+export type GameLevel = 1 | 2 | 3 | 4;
 
 export interface Preferences {
   theme: Theme;
@@ -13,6 +14,8 @@ export interface Preferences {
   volume: number;
   language: Lang;
   intensity: Intensity;
+  /** Palier exact joué pendant la partie (indépendant des catégories). */
+  gameLevel: GameLevel;
   /** Ambiances que la personne ne veut jamais voir apparaître. */
   exclusions: Category[];
 }
@@ -27,6 +30,7 @@ export const DEFAULT_PREFERENCES: Preferences = {
   volume: 0.4,
   language: "fr",
   intensity: "hot",
+  gameLevel: 2,
   exclusions: []
 };
 
@@ -61,6 +65,7 @@ export function sanitizePreferences(raw: unknown): Preferences {
     volume: clampVolume(source.volume),
     language: source.language === "en" ? "en" : "fr",
     intensity: source.intensity === "soft" || source.intensity === "veryHot" ? source.intensity : "hot",
+    gameLevel: source.gameLevel === 1 || source.gameLevel === 3 || source.gameLevel === 4 ? source.gameLevel : 2,
     exclusions: [...new Set(exclusions)]
   };
 }
