@@ -6,7 +6,7 @@ dans l'éditeur SQL du projet `xqvxorvvjmwzpcqmqnqv` ou via `psql`.
 | Fichier | Contenu | Remarque |
 |---|---|---|
 | `01_schema.sql` | mode deux joueurs : tables, RLS, RPC, droits | à exécuter en premier |
-| `02_catalog.sql` | catalogue des 43 interactions | TRUNCATE puis insert |
+| `02_catalog.sql` | catalogue des 192 interactions (48 par palier) | TRUNCATE puis insert |
 | `03_reconnexion_securisee.sql` | reprise de place par jeton uniquement | remplace `join_room` |
 | `04_duo_consent_default_off.sql` | correctif historique DUOS | **obsolète** : voir ci-dessous |
 | `05_duo_rpc_anon_only.sql` | correctif historique des droits | **obsolète** : repris par `06` |
