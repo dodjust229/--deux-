@@ -46,8 +46,8 @@ check("le retrait du consentement masque la carte adulte et saute les suivantes"
 # The previous selection has been recorded in the room history; with enough unseen cards, reuse is rejected.
 sql(f"update public.rooms set status='waiting' where id='{rid}'")
 check("une sélection déjà jouée est refusée tant qu'il reste assez de cartes inédites",expect("start_custom_game",f"'{rid}','{host}',{ids}","E_CUSTOM_REPEAT"))
-legacy=sql("select has_function_privilege('anon','public.start_custom_game(uuid,text,jsonb)','execute')")
-check("l'ancien point d'entrée texte arbitraire n'est plus exécutable",legacy=="f",legacy)
+legacy=sql("select to_regprocedure('public.start_custom_game(uuid,text,jsonb)') is null")
+check("l'ancien point d'entrée texte arbitraire est supprimé",legacy=="t",legacy)
 rights=sql("select has_function_privilege('anon','public.start_custom_game(uuid,text,text[])','execute')||'|'||has_function_privilege('authenticated','public.start_custom_game(uuid,text,text[])','execute')")
 check("droits RPC limités à anon (authentification par jeton dans la fonction)",rights=="true|false",rights)
 print(f"\n{sum(checks)}/{len(checks)} vérifications réussies")
