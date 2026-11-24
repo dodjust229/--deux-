@@ -43,7 +43,8 @@ for migration in \
   07_security_fixes \
   09_duo_replay \
   10_custom_room \
-  11_game_levels
+  11_game_levels \
+  12_level_consent_guard
 do
   echo "Applying supabase/${migration}.sql"
   "${PSQL[@]}" -d "$DB" -f "supabase/${migration}.sql"
