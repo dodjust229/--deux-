@@ -59,8 +59,9 @@ L'utilisateur ne peut pas joindre de fichiers dans cette conversation. Travaille
 - PR #21 — nettoyage des confidences locales : fusionnée.
 - PR #22 — nettoyage centralisé lors de la fermeture de session : fusionnée.
 - PR #23 — partage privé de photos depuis la galerie : fusionnée.
-- Commit applicatif Render live : `6bdfb67a522e1a0c8b625d3ddf9d3a8102cefb42`.
-- Déploiement Render : `dep-dc2m1ee8bjmc738425s0`, statut live.
+- Dernier commit applicatif Render live (Palier 6) : `a0fba2bdcc77c60e4d72fd907a0d9c7f15811ed4`.
+- Déploiement Render Palier 6 : `dep-dc2m65ss728c73b0u7c0`, statut live.
+- Livraison précédente Palier 5 : commit `6bdfb67a522e1a0c8b625d3ddf9d3a8102cefb42`, déploiement `dep-dc2m1ee8bjmc738425s0`.
 - Migration Supabase 18 : appliquée.
 - Edge Function `qspicy-room-media` : ACTIVE, version 1.
 - Bucket `qspicy-private-media` : privé, JPEG uniquement, 5 Mo maximum.
