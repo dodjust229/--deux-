@@ -138,8 +138,8 @@ echo "Applying invitation finalisation (after 16, 17 and 18)"
 echo "Running catalog-backed custom-engine integration recipe"
 python3 supabase/tests/custom_catalog_engine.py
 
-echo "Running legacy custom-room integration recipe"
-python3 supabase/tests/custom_room.py
+# The pre-catalog custom_room.py exercises the retired JSONB RPC signature.
+# The canonical catalog engine and invitation recipes below cover the supported flow.
 
 
 # La migration doit reconnaître le deck historique et le préserver en Personnalisé.
