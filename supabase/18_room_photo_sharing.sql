@@ -71,7 +71,7 @@ begin
   me := public._player_for(p_room_id,p_player_token);
   select * into r from public.rooms where id=p_room_id;
   if r.status='finished' then raise exception 'E_MEDIA_CLOSED: La partie est terminée.'; end if;
-  if p_scope not in ('partner','duo','group') then raise exception 'E_MEDIA_SCOPE: Destination invalide.'; end if;
+  if p_scope is null or p_scope not in ('partner','duo','group') then raise exception 'E_MEDIA_SCOPE: Destination invalide.'; end if;
 
   if r.mode='couple' then
     if p_scope<>'partner' then raise exception 'E_MEDIA_SCOPE: Destination invalide pour ce salon.'; end if;
@@ -141,7 +141,7 @@ begin
      or p_object_path !~ '^[0-9a-fA-F-]{36}/[0-9a-fA-F-]{36}\.(jpg|png|webp)$' then
     raise exception 'E_MEDIA_PATH: Chemin de fichier invalide.';
   end if;
-  if p_mime_type not in ('image/jpeg','image/png','image/webp')
+  if p_mime_type is null or p_mime_type not in ('image/jpeg','image/png','image/webp')
      or p_byte_size is null or p_byte_size not between 1 and 5242880 then
     raise exception 'E_MEDIA_FILE: Fichier non autorisé ou trop volumineux.';
   end if;
