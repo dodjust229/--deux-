@@ -11,6 +11,7 @@ for (const it of items) {
   if (!cats.includes(it.category)) errors.push(`${it.id} : catégorie inconnue`);
   if (!kinds.includes(it.kind)) errors.push(`${it.id} : type inconnu`);
   if (!it.title || !it.prompt) errors.push(`${it.id} : titre/consigne manquant`);
+  if (![1,2,3,4].includes(it.level)) errors.push(`${it.id} : palier invalide (1 à 4)`);
   if (it.kind === "secret" && !(it.options?.length >= 2)) errors.push(`${it.id} : un choix secret exige des options`);
 }
 if (errors.length) { console.error("✗ Catalogue invalide :\n  - " + errors.join("\n  - ")); process.exit(1); }
