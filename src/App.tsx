@@ -157,6 +157,8 @@ export default function App() {
 
   /* ---------- Session ---------- */
   const dropSession = useCallback((message: string) => {
+    const localStorage = storage();
+    if (identity && localStorage) clearPrivateAnswers(identity.roomId, localStorage);
     saveIdentity(null);
     setIdentity(null);
     setSnapshot(null);
@@ -164,7 +166,7 @@ export default function App() {
     setSettingsOpen(false);
     history.replaceState({}, "", location.pathname);
     setNotice(message);
-  }, []);
+  }, [identity]);
 
   const refresh = useCallback(async () => {
     if (!identity || inFlight.current) return;
@@ -354,8 +356,6 @@ export default function App() {
         /* on quitte quand même */
       }
     }
-    const localStorage = storage();
-    if (identity && localStorage) clearPrivateAnswers(identity.roomId, localStorage);
     dropSession("Tu as quitté la salle.");
   }
 

@@ -83,9 +83,9 @@ Le texte des réponses privées est actuellement gardé dans le `localStorage`, 
 
 Correction déjà ajoutée sur la branche de ce palier :
 - `clearPrivateAnswers(roomId, storage)` supprime uniquement les clés préfixées par l'identifiant de la salle quittée.
-- `exitRoom()` appelle ce nettoyage après la tentative de sortie côté serveur.
+- Le nettoyage est centralisé dans `dropSession()` : il s'exécute lors d'une sortie volontaire et lors d'une fermeture de session provoquée par une erreur fatale, pas uniquement dans le bouton Quitter.
 - Un test unitaire vérifie que les confidences d'une autre salle et la clé de session restent intactes.
-- La CI de la PR doit encore confirmer TypeScript, tests et build avant de considérer cette correction validée.
+- CI de la PR #21 : TypeScript, tests unitaires, build et intégration PostgreSQL 16 réussis.
 
 ## 7. Tests et preuves
 
@@ -116,3 +116,12 @@ Correction déjà ajoutée sur la branche de ce palier :
 - Aucune modification de production n'a été effectuée.
 - Correction du nettoyage des confidences locales ajoutée dans `src/lib/media.ts` et appelée depuis `src/App.tsx` ; test ciblé ajouté dans `src/lib/media.test.ts`. CI en attente au moment de la rédaction.
 - Le palier 5 ne doit pas être déclaré terminé tant que le cycle de vie des confidences et les permissions médias n'ont pas été corrigés et testés.
+
+
+## 10. Livraison du nettoyage local
+
+- PR #21 fusionnée dans `main` : https://github.com/dodjust229/--deux-/pull/21
+- Commit squash : `dad574467728070819694b5530e27471dd331ecf`.
+- CI GitHub Actions : réussite complète (TypeScript, tests, build et intégration PostgreSQL 16).
+- Une amélioration complémentaire centralise maintenant le nettoyage dans `dropSession()`, pour couvrir aussi les sorties déclenchées par une erreur fatale de session. Cette modification complémentaire doit passer sa propre CI avant fusion.
+- Aucun déploiement n'est déclaré tant que Render ne confirme pas le commit fusionné.
