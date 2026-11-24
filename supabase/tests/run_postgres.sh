@@ -46,6 +46,17 @@ if ! "${PSQL[@]}" -d postgres -Atqc "SELECT 1 FROM pg_database WHERE datname = '
   "${CREATEDB[@]}" "$DB"
 fi
 
+"${PSQL[@]}" -d "$DB" <<'SQL'
+CREATE SCHEMA IF NOT EXISTS storage;
+CREATE TABLE IF NOT EXISTS storage.buckets (
+  id text primary key,
+  name text not null,
+  public boolean not null default false,
+  file_size_limit bigint,
+  allowed_mime_types text[]
+);
+SQL
+
 for migration in \
   01_schema \
   02_catalog \
