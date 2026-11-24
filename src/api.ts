@@ -47,6 +47,6 @@ export const sendDuoMessage = (r: string, t: string, space: "group" | "duo_a" | 
 export const restartDuoGame = (r: string, t: string) => rpc<{ restarted: boolean; votes: number; needed: number }>("restart_duo_game", { p_room_id: r, p_player_token: t });
 
 /* Mode Personnalisé : la liste appartient à la salle (voir supabase/10_custom_room.sql). */
-export const startCustomGame = (r: string, t: string, questions: string[]) =>
-  rpc<boolean>("start_custom_game", { p_room_id: r, p_player_token: t, p_questions: questions });
+export const startCustomGame = (r: string, t: string, interactionIds: string[]) =>
+  rpc<boolean>("start_custom_game", { p_room_id: r, p_player_token: t, p_interaction_ids: interactionIds });
 export const getCustomDeck = (r: string, t: string) => rpc<string[]>("get_custom_deck", { p_room_id: r, p_player_token: t });

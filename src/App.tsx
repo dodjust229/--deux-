@@ -29,7 +29,7 @@ import { previewDuoSnapshot, previewSnapshot } from "./lib/preview";
 import { playSound } from "./lib/sound";
 import type { Category, Player, Snapshot } from "./types";
 import { interactions } from "./content";
-import { checkQuestions, customMessage, explainCustomError, resolveCustomInteraction } from "./lib/custom";
+import { explainCustomError, resolveCustomInteraction } from "./lib/custom";
 import { Wordmark } from "./components/Brand";
 import { Icon } from "./components/Icon";
 import { Settings } from "./components/Settings";
@@ -320,19 +320,14 @@ export default function App() {
     }
   }
 
-  const launchCustom = (questions: string[]) =>
+  const launchCustom = (interactionIds: string[]) =>
     run(async () => {
       if (!identity) return;
-      const check = checkQuestions(questions);
-      if (!check.ok) {
-        setCustomError(customMessage(prefs.language, check.errors[0]));
-        return;
-      }
       try {
-        await startCustomGame(identity.roomId, identity.token, check.questions);
+        await startCustomGame(identity.roomId, identity.token, interactionIds);
         setCustomError("");
       } catch (caught) {
-        // Refus du serveur : on l'affiche au-dessus du bouton, sans quitter le salon.
+        // Le serveur valide les identifiants, les catégories communes et le consentement 18+.
         setCustomError(explainCustomError(prefs.language, parseError(caught).message));
       }
     });
