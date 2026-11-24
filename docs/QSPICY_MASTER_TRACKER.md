@@ -25,14 +25,15 @@ L'utilisateur ne peut pas joindre de fichiers dans cette conversation. Travaille
 | 3 | Mode Personnalisé | Livré | `docs/QSPICY_PALIER_3_REPRISE_IA.md` ; moteur de catalogue et garde-fous serveur déployés. |
 | 4 | Invitations, rôles, intérêts individuels | Livré côté code | `docs/QSPICY_PALIER_4_REPRISE_IA.md` ; PR #20 fusionnée, migration 17 appliquée, Render live. Tests réels à 2/4 appareils encore à faire. |
 | 5 | Confidentialité et photos personnelles depuis la galerie | Livré côté code et infrastructure | `docs/QSPICY_PALIER_5_REPRISE_IA.md` ; PR #21, #22, #23 fusionnées ; migration 18 et Edge Function déployées ; Render live. Recette photo multi-appareils restante. |
-| 6 | Musique et ambiance | En cours de livraison | `docs/QSPICY_PALIER_6_REPRISE_IA.md` ; nappes Web Audio locales, choix manuel, volume et arrêt en fin de session ; CI/déploiement/recette appareil à confirmer. |
+| 6 | Musique et ambiance | Livré code et déployé | PR #24 fusionnée ; CI #45372319685 réussie ; Render `dep-dc2m65ss728c73b0u7c0` live. Recette audio réelle mobile/desktop restante. |
 | 7 | Tests globaux, bugs et stabilisation | À faire | Recette Couple/DUOS, appareils, permissions, sessions longues et sécurité. |
 
 ## Éléments encore ouverts
 
 ### Palier 6 — recette audio après déploiement
-- Vérifier Lounge, Velours et Pluie sur mobile et ordinateur ; lecture uniquement après clic.
-- Vérifier volume, arrêt manuel, fin de partie, sortie et absence d'autoplay après rechargement.
+- Code et infrastructure livrés ; PR #24 fusionnée et Render live.
+- CI GitHub Actions run `45372319685` : TypeScript, tests unitaires/catalogue, build et intégration PostgreSQL 16 réussis.
+- Reste la recette réelle : Lounge, Velours et Pluie sur mobile/ordinateur ; volume, arrêt, sortie, fin de partie et absence d'autoplay après rechargement.
 - Voir `docs/QSPICY_PALIER_6_REPRISE_IA.md`.
 
 ### Priorité immédiate — recette Palier 5
