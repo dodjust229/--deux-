@@ -30,7 +30,7 @@ import { deriveScene } from "./lib/scene";
 import { clearPrivateAnswers } from "./lib/media";
 import { applyPreferences, categoriesForIntensity, readPreferences, writePreferences, type Preferences } from "./lib/prefs";
 import { previewDuoSnapshot, previewSnapshot } from "./lib/preview";
-import { playSound } from "./lib/sound";
+import { playSound, stopAmbience } from "./lib/sound";
 import type { Category, Player, Snapshot } from "./types";
 import { interactions } from "./content";
 import { explainCustomError, resolveCustomInteraction } from "./lib/custom";
@@ -162,6 +162,10 @@ export default function App() {
   useEffect(() => {
     void cleanupExpiredRoomPhotos().catch(() => undefined);
   }, []);
+
+  useEffect(() => {
+    if (!identity || snapshot?.room.status === "finished") stopAmbience();
+  }, [identity, snapshot?.room.status]);
 
   /* ---------- Session ---------- */
   const dropSession = useCallback((message: string) => {

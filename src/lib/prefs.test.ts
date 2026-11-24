@@ -1,14 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
-  DEFAULT_PREFERENCES,
-  LEGACY_REDUCED_KEY,
-  PREFS_KEY,
-  categoriesForIntensity,
-  clampVolume,
-  readPreferences,
-  sanitizePreferences,
-  writePreferences
+  DEFAULT_PREFERENCES, LEGACY_REDUCED_KEY, PREFS_KEY, categoriesForIntensity,
+  clampVolume, readPreferences, sanitizePreferences, writePreferences
 } from "./prefs.ts";
 
 function memoryStorage(initial: Record<string, string> = {}) {
@@ -32,16 +26,18 @@ test("préférences : ancien réglage de réduction des animations repris", () =
 
 test("préférences : JSON corrompu ou valeurs invalides ne cassent rien", () => {
   assert.deepEqual(readPreferences(memoryStorage({ [PREFS_KEY]: "{oups" })), DEFAULT_PREFERENCES);
-  const sanitized = sanitizePreferences({ theme: "neon", reducedMotion: "oui", sound: 1, volume: 4, language: "de", intensity: "extreme", exclusions: ["seduction", "inconnue"] });
+  const sanitized = sanitizePreferences({ theme: "neon", reducedMotion: "oui", sound: 1, volume: 4, language: "de", intensity: "extreme", exclusions: ["seduction", "inconnue"], ambience: "ultrasonic" });
   assert.equal(sanitized.theme, "dark");
   assert.equal(sanitized.reducedMotion, false);
   assert.equal(sanitized.sound, false);
   assert.equal(sanitized.volume, 1);
+  assert.equal(sanitized.ambience, "off");
   assert.equal(sanitized.language, "fr");
   assert.equal(sanitized.intensity, "hot");
   assert.equal(sanitized.gameLevel, 2);
   assert.equal(sanitizePreferences({ gameLevel: 4 }).gameLevel, 4);
   assert.equal(sanitizePreferences({ gameLevel: 9 }).gameLevel, 2);
+  assert.equal(sanitizePreferences({ ambience: "rain" }).ambience, "rain");
   assert.deepEqual(sanitized.exclusions, ["seduction"]);
   assert.deepEqual(categoriesForIntensity("soft"), ["decouverte", "complicite"]);
   assert.deepEqual(categoriesForIntensity("veryHot", ["audacieux"]), ["decouverte", "complicite", "profondeur", "seduction"]);
@@ -52,7 +48,9 @@ test("préférences : JSON corrompu ou valeurs invalides ne cassent rien", () =>
 test("préférences : écriture puis relecture, thème indépendant par appareil", () => {
   const a = memoryStorage();
   const b = memoryStorage();
-  writePreferences(a, { ...DEFAULT_PREFERENCES, theme: "light", volume: 0.3 });
+  writePreferences(a, { ...DEFAULT_PREFERENCES, theme: "light", volume: 0.3, ambience: "velvet" });
   assert.equal(readPreferences(a).theme, "light");
-  assert.equal(readPreferences(b).theme, "dark", "l'autre appareil ne doit pas hériter du thème");
+  assert.equal(readPreferences(a).ambience, "velvet");
+  assert.equal(readPreferences(b).theme, "dark");
+  assert.equal(readPreferences(b).ambience, "off");
 });
