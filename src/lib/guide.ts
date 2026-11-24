@@ -206,7 +206,7 @@ export type TipId = "mode" | "intensity" | "categories" | "prefs" | "invite" | "
 
 const TIPS_FR: Record<TipId, { title: string; body: string }> = {
   mode: { title: "Quel salon ?", body: "À Deux, DUOS et Personnalisé sont jouables. Anonyme, Côte à Côte et Vocal sont verrouillés : leur moteur n'est pas terminé." },
-  intensity: { title: "À quoi servent les ambiances proposées ?", body: "Elles choisissent les catégories proposées par défaut dans le salon, indépendamment du palier de jeu. Les exclusions restent prioritaires. Les paliers 3–4 et Audacieux exigent l’accord 18+ de tous les joueurs." },
+  intensity: { title: "À quoi servent les ambiances proposées ?", body: "Elles choisissent les catégories proposées par défaut dans le salon, indépendamment du palier de jeu. Les exclusions restent prioritaires. Les paliers 3–4 et Audacieux exigent l’accord 18+ de tous les joueurs : deux en Couple, quatre en DUOS." },
   categories: { title: "Catégories", body: "Seules les catégories choisies par tout le monde sont tirées. Une catégorie exclue dans tes préférences reste fermée." },
   prefs: { title: "Tes préférences", body: "Elles restent sur cet appareil et ne changent rien pour l'autre personne." },
   invite: { title: "Invitation", body: "Le lien contient l'identifiant de la salle. Sans lui, personne ne peut entrer ; une salle pleine refuse les autres." },
@@ -219,7 +219,7 @@ const TIPS_FR: Record<TipId, { title: string; body: string }> = {
 
 const TIPS_EN: Record<TipId, { title: string; body: string }> = {
   mode: { title: "Which room?", body: "À Deux, DUOS and Custom are playable. Anonymous, Side by side and Voice are locked: their engine is unfinished." },
-  intensity: { title: "What do default moods do?", body: "They choose the default categories offered in the lobby, independently of the game level. Exclusions stay in force. Levels 3–4 and Audacieux require 18+ consent from everyone." },
+  intensity: { title: "What do default moods do?", body: "They choose the default categories offered in the lobby, independently of the game level. Exclusions stay in force. Levels 3–4 and Audacieux require 18+ consent from everyone: two players in Couple, four in DUOS." },
   categories: { title: "Categories", body: "Only the categories chosen by everyone are drawn. A category excluded in your preferences stays closed." },
   prefs: { title: "Your preferences", body: "They stay on this device and change nothing for the other person." },
   invite: { title: "Invitation", body: "The link carries the room id. Without it nobody can enter; a full room refuses newcomers." },
