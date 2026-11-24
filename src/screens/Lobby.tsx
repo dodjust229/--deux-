@@ -195,7 +195,7 @@ export function Lobby({
               <span>
                 <strong>{gameLevel >= 3 ? "J'ai 18 ans ou plus et j'accepte les paliers 3–4." : "J'ai 18 ans ou plus et j'accepte la catégorie « Audacieux »."}</strong>
                 <small>
-                  Facultatif, révocable à tout moment. L'accord des deux est nécessaire pour les paliers 3–4 et Audacieux.
+                  <small>{gameLevel >= 3 ? "Obligatoire pour les paliers 3–4. Accord révocable à tout moment." : "Facultatif pour les autres paliers ; accord révocable à tout moment."} Les deux joueurs doivent être d’accord.
                 </small>
               </span>
             </label>
