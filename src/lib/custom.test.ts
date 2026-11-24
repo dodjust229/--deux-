@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { CUSTOM, checkQuestions, customInteraction, explainCustomError, resolveCustomInteraction } from "./custom.ts";
+import { CUSTOM, buildCustomDeck, checkQuestions, customInteraction, explainCustomError, resolveCustomInteraction } from "./custom.ts";
 
 const valid = [
   "Quel souvenir te fait encore sourire ?",
@@ -92,4 +92,28 @@ test("personnalisé : une fonction serveur absente est expliquée sans jargon", 
 
 test("personnalisé : les autres erreurs ne sont pas déformées", () => {
   assert.equal(explainCustomError("fr", "E_STATE: Deux joueurs doivent être présents."), "E_STATE: Deux joueurs doivent être présents.");
+});
+
+
+test("personnalisé : le paquet provient du catalogue et exclut les paliers 3–4", () => {
+  const catalog = [
+    { id: "a", level: 1, kind: "free", prompt: "Question ouverte numéro un ?" },
+    { id: "b", level: 2, kind: "free", prompt: "Question ouverte numéro deux ?" },
+    { id: "c", level: 3, kind: "free", prompt: "Question adulte à exclure ?" },
+    { id: "d", level: 1, kind: "secret", prompt: "Question à choix à exclure ?" }
+  ] as any;
+  const deck = buildCustomDeck(catalog, 5, () => 0);
+  assert.deepEqual(deck.sort(), [
+    "Question ouverte numéro deux ?",
+    "Question ouverte numéro un ?"
+  ].sort());
+});
+
+test("personnalisé : le paquet est limité à 24 et ne contient aucun doublon", () => {
+  const catalog = Array.from({ length: 30 }, (_, i) => ({
+    id: String(i), level: 1, kind: "free", prompt: `Question ouverte numéro ${i} ?`
+  })) as any;
+  const deck = buildCustomDeck(catalog, 99, () => 0.5);
+  assert.equal(deck.length, 24);
+  assert.equal(new Set(deck).size, 24);
 });
