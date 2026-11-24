@@ -2,7 +2,7 @@ import type { Interaction } from "./types";
 import catalog from "./catalog.json";
 
 /** Source unique du contenu : src/catalog.json (parsé en JSON, pas de regex).
- *  `npm run catalog:sync` régénère supabase/02_catalog.sql ; `npm run catalog:check` vérifie la cohérence. */
+ *  `npm run catalog:sync` régénère les SQL initiaux et la migration 22 ; `npm run catalog:check` vérifie la cohérence. */
 export const interactions = catalog as Interaction[];
 
 export const categoryLabels: Record<string, string> = {
