@@ -37,6 +37,20 @@ test("event selection changes across rooms instead of showing a fixed surprise",
   assert.ok(ids.size > 1);
 });
 
+test("level 3 surprise rounds use sensual, consent-led mechanics", () => {
+  const event = getRoundEvent("room-a", 2, 8, { ...interaction, level: 3 });
+  assert.ok(event);
+  assert.match(event.id, /^l3-/);
+  assert.match(event.subtitle, /PALIER 3/);
+});
+
+test("level 4 surprise rounds use direct adult mechanics", () => {
+  const event = getRoundEvent("room-a", 2, 8, { ...interaction, level: 4 });
+  assert.ok(event);
+  assert.match(event.id, /^l4-/);
+  assert.match(event.instruction, /sexuel|sexuelle|sexe/i);
+});
+
 test("English sessions receive translated event copy", () => {
   const event = getRoundEvent("room-a", 2, 8, interaction, "en");
   assert.ok(event);
