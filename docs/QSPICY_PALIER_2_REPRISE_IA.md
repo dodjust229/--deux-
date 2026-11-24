@@ -39,9 +39,7 @@ Base : `main`, après la fusion de la PR #16
 
 ## Point de reprise important — volume du catalogue
 
-Le catalogue de production contient actuellement **96 cartes, soit 24 par palier**. Le moteur conserve correctement l'historique et évite les répétitions tant qu'il existe des cartes inédites dans le pool choisi. Cependant, si les catégories communes couvrent les 24 cartes du palier, une seule partie peut épuiser ce pool.
-
-Pour garantir plusieurs parties complètes de 24 questions sans répétition, il faut augmenter le catalogue à au moins **48 cartes par palier** (192 cartes au total), idéalement davantage, avec une vraie relecture éditoriale. Ne pas réduire arbitrairement la taille d'une partie pour masquer le manque de contenu.
+Le catalogue est maintenant étendu à **192 cartes, soit 48 par palier**. Une session de 24 questions peut être suivie d'une deuxième session complète sans répétition si les catégories communes couvrent tout le pool du palier. Si les joueurs ne sélectionnent qu'une partie des catégories, la taille du pool éligible varie et le cycle peut s'épuiser plus tôt.
 
 ## Vérifications à effectuer avant fusion
 
@@ -61,7 +59,7 @@ La recette SQL doit confirmer :
 - conservation du consentement et du filtrage par niveau ;
 - reconnexion à une session en cours sans nouveau tirage.
 
-Vérifier aussi que `supabase/tests/run_postgres.sh` applique bien `14_session_question_history.sql` après les migrations 11 à 13.
+Vérifier aussi que `supabase/tests/run_postgres.sh` applique bien `14_session_question_history.sql` puis `15_expand_session_catalog.sql` après les migrations 11 à 13.
 
 ## Déploiement / base de production
 
@@ -80,7 +78,7 @@ Après CI verte et revue du diff :
 - Ne pas effacer `played_interaction_ids` dans `restart_game` ou `restart_duo_game` : cela réintroduirait les répétitions.
 - Ne pas remplacer le paquet en cours lors d'une reconnexion : `interaction_ids` + `current_index` sont la source de vérité.
 - Ne pas remettre à zéro tout l'historique quand un seul palier/catégorie est épuisé.
-- Ne pas prétendre que le volume de contenu suffit : l'expansion à 48+ cartes par palier reste nécessaire pour plusieurs sessions complètes.
+- Ne pas prétendre que le volume de contenu suffit : la migration 15 fournit 48 cartes par palier ; poursuivre l'expansion si les tests éditoriaux montrent que le pool n'est pas assez varié.
 
 ## État technique connu
 
