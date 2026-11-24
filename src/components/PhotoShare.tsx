@@ -89,7 +89,8 @@ export function PhotoShare({ roomId, token, myPlayerId, mode, onPermissionChange
   const myPlayer = state?.players.find((p) => p.id === myPlayerId);
   const partner = others.find((p) => mode === "couple" || p.duo_no === myPlayer?.duo_no);
   const groupAllowed = mode === "duos" && others.length === 3 &&
-    state?.players.every((p) => p.cross_participation && p.receive_media);
+    state?.players.every((p) => p.cross_participation) &&
+    others.every((p) => p.receive_media);
   const duoAllowed = mode === "duos" && Boolean(partner?.receive_media);
   const partnerAllowed = mode === "couple" && Boolean(partner?.receive_media);
   const canSend = mode === "couple"
