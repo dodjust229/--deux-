@@ -110,14 +110,16 @@ Deno.serve(async (req: Request) => {
       }
       const expiredQuery = await admin.from("room_media").select("id,object_path").eq("room_id", roomId).lte("expires_at", new Date().toISOString());
       if (expiredQuery.data?.length) {
-        await admin.storage.from(BUCKET).remove(expiredQuery.data.map((row: { object_path: string }) => row.object_path));
-        await admin.from("room_media").delete().in("id", expiredQuery.data.map((row: { id: string }) => row.id));
+        const { error: expiredRemoveError } = await admin.storage.from(BUCKET).remove(expiredQuery.data.map((row: { object_path: string }) => row.object_path));
+        if (!expiredRemoveError) {
+          await admin.from("room_media").delete().in("id", expiredQuery.data.map((row: { id: string }) => row.id));
+        }
       }
       if (data.room_status === "finished") {
         const all = await admin.from("room_media").select("id,object_path").eq("room_id", roomId);
         if (all.data?.length) {
-          await admin.storage.from(BUCKET).remove(all.data.map((row: { object_path: string }) => row.object_path));
-          await admin.from("room_media").delete().eq("room_id", roomId);
+          const { error: finishRemoveError } = await admin.storage.from(BUCKET).remove(all.data.map((row: { object_path: string }) => row.object_path));
+          if (!finishRemoveError) await admin.from("room_media").delete().eq("room_id", roomId);
         }
         return json(req, 200, { my_receive_media: data.my_receive_media, players: data.players, items: [] });
       }
@@ -139,12 +141,16 @@ Deno.serve(async (req: Request) => {
     if (req.method === "DELETE" && action === "delete") {
       const mediaId = new URL(req.url).searchParams.get("media_id");
       if (!validUuid(mediaId)) return json(req, 400, { error: "Photo invalide." });
-      const { data: path, error } = await admin.rpc("qspicy_media_delete", {
+      const { data: path, error: authError } = await admin.rpc("qspicy_media_delete_path", {
         p_room_id: roomId, p_player_token: token, p_media_id: mediaId,
       });
-      if (error || !path) return json(req, 403, { error: errorMessage(error) });
+      if (authError || !path) return json(req, 403, { error: errorMessage(authError) });
       const { error: removeError } = await admin.storage.from(BUCKET).remove([path]);
-      if (removeError) return json(req, 502, { error: "La photo est masquée, mais son fichier n'a pas encore pu être supprimé." });
+      if (removeError) return json(req, 502, { error: "La photo est conservée ; son fichier n'a pas encore pu être supprimé." });
+      const { error: deleteError } = await admin.rpc("qspicy_media_delete", {
+        p_room_id: roomId, p_player_token: token, p_media_id: mediaId,
+      });
+      if (deleteError) return json(req, 502, { error: "Le fichier a été supprimé, mais sa référence doit encore être nettoyée." });
       return json(req, 200, { deleted: true });
     }
 
