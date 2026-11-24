@@ -15,7 +15,7 @@ async function preparePhoto(file: File): Promise<Blob> {
   if (file.size > 20 * 1024 * 1024) throw new Error("La photo originale dépasse 20 Mo.");
   let bitmap: ImageBitmap | null = null;
   let imageUrl = "";
-  let source: CanvasImageSource;
+  let source: CanvasImageSource | null = null;
   let width = 0;
   let height = 0;
   try {
@@ -38,7 +38,7 @@ async function preparePhoto(file: File): Promise<Blob> {
       width = image.naturalWidth;
       height = image.naturalHeight;
     }
-    if (!width || !height) throw new Error("Cette image ne peut pas être lue par le navigateur.");
+    if (!source || !width || !height) throw new Error("Cette image ne peut pas être lue par le navigateur.");
     const scale = Math.min(1, 1600 / Math.max(width, height));
     const canvas = document.createElement("canvas");
     canvas.width = Math.max(1, Math.round(width * scale));
