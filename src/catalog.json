@@ -706,5 +706,383 @@
     "level": 4,
     "audience": "partner",
     "visibility": "partagee"
+  },
+  {
+    "id": "d12",
+    "category": "decouverte",
+    "kind": "secret",
+    "title": "Votre rendez-vous idéal",
+    "prompt": "🌅 Quel rendez-vous vous ferait le plus plaisir ? Choisissez chacun en secret, puis comparez vos choix.",
+    "options": [
+      "Un dîner tranquille à deux",
+      "Une sortie spontanée sans programme",
+      "Une soirée à la maison, rien que nous",
+      "Une escapade surprise"
+    ],
+    "level": 1,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "d13",
+    "category": "decouverte",
+    "kind": "free",
+    "title": "Le premier détail remarqué",
+    "prompt": "👀 Quel détail de mon apparence ou de ma personnalité as-tu remarqué avant même qu’on se connaisse vraiment ?",
+    "level": 1,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "d14",
+    "category": "decouverte",
+    "kind": "prediction",
+    "title": "Mon petit plaisir",
+    "prompt": "🎯 Devine le petit plaisir tout simple qui pourrait améliorer ma journée en moins de cinq minutes.",
+    "level": 1,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "d15",
+    "category": "decouverte",
+    "kind": "challenge",
+    "title": "Une question inattendue",
+    "prompt": "❓ Peux-tu me poser une question à laquelle tu n’as jamais pensé, mais dont la réponse pourrait te surprendre ?",
+    "level": 1,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "d16",
+    "category": "decouverte",
+    "kind": "free",
+    "title": "La scène qui te ressemble",
+    "prompt": "🎬 Si notre relation était une scène de film, laquelle décrirait le mieux notre énergie actuelle ?",
+    "level": 1,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "d17",
+    "category": "decouverte",
+    "kind": "secret",
+    "title": "Le moment préféré",
+    "prompt": "🕰️ À quel moment de la journée préfères-tu passer du temps avec moi ? Choisissez en secret.",
+    "options": [
+      "Au réveil",
+      "Pendant la journée",
+      "En fin d’après-midi",
+      "Le soir, quand tout ralentit"
+    ],
+    "level": 1,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "d18",
+    "category": "decouverte",
+    "kind": "free",
+    "title": "Un souvenir à revivre",
+    "prompt": "📸 Quel moment récent aimerais-tu revivre exactement de la même façon avec moi ?",
+    "level": 1,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "d19",
+    "category": "decouverte",
+    "kind": "cross",
+    "title": "Deux souvenirs, une histoire",
+    "prompt": "💭 Le premier peut-il raconter un souvenir drôle ou touchant de votre histoire ? Le second peut-il dire ce qu’il en retient, lui aussi ?",
+    "level": 1,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "d20",
+    "category": "decouverte",
+    "kind": "free",
+    "title": "La surprise qui te ferait sourire",
+    "prompt": "🎁 Quelle petite surprise inattendue te ferait sourire cette semaine, même si elle ne coûte presque rien ?",
+    "level": 1,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "c12",
+    "category": "complicite",
+    "kind": "free",
+    "title": "Notre langage secret",
+    "prompt": "🤫 Quel geste, regard ou mot entre nous pourrait devenir notre petit code secret ?",
+    "level": 1,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "c13",
+    "category": "complicite",
+    "kind": "challenge",
+    "title": "Le compliment précis",
+    "prompt": "💞 Peux-tu me faire un compliment sur une qualité que je ne remarque probablement pas assez chez moi ?",
+    "level": 1,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "c14",
+    "category": "complicite",
+    "kind": "secret",
+    "title": "La soirée parfaite",
+    "prompt": "🍿 Quelle soirée vous ferait le plus de bien en ce moment ? Choisissez chacun en secret.",
+    "options": [
+      "Un film et des câlins",
+      "Une longue discussion",
+      "Un jeu et beaucoup de rires",
+      "Sortir découvrir un nouvel endroit"
+    ],
+    "level": 1,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "c15",
+    "category": "complicite",
+    "kind": "prediction",
+    "title": "Ce qui me fait rire",
+    "prompt": "😂 Devine ce qui me fait rire le plus facilement chez toi : une expression, une habitude ou une façon de parler ?",
+    "level": 1,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "c16",
+    "category": "complicite",
+    "kind": "cross",
+    "title": "Le petit rituel à inventer",
+    "prompt": "🫶 Le premier peut-il proposer un petit rituel à faire ensemble chaque semaine ? Le second peut-il l’améliorer avec une idée à lui ?",
+    "level": 1,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "c17",
+    "category": "complicite",
+    "kind": "free",
+    "title": "Le moment sans téléphone",
+    "prompt": "📵 Quel moment aimerais-tu qu’on protège davantage, juste pour être ensemble sans téléphone ni distraction ?",
+    "level": 1,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "c18",
+    "category": "complicite",
+    "kind": "challenge",
+    "title": "Une vérité tendre",
+    "prompt": "❤️ Peux-tu me dire une chose que tu apprécies chez moi mais que tu oublies souvent de formuler ?",
+    "level": 2,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "s07",
+    "category": "seduction",
+    "kind": "free",
+    "title": "Le détail irrésistible",
+    "prompt": "😉 Quel détail dans ma façon de parler ou de bouger te paraît particulièrement séduisant ?",
+    "level": 2,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "p10",
+    "category": "profondeur",
+    "kind": "free",
+    "title": "Le besoin derrière le désir",
+    "prompt": "🌙 Quand tu as envie de te rapprocher de moi, qu’est-ce que tu recherches le plus : du réconfort, de la passion, de la tendresse ou autre chose ?",
+    "level": 3,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "p11",
+    "category": "profondeur",
+    "kind": "secret",
+    "title": "La confiance intime",
+    "prompt": "🔐 Qu’est-ce qui te permet de te sentir pleinement en confiance quand une conversation devient très intime ? Choisissez en secret.",
+    "options": [
+      "Être écouté sans jugement",
+      "Pouvoir dire stop à tout moment",
+      "Recevoir des paroles rassurantes",
+      "Sentir que l’autre se livre aussi"
+    ],
+    "level": 3,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "p12",
+    "category": "profondeur",
+    "kind": "prediction",
+    "title": "Ce que tu n’oses pas demander",
+    "prompt": "🫀 Devine quelle attention intime j’aimerais recevoir plus souvent, mais que je n’ose pas toujours demander.",
+    "level": 3,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "p13",
+    "category": "profondeur",
+    "kind": "challenge",
+    "title": "Une envie à formuler",
+    "prompt": "💬 Peux-tu exprimer une envie que tu aimerais explorer avec moi, en précisant ce qui te mettrait à l’aise ?",
+    "level": 3,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "p14",
+    "category": "profondeur",
+    "kind": "cross",
+    "title": "Écouter avant de répondre",
+    "prompt": "🫂 Le premier peut-il nommer une limite importante pour lui dans l’intimité ? Le second peut-il reformuler ce qu’il a compris avant de partager sa propre limite ?",
+    "level": 3,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "p15",
+    "category": "profondeur",
+    "kind": "free",
+    "title": "Le rythme qui te convient",
+    "prompt": "⏳ Quand l’intimité monte entre nous, qu’est-ce qui t’aide à garder un rythme qui te convient vraiment ?",
+    "level": 3,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "p16",
+    "category": "profondeur",
+    "kind": "secret",
+    "title": "Ton terrain de confiance",
+    "prompt": "🕯️ Dans quel contexte te sentirais-tu le plus libre de parler de tes envies ? Choisissez en secret.",
+    "options": [
+      "Pendant une promenade",
+      "Dans un moment calme à la maison",
+      "Par messages avant de se retrouver",
+      "Après un moment de tendresse"
+    ],
+    "level": 3,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "p17",
+    "category": "profondeur",
+    "kind": "free",
+    "title": "Ce que tu veux mieux comprendre",
+    "prompt": "🧩 Quelle partie de mon rapport à l’intimité aimerais-tu mieux comprendre, sans supposer que tu connais déjà la réponse ?",
+    "level": 3,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "s08",
+    "category": "seduction",
+    "kind": "free",
+    "title": "La tension dans un regard",
+    "prompt": "👁️ Quel regard de ma part pourrait te faire comprendre que j’ai envie de te séduire sans prononcer un seul mot ?",
+    "level": 3,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "s09",
+    "category": "seduction",
+    "kind": "challenge",
+    "title": "La phrase qui trouble",
+    "prompt": "💋 Peux-tu me dire à voix basse une phrase de séduction assez audacieuse pour me faire rougir, tout en restant dans ce que j’aime ?",
+    "level": 3,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "s10",
+    "category": "seduction",
+    "kind": "secret",
+    "title": "Le geste qui attire",
+    "prompt": "🔥 Quel geste de séduction aimerais-tu que je prenne davantage le temps de faire ? Choisissez en secret.",
+    "options": [
+      "Un baiser qui dure",
+      "Une main posée à la taille",
+      "Un regard soutenu",
+      "Des mots murmurés tout près"
+    ],
+    "level": 3,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "a25",
+    "category": "audacieux",
+    "kind": "secret",
+    "title": "L’envie assumée",
+    "prompt": "😈 Quelle proposition te semblerait la plus excitante à explorer à deux, si vous en avez tous les deux envie ?",
+    "options": [
+      "Un jeu de séduction avec des règles",
+      "Une soirée où chacun révèle un fantasme léger",
+      "Un moment où l’on prend le temps de se découvrir",
+      "Une surprise préparée par l’autre"
+    ],
+    "level": 3,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "a26",
+    "category": "audacieux",
+    "kind": "free",
+    "title": "Le désir sans détour",
+    "prompt": "🌶️ Quelle envie sensuelle aimerais-tu me confier franchement, sans la transformer en défi ni te sentir obligé de la réaliser ?",
+    "level": 3,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "a27",
+    "category": "audacieux",
+    "kind": "challenge",
+    "title": "Oser demander",
+    "prompt": "🫦 Peux-tu me demander une attention sensuelle précise que tu aimerais recevoir, en me laissant totalement libre de répondre oui ou non ?",
+    "level": 3,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "a28",
+    "category": "audacieux",
+    "kind": "free",
+    "title": "Le scénario qui t’attire",
+    "prompt": "🔥 Quel scénario de séduction entre adultes consentants aimerais-tu imaginer avec moi, sans obligation de le vivre ?",
+    "level": 4,
+    "audience": "partner",
+    "visibility": "partagee"
+  },
+  {
+    "id": "a29",
+    "category": "audacieux",
+    "kind": "secret",
+    "title": "L’audace de la soirée",
+    "prompt": "🍒 Quelle ambiance te donnerait le plus envie de te laisser séduire ce soir ? Choisissez en secret.",
+    "options": [
+      "Lumière tamisée et musique lente",
+      "Une conversation très franche",
+      "Des baisers spontanés",
+      "Un jeu de défis sensuels"
+    ],
+    "level": 4,
+    "audience": "partner",
+    "visibility": "partagee"
   }
 ]
