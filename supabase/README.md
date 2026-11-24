@@ -62,3 +62,25 @@ cloisonnement des modes, revanche à quatre accords, parcours deux joueurs.
 ## Palier 1 — moteur de niveaux
 
 Après les migrations existantes, appliquer `11_game_levels.sql`, puis `12_level_consent_guard.sql` et `13_expand_balanced_catalog.sql`. Elles ajoutent les paliers au catalogue et aux salles, synchronisent les cartes sans vider la table, filtrent les cartes côté serveur et arrêtent une partie de palier 3–4 si un consentement 18+ est retiré. Elles sont additives et conservent les salles/réponses existantes.
+
+
+## Palier 2 — sessions et historique anti-répétition
+
+Après le palier 1, appliquer `14_session_question_history.sql`. La colonne
+`rooms.played_interaction_ids` conserve les identifiants déjà joués dans la salle.
+Chaque nouvelle partie filtre les cartes déjà consommées, pour Couple comme pour DUOS.
+Quand tout le pool correspondant au palier et aux catégories communes est épuisé,
+un nouveau cycle repart automatiquement. La reprise d'une partie en cours ne modifie
+ni l'ordre ni l'index : elle recharge toujours `rooms.interaction_ids` et
+`rooms.current_index`.
+
+La migration est additive et ne supprime aucune donnée. La recette locale couvre
+deux sessions successives sans recouvrement, puis la remise à zéro du cycle après
+épuisement du pool, dans les deux modes.
+
+**Limite de contenu à garder en tête :** le catalogue actuel contient 24 cartes par
+palier. Une partie peut donc consommer tout le pool d'un palier en une session si
+les catégories communes couvrent toutes ses cartes. Pour offrir plusieurs sessions
+complètes sans répétition, il faudra augmenter le catalogue au-delà de 24 cartes
+par palier. L'historique fonctionne déjà pour des pools plus larges et pour les
+sélections de catégories plus restreintes.
