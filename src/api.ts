@@ -8,9 +8,12 @@ async function rpc<T>(name: string, args: Record<string, unknown>): Promise<T> {
   if (error) throw new Error(error.message);
   return data as T;
 }
-type Joined = { room_id: string; player_id: string; player_token: string; mode?: "couple" | "duos" };
+type Joined = { room_id: string; player_id: string; player_token: string; mode?: "couple" | "duos"; room_kind?: "couple" | "custom" | "duos" };
 export const createRoom = (nickname: string, avatar: string) => rpc<Joined>("create_room", { p_nickname: nickname, p_avatar: avatar });
 export const joinRoom = (roomId: string, nickname: string, avatar: string) => rpc<Joined>("join_room_any", { p_room_id: roomId, p_nickname: nickname, p_avatar: avatar });
+/** Le type du salon est porté par la salle : un lien tronqué ne change plus le format joué. */
+export const setRoomKind = (r: string, t: string, kind: "couple" | "custom" | "duos") =>
+  rpc<boolean>("set_room_kind", { p_room_id: r, p_player_token: t, p_room_kind: kind });
 export async function getSnapshot(roomId: string, token: string): Promise<Snapshot> {
   const raw = await rpc<Omit<Snapshot, "interaction">>("get_room_snapshot", { p_room_id: roomId, p_player_token: token });
   return { ...raw, interaction: interactions.find(i => i.id === raw.interaction_id) ?? null };

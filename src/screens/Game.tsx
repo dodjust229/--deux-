@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import type { CSSProperties } from "react";
 import { Icon } from "../components/Icon";
 import { Stage } from "../components/Stage";
 import type { StagePlayer } from "../components/Stage";
@@ -105,17 +106,34 @@ export function Game({
   lang
 }: GameProps) {
   const [curtain, setCurtain] = useState<1 | 2 | 3 | 4 | null>(null);
+  const [justSent, setJustSent] = useState(false);
   const lastLevel = useRef<number | null>(null);
+  const lastAnswer = useRef<string | null>(null);
+  // Palier de SESSION (persistant, non décroissant), pas celui de la carte tirée :
+  // en mode Personnalisé le paquet mélange plusieurs paliers, et lire la carte
+  // faisait sauter l'affichage de 3 à 2 puis à 1.
+  const sessionLevel = (snap.room.level ?? interaction.level) as 1 | 2 | 3 | 4;
 
   useEffect(() => {
     const previous = lastLevel.current;
-    lastLevel.current = interaction.level;
-    if (previous === null || previous === interaction.level) return;
-    setCurtain(interaction.level);
+    lastLevel.current = sessionLevel;
+    if (previous === null || previous === sessionLevel) return;
+    setCurtain(sessionLevel);
     if (document.documentElement.dataset.motion !== "reduced") navigator.vibrate?.(28);
     const timer = window.setTimeout(() => setCurtain(null), 1800);
     return () => window.clearTimeout(timer);
-  }, [interaction.id, interaction.level]);
+  }, [interaction.id, sessionLevel]);
+  // Feedback de validation : la réponse vient d'être enregistrée.
+  useEffect(() => {
+    const previous = lastAnswer.current;
+    lastAnswer.current = snap.my_answer;
+    if (previous !== null || snap.my_answer === null) return;
+    setJustSent(true);
+    if (document.documentElement.dataset.motion !== "reduced") navigator.vibrate?.(14);
+    const timer = window.setTimeout(() => setJustSent(false), 1400);
+    return () => window.clearTimeout(timer);
+  }, [snap.my_answer]);
+
   const nameOf = (id: string) => snap.players.find((player) => player.id === id)?.nickname ?? "Joueur";
   const position = snap.room.current_index + 1;
   const progress = Math.min(100, Math.round((position / Math.max(1, snap.room.total)) * 100));
@@ -123,11 +141,11 @@ export function Game({
   const crossAnswer = interaction.kind === "cross" && snap.my_seat === 2 && snap.first_answer;
 
   return (
-    <main className="game">
+    <main className="game" data-level={sessionLevel}>
       {curtain && <LevelCurtain level={curtain} lang={lang} />}
       <header className="game__bar">
         <div className="game__progress" aria-label={lang === "en" ? `Question ${position} of ${snap.room.total}` : `Question ${position} sur ${snap.room.total}`}>
-          <span className="game__progress-track">
+          <span className="game__progress-track" data-level={sessionLevel}>
             <span className="game__progress-fill" style={{ width: `${progress}%` }} />
           </span>
           <span className="game__progress-label">
@@ -149,7 +167,7 @@ export function Game({
 
       <Stage scene={scene} me={me} other={other} size={215} />
 
-      <section className="prompt" key={interaction.id} aria-labelledby="prompt-title">
+      <section className="prompt" key={interaction.id} data-level={sessionLevel} aria-labelledby="prompt-title">
         <div className="prompt__meta">
           <span className={`tag tag--${interaction.category}`}>{categoryLabels[interaction.category]}</span>
           <span className="tag tag--ghost">{kindLabels[interaction.kind]}</span>
@@ -184,8 +202,12 @@ export function Game({
         <section className="reveal" aria-labelledby="reveal-title" data-testid="reveal">
           <h2 id="reveal-title" className="reveal__title">Vos réponses</h2>
           <div className="reveal__grid">
-            {snap.answers.map((answer) => (
-              <article key={answer.player_id} className="reveal__card">
+            {snap.answers.map((answer, index) => (
+              <article
+                key={answer.player_id}
+                className="reveal__card"
+                style={{ "--i": index } as CSSProperties}
+              >
                 <header>{nameOf(answer.player_id)}</header>
                 <AnswerBody
                   answer={answer}
@@ -213,6 +235,7 @@ export function Game({
         <Composer
           interaction={interaction}
           busy={busy}
+          justSent={justSent}
           alreadyAnswered={snap.my_answer != null}
           canSend={canSend}
           hint={hint}

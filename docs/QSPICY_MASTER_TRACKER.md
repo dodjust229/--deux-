@@ -3,7 +3,8 @@
 Dernière mise à jour : 24 novembre 2026  
 Dépôt : https://github.com/dodjust229/--deux-  
 Application : https://a-deux-jeu.onrender.com  
-Branche principale : `main`
+Branche principale : `main`  
+Branche en cours d'examen : `qspicy/test-invitation-personnalise` (invitations, paliers et modes, motion design et contenus explicites)
 
 ## Règle de reprise — éviter les audits en boucle
 
@@ -27,6 +28,113 @@ L'utilisateur ne peut pas joindre de fichiers dans cette conversation. Travaille
 | 5 | Confidentialité et photos personnelles depuis la galerie | Livré côté code et infrastructure | `docs/QSPICY_PALIER_5_REPRISE_IA.md` ; PR #21, #22, #23 fusionnées ; migration 18 et Edge Function déployées ; Render live. Recette photo multi-appareils restante. |
 | 6 | Musique et ambiance | Livré code et déployé | PR #24 fusionnée ; CI #45372319685 réussie ; Render `dep-dc2m65ss728c73b0u7c0` live. Recette audio réelle mobile/desktop restante. |
 | 7 | Tests globaux, bugs et stabilisation | Livré code et déployé | PR #25 fusionnée ; CI #45374406093 réussie, dont recette PostgreSQL 16 ; Render `dep-dc2mc1m7bikc7394161g` live. Recette terrain à deux/quatre appareils encore nécessaire. Voir `docs/QSPICY_PALIER_7_REPRISE_IA.md`. |
+| 8 | Finalisation du parcours d'invitation | Livré sur branche, PR #27 à examiner | Branche `qspicy/test-invitation-personnalise` ; migration 19 ; recettes E2E 13/13 + 6/6 et suite SQL complète au vert sur base neuve ; CI du 24/11 sur la PR #27 : succès. Voir ci-dessous. |
+| 9 | Motion design et contenus plus explicites | Livré sur branche, PR #27 à examiner | Branche `qspicy/test-invitation-personnalise` ; `src/styles/motion.css` et migration 21 ; 117 cartes réécrites ; suite SQL complète au vert, 41/41 tests front, `tsc -b` et build sans erreur. Voir ci-dessous. |
+
+## Palier 9 — motion design et contenus plus explicites
+
+Branche de travail : `qspicy/test-invitation-personnalise`. Aucune fusion dans `main`, aucun
+déploiement de production, aucune écriture sur la base Supabase de production.
+
+### Axe 1 — motion design
+
+Diagnostic : le jeu n'avait qu'une seule animation de carte (`card-up`, un simple
+`translateY`) et un rideau de niveau en fondu. Rien ne distinguait visuellement un palier 1
+d'un palier 4 : la montée d'intensité se lisait, elle ne se voyait pas.
+
+- **`src/styles/motion.css`** (nouvelle couche, importée en dernier) : tout est piloté par
+  `data-level` (1 à 4) posé sur `.game`, `.prompt`, la barre de progression et le rideau.
+  Un jeu de variables dérivées (`--heat`, `--heat-glow`, `--heat-ring`, `--heat-tint`,
+  `--heat-pulse`) fait chauffer le cadre, le liseré et le halo à mesure que le palier monte.
+- **Transitions de cartes** : entrée avec flou qui se résorbe, titre qui se pose après le
+  cadre, étiquettes en cascade, texte qui se révèle. Le regard est conduit au lieu de subir
+  une apparition sèche.
+- **Montée d'intensité visible** : la barre de progression chauffe avec le palier et un
+  reflet la traverse ; aux paliers 3–4 le cadre respire lentement (`heat-breathe`).
+- **Feedbacks de jeu** : révélation des réponses en cascade (`--i` par carte, nom du joueur
+  qui s'allume), validation d'envoi (`sent-pop` + vibration courte), rideau de niveau enrichi
+  (halo, titre animé, pips de palier).
+- **Micro-animations** : les émojis du compositeur sautent à l'insertion (`emoji-pop`),
+  survol et appui animés.
+- **Performance** : uniquement `transform`, `opacity` et `filter` — aucune propriété de
+  layout animée, donc aucun reflow pendant la partie.
+- **Accessibilité** : `:root[data-motion="reduced"]` neutralise toutes les animations ; le
+  rideau reste lisible (opacité 1) au lieu de devenir invisible. Vérifié en navigateur :
+  `animationName: none`, `curtainOpacity: 1`.
+
+### Axe 2 — contenus plus explicites
+
+Diagnostic : le banc de questions était inégal. Les paliers 3–4 contenaient des cartes
+formulées de façon générique (« Qu'est-ce qui t'aide le plus à lâcher prise ? ») qui ne
+disaient pas ce qu'elles voulaient dire, et la séduction de palier 2 restait allusive.
+
+- **117 cartes réécrites** (`scripts/rewrite-cards.mjs`) : paliers 3 et 4 en entier, plus la
+  séduction de palier 2. Les consignes sont désormais adressées directement, nomment le
+désir, et gardent l'émoji et la forme interrogative exigés par `scripts/sync-catalog.mjs`.
+- **Structure strictement conservée** : `id`, `category`, `kind`, `level`, `audience`,
+  `visibility` sont inchangés (vérifié : 192 cartes, mêmes identifiants, même structure).
+  Seuls `title`, `prompt` et `options` changent. Aucune recette existante n'est cassée.
+- **`supabase/02_catalog.sql` régénéré** et cohérence vérifiée (`catalog:check`, `cards:check`).
+
+### Axe 2 (suite) — le mode détermine réellement l'explicite
+
+Deux causes réelles, distinctes du palier, corrigées par
+**`supabase/21_explicit_content_floor.sql`** (additive, idempotente, appliquée après la 20) :
+
+1. **`start_custom_game` écrivait `selected_level = 2` en dur** (migration 16), quel que soit
+   le paquet lancé. Un salon Personnalisé composé de cartes de palier 4 se déclarait donc
+   « palier 2 » : le serveur croyait servir du contenu doux et `_sync_adult` ne protégeait
+   plus la partie comme il l'aurait dû. Le palier déclaré est maintenant celui du paquet
+   réellement servi.
+2. **Aucun plancher d'explicite n'existait.** On introduit `catalog.explicit_rank` (axe
+   d'explicite, distinct du palier : une carte audacieuse est un cran au-dessus à palier
+   égal) et `rooms.explicit_floor`, un plancher **strictement non décroissant** garanti par
+   le trigger `trg_rooms_explicit_floor`. `_effective_level` reçoit ce plancher : le palier
+   servi ne peut plus être rabaissé sous ce que la salle a déjà atteint.
+
+Recette dédiée : `supabase/tests/explicit_content_floor.sql` (axe d'explicite cohérent,
+plancher non décroissant, Personnalisé déclarant le palier du paquet, paquet doux ne
+relevant pas le plancher).
+
+### Résultats
+
+| Suite | Résultat |
+|---|---|
+| Recette SQL complète (`run_postgres.sh`) | **verte** |
+| dont Palier 7 sécurité | **OK** |
+| dont permissions d'invitation | **OK** |
+| dont intégrité paliers et modes | **OK** |
+| dont **plancher d'explicite (nouvelle)** | **OK** |
+| Tests unitaires front | **41/41** |
+| `tsc -b` | sans erreur |
+| `vite build` | sans erreur |
+| Rendu visuel (Chromium) | dégradé d'intensité, cascade, feedbacks, mouvement réduit vérifiés |
+
+### Reste à faire
+
+- Revue de la PR, puis recette terrain à deux/quatre appareils (inchangée).
+- Recette E2E navigateur (`invite.spec.mjs` / `invite_duos.spec.mjs`) non rejouée dans ce run.
+
+## Palier 8 — finalisation du parcours d'invitation
+
+Branche de travail : `qspicy/test-invitation-personnalise`. Aucune fusion dans `main`, aucun
+déploiement de production, aucune écriture sur la base Supabase de production.
+
+- **`join_room_any` versionné** (migration `19_invitation_finalisation.sql`). C'était le seul
+  point d'entrée utilisé par le client pour rejoindre une salle, mais il n'était défini dans
+  aucune migration : une base neuve construite à partir du dépôt refusait toute invitation, et
+  les recettes locales le recréaient par un adaptateur jetable. Le dispatcher est désormais
+  versionné (DUOS → `join_duo_room`, sinon → `join_room`) et renvoie `room_kind`.
+- **`get_custom_deck` corrigé** : il renvoyait `[]` pour les salons Personnalisés du moteur
+  catalogue (migration 16). Il renvoie maintenant la séquence réelle (`rooms.interaction_ids`).
+- **Type de salon porté par la salle** (`rooms.room_kind`) : un lien tronqué (sans `&mode=custom`)
+  ne fait plus arriver l'invité dans le mauvais format. `set_room_kind` réservé à l'hôte.
+- **Privilèges RPC resserrés** : API anonyme, `authenticated` sans droit d'exécution.
+- **Recettes** : `supabase/tests/invite_e2e/run.sh` (13/13 Personnalisé + 6/6 DUOS et lien
+  tronqué) et `supabase/tests/run_postgres.sh` (21/21, 10/10, 9/9, Palier 7 OK, permissions
+  d'invitation OK) tournent sur une base construite uniquement à partir des migrations, sans
+  adaptateur de test. `run_postgres.sh` recrée désormais sa base à chaque exécution.
+- **Reste à faire** : revue de la PR, puis recette terrain à deux/quatre appareils (inchangée).
 
 ## Palier 7 — stabilisation finale
 - Correctif de course réseau : les réponses tardives d'une ancienne salle ne peuvent plus écraser la session courante ; isolation par salle/jeton/mode.
@@ -75,6 +183,27 @@ L'utilisateur ne peut pas joindre de fichiers dans cette conversation. Travaille
 - Edge Function `qspicy-room-media` : ACTIVE, version 1.
 - Bucket `qspicy-private-media` : privé, JPEG uniquement, 5 Mo maximum.
 - Le dossier Palier 5 précise les limites de nettoyage après fermeture brutale de tous les navigateurs.
+
+## Correctif paliers et modes (24/11/2026)
+
+Trois défauts constatés en jouant, corrigés dans `supabase/20_level_and_mode_integrity.sql`
+(additive, idempotente, appliquée après la 17 dont elle conserve toutes les règles).
+
+- **La progression régressait.** L'interface lisait le palier de la carte tirée
+  (`interaction.level`) au lieu du palier de session. Sans carte active l'affichage
+  retombait à 1 ; en mode Personnalisé (paquet multi-paliers) il sautait de 3 à 2 puis à 1.
+  `rooms.current_level` est désormais un palier de session persistant, strictement non
+  décroissant (trigger `trg_rooms_current_level`), exposé au client via `get_room_snapshot`.
+- **« Pas d'option disponible » en choisissant Audacieux.** Les cartes `audacieux`
+  n'existent qu'aux paliers 3–4 (13 + 28, aucune aux paliers 1–2). `_effective_level`
+  relève le palier au minimum nécessaire pour servir le mode choisi, sans jamais le
+  rabaisser ni relever un palier qui a déjà des cartes.
+- **L'intensité était rabaissée.** `restart_game` effaçait l'accord 18+ de tous les
+  joueurs ; `_advance` sautait alors les cartes `audacieux`. L'accord est conservé d'une
+  partie à l'autre (toujours révocable via `set_adult_consent`) et le palier ne recule plus.
+
+Recette dédiée : `supabase/tests/level_and_mode_integrity.sql`. Suite SQL complète verte,
+41/41 tests front, `tsc -b` sans erreur, CI GitHub verte (run 45397972009).
 
 ## Conventions techniques
 

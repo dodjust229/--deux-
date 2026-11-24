@@ -22,6 +22,7 @@ import {
   sendDuoMessage,
   restartDuoGame,
   setRoomMediaPermission,
+  setRoomKind,
   clearRoomPhotos,
   cleanupExpiredRoomPhotos
 } from "./api";
@@ -339,10 +340,19 @@ export default function App() {
       const result = mode === "create" ? (entry?.gameMode === "duos" ? await createDuoRoom(name, persona) : await createRoom(name, persona)) : await joinRoom(roomId, name, persona);
       if (mode === "create") {
         await setPlayerCategories(result.room_id, result.player_token, [selected[0] ?? "decouverte"]);
+        // Le type du salon est enregistré côté serveur : l'invité le reçoit avec son adhésion,
+        // même si le lien a perdu son paramètre &mode=.
+        if (entry?.gameMode === "custom") {
+          await setRoomKind(result.room_id, result.player_token, "custom");
+        }
       }
-      // Le salon Personnalisé utilise la salle à deux du serveur : on garde le mode choisi
-      // à l'écran, sinon un invité retomberait sur le lobby du catalogue.
-      const gameMode: GameMode = entry?.gameMode === "custom" ? "custom" : (result.mode ?? entry?.gameMode ?? "couple");
+      // Le type vient du serveur en priorité ; le paramètre du lien ne sert que de repli
+      // pour une salle créée avant la migration 19.
+      const serverKind = result.room_kind ?? (result.mode === "duos" ? "duos" : undefined);
+      const gameMode: GameMode = serverKind === "duos" ? "duos"
+        : serverKind === "custom" ? "custom"
+        : entry?.gameMode === "custom" ? "custom"
+        : (result.mode ?? entry?.gameMode ?? "couple");
       const nextIdentity: Identity = { roomId: result.room_id, token: result.player_token, nickname: name, avatar: persona, gameMode };
       saveIdentity(nextIdentity);
       activeSession.current = sessionFingerprint(nextIdentity);
@@ -512,7 +522,7 @@ export default function App() {
       {snapshot && (
         <SalonAmbiance
           salon={identity?.gameMode === "duos" ? "duos" : "couple"}
-          level={(snapshot.interaction?.level ?? 1) as 1 | 2 | 3 | 4}
+          level={(snapshot.room.level ?? snapshot.interaction?.level ?? 1) as 1 | 2 | 3 | 4}
           paused={snapshot.room.status === "paused"}
           waiting={Boolean(snapshot.my_answer && !snapshot.revealed)}
         />

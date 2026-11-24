@@ -27,6 +27,10 @@ def room_pair(a,b):
     return rid,ht,guest["player_token"]
 sql("truncate public.rate_events;")
 rid,host,guest=room_pair("Hote3","Invite3")
+# The chosen catalog fixture cards all belong to profondeur; select that interest
+# for both participants before testing consent and the canonical custom engine.
+rpc("set_player_categories",f"'{rid}','{host}',array['profondeur']::text[]")
+rpc("set_player_categories",f"'{rid}','{guest}',array['profondeur']::text[]")
 ids="array['p04','p03','p01','p02','p05']::text[]"
 check("l'invité ne peut pas lancer le mode personnalisé",expect("start_custom_game",f"'{rid}','{guest}',{ids}","E_HOST"))
 check("un identifiant hors catalogue est rejeté",expect("start_custom_game",f"'{rid}','{host}',array['perso-1','p03','p01','p02','p05']::text[]","E_CUSTOM"))

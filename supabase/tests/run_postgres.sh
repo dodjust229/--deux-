@@ -5,8 +5,18 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$ROOT"
 
 DB="${TEST_DB:-qspicy_test}"
-if [[ ! "$DB" =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]]; then
-  echo "TEST_DB doit être un nom PostgreSQL simple." >&2
+if [[ ! "$DB" =~ ^(qspicy_test|qspicy_invite_e2e)(_[A-Za-z0-9_]+)?$ ]]; then
+  echo "TEST_DB doit utiliser le préfixe réservé qspicy_test ou qspicy_invite_e2e." >&2
+  exit 2
+fi
+for host in "${PGHOST:-}" "${PGHOSTADDR:-}"; do
+  if [[ -n "$host" && "$host" != "localhost" && "$host" != "127.0.0.1" && "$host" != "::1" ]]; then
+    echo "Connexion PostgreSQL distante interdite pour cette recette (hôte: $host)." >&2
+    exit 2
+  fi
+done
+if [[ -n "${PGSERVICE:-}" || -n "${PGSERVICEFILE:-}" ]]; then
+  echo "Les profils PG service sont interdits pour éviter une cible de base inattendue." >&2
   exit 2
 fi
 
@@ -45,6 +55,11 @@ SQL
 if ! "${PSQL[@]}" -d postgres -Atqc "SELECT 1 FROM pg_database WHERE datname = '$DB'" | grep -q 1; then
   "${CREATEDB[@]}" "$DB"
 fi
+
+# Base recréée à chaque exécution : les recettes doivent tourner sur une base construite
+# uniquement à partir des migrations du dépôt, jamais sur un état laissé par un run précédent.
+"${PSQL[@]}" -d postgres -c "DROP DATABASE IF EXISTS \"$DB\" WITH (FORCE);" >/dev/null
+"${CREATEDB[@]}" "$DB"
 
 "${PSQL[@]}" -d "$DB" <<'SQL'
 CREATE SCHEMA IF NOT EXISTS storage;
@@ -101,29 +116,78 @@ SQL
 echo "Running level engine integration recipe"
 "${PSQL[@]}" -d "$DB" -f supabase/tests/level_engine.sql
 
-echo "Applying test-only join_room_any shim"
-"${PSQL[@]}" -d "$DB" -f supabase/tests/bootstrap_custom_room.sql
-
-echo "Running legacy custom-room integration recipe"
-python3 supabase/tests/custom_room.py
-
 echo "Applying catalog-backed custom engine"
 "${PSQL[@]}" -d "$DB" -f supabase/16_custom_catalog_engine.sql
-
-echo "Running catalog-backed custom-engine integration recipe"
-python3 supabase/tests/custom_catalog_engine.py
 
 echo "Applying Palier 4 invitation and permissions rules"
 "${PSQL[@]}" -d "$DB" -f supabase/17_invitation_permissions.sql
 
+echo "Applying Palier 5 private gallery photo rules"
+"${PSQL[@]}" -d "$DB" -f "supabase/18_room_photo_sharing.sql"
+
+# Simule une ancienne salle Personnalisé créée avant l'existence de room_kind.
+"${PSQL[@]}" -d "$DB" <<'SQL'
+INSERT INTO public.rooms (id, mode, status, custom_deck, interaction_ids)
+VALUES ('00000000-0000-4000-8000-000000000019', 'couple', 'waiting',
+        '["Question personnalisée legacy"]'::jsonb, ARRAY['perso-1']);
+SQL
+
+echo "Applying invitation finalisation (after 16, 17 and 18)"
+"${PSQL[@]}" -d "$DB" -f "supabase/19_invitation_finalisation.sql"
+
+# Isolate rate-limit counters between independent integration recipes.
+"${PSQL[@]}" -d "$DB" -c "TRUNCATE public.rate_events"
+
+echo "Running catalog-backed custom-engine integration recipe"
+python3 supabase/tests/custom_catalog_engine.py
+
+# The pre-catalog custom_room.py exercises the retired JSONB RPC signature.
+# The canonical catalog engine and invitation recipes below cover the supported flow.
+
+
+# La migration doit reconnaître le deck historique et le préserver en Personnalisé.
+"${PSQL[@]}" -d "$DB" <<'SQL'
+DO $legacy$
+BEGIN
+  IF (SELECT room_kind FROM public.rooms
+       WHERE id = '00000000-0000-4000-8000-000000000019') IS DISTINCT FROM 'custom' THEN
+    RAISE EXCEPTION 'La migration 19 a mal classé une ancienne salle Personnalisé';
+  END IF;
+END
+$legacy$;
+DELETE FROM public.rooms WHERE id = '00000000-0000-4000-8000-000000000019';
+SQL
+
+# Isolate rate-limit counters between independent integration recipes.
+"${PSQL[@]}" -d "$DB" -c "TRUNCATE public.rate_events"
+
 echo "Running Palier 4 invitation and permissions integration recipe"
 python3 supabase/tests/palier4_invitation_permissions.py
 
-echo "Applying Palier 5 private gallery photo rules"
-"${PSQL[@]}" -d "$DB" -f "supabase/18_room_photo_sharing.sql"
+echo "Applying level and mode integrity fix (after 19)"
+"${PSQL[@]}" -d "$DB" -f supabase/20_level_and_mode_integrity.sql
+
+echo "Re-running level engine recipe against the final schema"
+"${PSQL[@]}" -d "$DB" -f supabase/tests/level_engine.sql
+
 
 echo "Running Palier 5 private gallery photo integration recipe"
 "${PSQL[@]}" -d "$DB" -f "supabase/tests/photo_sharing.sql"
 
 echo "Running Palier 7 security and privacy regression recipe"
 "${PSQL[@]}" -d "$DB" -f "supabase/tests/palier7_security_regression.sql"
+
+# Isolate rate-limit counters between independent integration recipes.
+"${PSQL[@]}" -d "$DB" -c "TRUNCATE public.rate_events"
+
+echo "Running invitation permissions and dispatcher recipe"
+"${PSQL[@]}" -d "$DB" -f "supabase/tests/invitation_permissions.sql"
+
+echo "Running level and mode integrity recipe"
+"${PSQL[@]}" -d "$DB" -f "supabase/tests/level_and_mode_integrity.sql"
+
+echo "Applying explicit content floor fix (must run after 20)"
+"${PSQL[@]}" -d "$DB" -f "supabase/21_explicit_content_floor.sql"
+
+echo "Running explicit content floor recipe"
+"${PSQL[@]}" -d "$DB" -f "supabase/tests/explicit_content_floor.sql"

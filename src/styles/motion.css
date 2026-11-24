@@ -1,0 +1,441 @@
+/* ============================================================================
+   QSPICY · motion.css — couche d'animation du jeu.
+   Objectif : que la montée d'intensité se VOIE, pas seulement qu'elle se lise.
+   Tout est piloté par data-level (1 à 4) posé sur .game, .prompt, la barre de
+   progression et le rideau de niveau. Uniquement transform / opacity / filter :
+   aucune propriété de layout n'est animée, donc aucun reflow pendant la partie.
+   Respecte :root[data-motion="reduced"] (base.css neutralise tout).
+   ========================================================================== */
+
+/* ---------- 1. Intensité par palier : variables dérivées ---------- */
+.game,
+.prompt,
+.curtain {
+  --heat: 0;
+  --heat-glow: rgba(217, 160, 91, 0.16);
+  --heat-ring: rgba(217, 160, 91, 0.28);
+  --heat-tint: rgba(217, 160, 91, 0.05);
+  --heat-pulse: 0s;
+}
+
+.game[data-level="1"],
+.prompt[data-level="1"],
+.curtain[data-level="1"] {
+  --heat: 0.15;
+  --heat-glow: rgba(217, 160, 91, 0.14);
+  --heat-ring: rgba(217, 160, 91, 0.24);
+  --heat-tint: rgba(217, 160, 91, 0.04);
+}
+
+.game[data-level="2"],
+.prompt[data-level="2"],
+.curtain[data-level="2"] {
+  --heat: 0.4;
+  --heat-glow: rgba(232, 180, 115, 0.2);
+  --heat-ring: rgba(232, 180, 115, 0.34);
+  --heat-tint: rgba(232, 180, 115, 0.06);
+}
+
+.game[data-level="3"],
+.prompt[data-level="3"],
+.curtain[data-level="3"] {
+  --heat: 0.7;
+  --heat-glow: rgba(227, 59, 78, 0.22);
+  --heat-ring: rgba(227, 59, 78, 0.4);
+  --heat-tint: rgba(227, 59, 78, 0.07);
+  --heat-pulse: 4.2s;
+}
+
+.game[data-level="4"],
+.prompt[data-level="4"],
+.curtain[data-level="4"] {
+  --heat: 1;
+  --heat-glow: rgba(227, 59, 78, 0.3);
+  --heat-ring: rgba(227, 59, 78, 0.55);
+  --heat-tint: rgba(227, 59, 78, 0.1);
+  --heat-pulse: 2.8s;
+}
+
+/* ---------- 2. Transition entre les cartes ---------- */
+/* La carte entre en montant, avec un léger flou qui se résorbe : le regard
+   est conduit vers le texte au lieu de le voir apparaître d'un coup. */
+.prompt {
+  position: relative;
+  isolation: isolate;
+  animation: card-enter 0.62s var(--ease) both;
+}
+
+.prompt::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: -1;
+  background: radial-gradient(
+    120% 90% at 50% 0%,
+    var(--heat-glow),
+    transparent 62%
+  );
+  opacity: calc(0.35 + var(--heat) * 0.65);
+  transition: opacity 0.6s var(--ease);
+}
+
+/* Liseré chaud qui s'allume avec le palier. */
+.prompt::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1px var(--heat-ring);
+  opacity: calc(0.25 + var(--heat) * 0.75);
+  transition: opacity 0.6s var(--ease), box-shadow 0.6s var(--ease);
+}
+
+@keyframes card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(22px) scale(0.985);
+    filter: blur(6px);
+  }
+  60% {
+    filter: blur(0);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+/* Le titre de la carte se pose une demi-seconde après le cadre. */
+.prompt h1 {
+  animation: title-settle 0.7s var(--ease) 0.08s both;
+}
+
+@keyframes title-settle {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+    letter-spacing: 0.02em;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    letter-spacing: normal;
+  }
+}
+
+/* Les étiquettes (catégorie, format, palier) arrivent en cascade. */
+.prompt__meta .tag {
+  animation: tag-in 0.45s var(--ease) both;
+}
+
+.prompt__meta .tag:nth-child(1) { animation-delay: 0.02s; }
+.prompt__meta .tag:nth-child(2) { animation-delay: 0.08s; }
+.prompt__meta .tag:nth-child(3) { animation-delay: 0.14s; }
+
+@keyframes tag-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Le texte de la question se révèle ligne à ligne, du haut vers le bas. */
+.prompt__text {
+  animation: text-reveal 0.8s var(--ease) 0.12s both;
+}
+
+@keyframes text-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------- 3. Barre de progression : elle chauffe avec le palier ---------- */
+.game__progress-track {
+  position: relative;
+  transition: box-shadow 0.6s var(--ease);
+  box-shadow: 0 0 0 1px var(--heat-ring);
+}
+
+.game__progress-fill {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(
+    90deg,
+    var(--copper),
+    color-mix(in srgb, var(--pepper) calc(40% + var(--heat) * 60%), var(--copper))
+  );
+}
+
+/* Un reflet traverse la barre quand elle avance : le mouvement se voit. */
+.game__progress-fill::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.55) 50%,
+    transparent 80%
+  );
+  transform: translateX(-100%);
+  animation: progress-sheen 2.6s var(--ease) infinite;
+  animation-play-state: running;
+}
+
+@keyframes progress-sheen {
+  0% { transform: translateX(-100%); }
+  55%, 100% { transform: translateX(100%); }
+}
+
+/* ---------- 4. Révélation des réponses en cascade ---------- */
+.reveal {
+  animation: reveal-panel 0.5s var(--ease) both;
+}
+
+@keyframes reveal-panel {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.reveal__card {
+  animation: reveal-card 0.55s var(--ease) both;
+  animation-delay: calc(var(--i, 0) * 0.12s + 0.1s);
+}
+
+@keyframes reveal-card {
+  from {
+    opacity: 0;
+    transform: translateY(16px) rotateX(-6deg);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) rotateX(0);
+    filter: blur(0);
+  }
+}
+
+/* Le nom du joueur s'allume brièvement : on sait à qui on lit la réponse. */
+.reveal__card header {
+  animation: name-flash 1.1s var(--ease) both;
+  animation-delay: calc(var(--i, 0) * 0.12s + 0.25s);
+}
+
+@keyframes name-flash {
+  0% { opacity: 0; }
+  35% { opacity: 1; color: var(--gold); }
+  100% { opacity: 1; color: var(--copper); }
+}
+
+/* ---------- 5. Feedback de validation d'envoi ---------- */
+.composer--locked.is-just-sent {
+  animation: sent-pop 0.5s var(--ease) both;
+}
+
+@keyframes sent-pop {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(240, 192, 106, 0.5);
+  }
+  40% {
+    transform: scale(1.012);
+    box-shadow: 0 0 0 6px rgba(240, 192, 106, 0.16);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(240, 192, 106, 0);
+  }
+}
+
+.composer--locked.is-just-sent .composer__locked {
+  animation: check-in 0.45s var(--ease) both;
+}
+
+@keyframes check-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------- 6. Micro-animations des émojis ---------- */
+.emoji {
+  transition: transform 0.18s var(--ease), border-color 0.18s var(--ease),
+    background 0.18s var(--ease);
+}
+
+.emoji:hover:not(:disabled) {
+  transform: translateY(-2px) scale(1.06);
+}
+
+.emoji:active:not(:disabled) {
+  transform: scale(0.92);
+}
+
+.emoji.is-popped {
+  animation: emoji-pop 0.42s var(--ease) both;
+}
+
+@keyframes emoji-pop {
+  0% { transform: scale(1); }
+  35% { transform: scale(1.28) rotate(-6deg); }
+  65% { transform: scale(0.96) rotate(3deg); }
+  100% { transform: scale(1) rotate(0); }
+}
+
+/* ---------- 7. Rideau de passage de niveau ---------- */
+.curtain {
+  overflow: hidden;
+}
+
+.curtain__halo {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(70vmin, 520px);
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--heat-glow), transparent 68%);
+  animation: halo-breathe 1.8s var(--ease) both;
+  pointer-events: none;
+}
+
+@keyframes halo-breathe {
+  0% {
+    opacity: 0;
+    transform: scale(0.55);
+  }
+  45% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0.35;
+    transform: scale(1.18);
+  }
+}
+
+.curtain strong {
+  animation: curtain-title 1.8s var(--ease) both;
+}
+
+@keyframes curtain-title {
+  0% {
+    opacity: 0;
+    transform: translateY(14px) scale(0.96);
+    filter: blur(8px);
+  }
+  30%, 70% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-6px) scale(1.02);
+    filter: blur(2px);
+  }
+}
+
+.curtain__pips {
+  display: inline-flex;
+  gap: 7px;
+  justify-content: center;
+  margin-top: 6px;
+}
+
+.curtain__pips i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(247, 237, 227, 0.22);
+  transition: background 0.3s var(--ease), transform 0.3s var(--ease);
+}
+
+.curtain__pips i.is-on {
+  background: var(--gold);
+  transform: scale(1.15);
+  animation: pip-light 0.5s var(--ease) both;
+}
+
+.curtain__pips i.is-on:nth-child(2) { animation-delay: 0.08s; }
+.curtain__pips i.is-on:nth-child(3) { animation-delay: 0.16s; }
+.curtain__pips i.is-on:nth-child(4) { animation-delay: 0.24s; }
+
+@keyframes pip-light {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+/* ---------- 8. Pulsation d'intensité aux paliers hauts ---------- */
+/* Aux paliers 3 et 4, le cadre respire lentement : la tension se sent. */
+.game[data-level="3"] .prompt::before,
+.game[data-level="4"] .prompt::before {
+  animation: heat-breathe var(--heat-pulse) ease-in-out infinite;
+}
+
+@keyframes heat-breathe {
+  0%, 100% { opacity: calc(0.35 + var(--heat) * 0.45); }
+  50% { opacity: calc(0.55 + var(--heat) * 0.45); }
+}
+
+/* ---------- 9. Respect strict du mouvement réduit ---------- */
+:root[data-motion="reduced"] .prompt,
+:root[data-motion="reduced"] .prompt h1,
+:root[data-motion="reduced"] .prompt__text,
+:root[data-motion="reduced"] .prompt__meta .tag,
+:root[data-motion="reduced"] .reveal,
+:root[data-motion="reduced"] .reveal__card,
+:root[data-motion="reduced"] .reveal__card header,
+:root[data-motion="reduced"] .composer--locked.is-just-sent,
+:root[data-motion="reduced"] .composer--locked.is-just-sent .composer__locked,
+:root[data-motion="reduced"] .emoji.is-popped,
+:root[data-motion="reduced"] .curtain strong,
+:root[data-motion="reduced"] .curtain__halo,
+:root[data-motion="reduced"] .curtain__pips i.is-on,
+:root[data-motion="reduced"] .game__progress-fill::after,
+:root[data-motion="reduced"] .game[data-level="3"] .prompt::before,
+:root[data-motion="reduced"] .game[data-level="4"] .prompt::before {
+  animation: none !important;
+}
+
+:root[data-motion="reduced"] .game__progress-fill::after {
+  display: none;
+}
+
+/* Le rideau reste lisible sans animation : il ne doit pas devenir invisible. */
+:root[data-motion="reduced"] .curtain {
+  animation: none !important;
+  opacity: 1;
+}
