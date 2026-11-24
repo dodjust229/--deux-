@@ -580,7 +580,7 @@
     "category": "seduction",
     "kind": "challenge",
     "title": "Le murmure",
-    "prompt": "🤫 Approche-toi et murmure à mon oreille une phrase que tu n'oserais pas dire devant les autres. Tu peux aussi l'écrire si tu préfères.",
+    "prompt": "🤫 Peux-tu t’approcher et me murmurer à l’oreille une phrase que tu n’oserais pas dire devant les autres ? Tu peux aussi me l’écrire si tu préfères.",
     "level": 4,
     "audience": "partner",
     "visibility": "partagee"
@@ -626,7 +626,7 @@
     "category": "profondeur",
     "kind": "cross",
     "title": "Une envie, deux versions",
-    "prompt": "🔥 Le premier décrit une envie qu'il aimerait partager avec l'autre en trois phrases. Le second dit ce qui lui plaît dans cette idée et ce qu'il changerait. Chacun peut passer.",
+    "prompt": "🔥 Êtes-vous prêts à ce que le premier décrive en trois phrases une envie qu’il aimerait partager, puis que le second dise ce qui lui plaît dans cette idée et ce qu’il changerait ? Chacun peut passer.",
     "level": 4,
     "audience": "partner",
     "visibility": "partagee"
@@ -646,7 +646,7 @@
     "category": "seduction",
     "kind": "challenge",
     "title": "Le regard qui insiste",
-    "prompt": "👀 Pendant dix secondes, regarde-moi comme si tu avais quelque chose de très osé à me dire. Ensuite, dis ce qui te traversait l'esprit. Aucun contact n'est imposé.",
+    "prompt": "👀 Peux-tu me regarder dix secondes comme si tu avais quelque chose de très osé à me dire, puis m’expliquer ce qui te traversait l’esprit ? Aucun contact n’est imposé.",
     "level": 4,
     "audience": "partner",
     "visibility": "partagee"
@@ -692,7 +692,7 @@
     "category": "seduction",
     "kind": "challenge",
     "title": "Le compliment sans filtre",
-    "prompt": "🔥 Fais-moi un compliment physique très précis, sans formule toute faite. Dis exactement ce qui t'attire chez moi.",
+    "prompt": "🔥 Peux-tu me faire un compliment physique très précis, sans formule toute faite, en me disant exactement ce qui t’attire chez moi ?",
     "level": 4,
     "audience": "partner",
     "visibility": "partagee"
