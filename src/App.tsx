@@ -22,7 +22,8 @@ import {
   sendDuoMessage,
   restartDuoGame,
   setRoomMediaPermission,
-  clearRoomPhotos
+  clearRoomPhotos,
+  cleanupExpiredRoomPhotos
 } from "./api";
 import { extractRoomId, getSelectedInterests, parseError } from "./lib/protocol";
 import { deriveScene } from "./lib/scene";
@@ -157,6 +158,10 @@ export default function App() {
     if (systemReduced && !prefs.reducedMotion) document.documentElement.dataset.motion = "reduced";
     writePreferences(storage(), prefs);
   }, [prefs, systemReduced]);
+
+  useEffect(() => {
+    void cleanupExpiredRoomPhotos().catch(() => undefined);
+  }, []);
 
   /* ---------- Session ---------- */
   const dropSession = useCallback((message: string) => {
