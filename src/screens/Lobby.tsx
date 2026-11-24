@@ -5,7 +5,7 @@ import type { Lang } from "../lib/i18n";
 import { Stage } from "../components/Stage";
 import type { StagePlayer } from "../components/Stage";
 import type { Scene } from "../lib/scene";
-import type { Category, Player } from "../types";
+import type { Category, Interaction, Player } from "../types";
 import { categoryLabels, categoryDescriptions } from "../content";
 
 const CATEGORIES: Category[] = ["decouverte", "complicite", "profondeur", "seduction", "audacieux"];
@@ -36,9 +36,8 @@ interface LobbyProps {
   lang?: Lang;
   /** « custom » remplace les ambiances par l'écriture des questions. */
   kind?: "couple" | "custom";
-  customQuestions?: string[];
-  onCustomQuestions?: (next: string[]) => void;
-  onLaunchCustom?: () => void;
+  customCatalog: readonly Interaction[];
+  onLaunchCustom?: (questions: string[]) => void;
   customError?: string;
   isHost?: boolean;
   gameLevel?: 1 | 2 | 3 | 4;
@@ -64,8 +63,7 @@ export function Lobby({
   excluded = [],
   lang = "fr",
   kind = "couple",
-  customQuestions = [],
-  onCustomQuestions,
+  customCatalog,
   onLaunchCustom,
   customError,
   isHost = true,
@@ -133,8 +131,7 @@ export function Lobby({
           {custom ? (
             <CustomQuestions
               lang={lang}
-              questions={customQuestions}
-              onChange={onCustomQuestions ?? (() => {})}
+              catalog={customCatalog}
               onLaunch={onLaunchCustom ?? (() => {})}
               isHost={isHost}
               partnerHere={bothPresent}
