@@ -157,6 +157,10 @@ begin
   if jsonb_array_length(state->'items') <> 0 then
     raise exception 'Group photo remained visible while cross participation was withdrawn';
   end if;
+  state := public.qspicy_media_list(room,p2->>'player_token');
+  if jsonb_array_length(state->'items') <> 1 then
+    raise exception 'Own-duo photo was hidden when another player withdrew cross participation';
+  end if;
   perform public.set_duo_permissions(room,token3,true,true,false);
   state := public.qspicy_media_list(room,token4);
   if jsonb_array_length(state->'items') <> 1 then
