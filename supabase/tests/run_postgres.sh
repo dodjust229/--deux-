@@ -94,11 +94,16 @@ echo "Checking level-aware catalog and RPCs"
 "${PSQL[@]}" -d "$DB" <<'SQL'
 DO $qspicy$
 BEGIN
-  IF (SELECT count(*) FROM public.catalog) <> 192 THEN
-    RAISE EXCEPTION 'Expected 192 catalog cards after level migration';
+  IF (SELECT count(*) FROM public.catalog) <> 220 THEN
+    RAISE EXCEPTION 'Expected 220 catalogue V2 cards';
   END IF;
-  IF EXISTS (SELECT 1 FROM public.catalog GROUP BY level HAVING count(*) <> 48) THEN
-    RAISE EXCEPTION 'Expected exactly 48 cards in each game level';
+  IF EXISTS (SELECT 1 FROM (VALUES (1,52),(2,53),(3,54),(4,61)) expected(level,total)
+             WHERE (SELECT count(*) FROM public.catalog c WHERE c.level=expected.level) <> expected.total) THEN
+    RAISE EXCEPTION 'Unexpected technical level distribution in catalogue V2';
+  END IF;
+  IF EXISTS (SELECT 1 FROM (VALUES (1,52),(2,53),(3,49),(4,32),(5,34)) expected(intensity,total)
+             WHERE (SELECT count(*) FROM public.catalog c WHERE c.intensity=expected.intensity) <> expected.total) THEN
+    RAISE EXCEPTION 'Unexpected editorial intensity distribution in catalogue V2';
   END IF;
   IF (SELECT count(DISTINCT level) FROM public.catalog) <> 4 THEN
     RAISE EXCEPTION 'Expected all four game levels in catalog';
@@ -191,6 +196,21 @@ echo "Applying explicit content floor fix (must run after 20)"
 
 echo "Running explicit content floor recipe"
 "${PSQL[@]}" -d "$DB" -f "supabase/tests/explicit_content_floor.sql"
+
+echo "Replacing active catalogue with the 220-card master V2"
+"${PSQL[@]}" -d "$DB" -f "supabase/22_catalogue_maitre_v2.sql"
+"${PSQL[@]}" -d "$DB" <<'SQL'
+DO $catalogue$
+BEGIN
+  IF (SELECT count(*) FROM public.catalog) <> 220 THEN
+    RAISE EXCEPTION 'Catalogue V2 incomplet';
+  END IF;
+  IF EXISTS (SELECT 1 FROM public.catalog WHERE intensity NOT BETWEEN 1 AND 5 OR explicit_rank <> least(4,intensity)) THEN
+    RAISE EXCEPTION 'Intensité ou explicite incohérent';
+  END IF;
+END
+$catalogue$;
+SQL
 
 # Re-run the multi-interest custom flow after migration 21, which replaces start_custom_game.
 "${PSQL[@]}" -d "$DB" -c "TRUNCATE public.rate_events"
