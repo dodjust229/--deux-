@@ -1,9 +1,9 @@
 # QSPICY — dossier de reprise IA · Palier 2
 
 Date : 24 novembre 2026  
-Branche de travail : `qspicy/palier-2-session-history`  
-Base : `main`, après la fusion de la PR #16  
-État : implémentation SQL + recette + interface/documentation préparées ; CI et déploiement restent à confirmer.
+Travail historique fusionné par la PR #17 ; extension du catalogue préparée sur `qspicy/palier-2-catalog-expansion`.  
+Base : `main` après la PR #17.  
+État : moteur d'historique fusionné et migration 14 appliquée en production ; migration 15 + catalogue 192 cartes en attente de CI, fusion et application.
 
 ## Objectif du palier 2
 
@@ -24,28 +24,32 @@ Base : `main`, après la fusion de la PR #16
    - Les droits restent limités à `anon`, comme les fonctions existantes ; `public` et `authenticated` sont révoqués.
 
 2. `supabase/tests/level_engine.sql`
-   - Ajoute des tests d'intégration Couple et DUOS : premier tirage, deuxième tirage sans recouvrement, puis renouvellement après épuisement.
+   - Ajoute des tests d'intégration Couple et DUOS : deux sessions complètes de 24 cartes sans recouvrement, le reliquat de deux cartes, puis renouvellement après épuisement.
    - Les cartes temporaires `t98` et `t99` sont supprimées à la fin du test.
 
 3. `supabase/tests/run_postgres.sh`
-   - Ajoute la migration 14 à la chaîne de recette.
+   - Ajoute les migrations 14 et 15 à la chaîne de recette.
 
 4. `src/screens/End.tsx`
    - Le bouton devient « Nouvelle partie ».
    - L'écran précise que les cartes déjà jouées sont mises de côté.
 
 5. `supabase/README.md`
-   - Documente l'ordre et le comportement du palier 2, ainsi que la limite actuelle du catalogue.
+   - Documente l'ordre des migrations et les 48 cartes par palier.
+
+6. `src/catalog.json` + `supabase/02_catalog.sql`
+   - Catalogue étendu à 192 cartes, soit 48 par palier ; le SQL généré est synchronisé.
+
+7. `supabase/15_expand_session_catalog.sql`
+   - UPSERT des métadonnées des 96 nouvelles cartes ; aucun TRUNCATE ni effacement.
 
 ## Point de reprise important — volume du catalogue
 
-Le catalogue de production contient actuellement **96 cartes, soit 24 par palier**. Le moteur conserve correctement l'historique et évite les répétitions tant qu'il existe des cartes inédites dans le pool choisi. Cependant, si les catégories communes couvrent les 24 cartes du palier, une seule partie peut épuiser ce pool.
-
-Pour garantir plusieurs parties complètes de 24 questions sans répétition, il faut augmenter le catalogue à au moins **48 cartes par palier** (192 cartes au total), idéalement davantage, avec une vraie relecture éditoriale. Ne pas réduire arbitrairement la taille d'une partie pour masquer le manque de contenu.
+Le catalogue est maintenant étendu à **192 cartes, soit 48 par palier**. Une session de 24 questions peut être suivie d'une deuxième session complète sans répétition si les catégories communes couvrent tout le pool du palier. Si les joueurs ne sélectionnent qu'une partie des catégories, la taille du pool éligible varie et le cycle peut s'épuiser plus tôt.
 
 ## Vérifications à effectuer avant fusion
 
-Depuis une copie fraîche de la branche :
+Depuis une copie fraîche de la branche `qspicy/palier-2-catalog-expansion` :
 
 ```bash
 npm ci
@@ -61,26 +65,25 @@ La recette SQL doit confirmer :
 - conservation du consentement et du filtrage par niveau ;
 - reconnexion à une session en cours sans nouveau tirage.
 
-Vérifier aussi que `supabase/tests/run_postgres.sh` applique bien `14_session_question_history.sql` après les migrations 11 à 13.
+Vérifier aussi que `supabase/tests/run_postgres.sh` applique bien `14_session_question_history.sql` puis `15_expand_session_catalog.sql` après les migrations 11 à 13.
 
 ## Déploiement / base de production
 
-**Ne pas considérer cette branche comme publiée.** La migration 14 n'a pas été appliquée à Supabase et aucun déploiement Render n'a été déclenché dans le cadre de ce travail.
+**Le moteur d'historique est déjà en production.** La migration 14 a été appliquée et vérifiée sur Supabase. L'extension du catalogue (migration 15 + 96 nouvelles cartes) n'est pas encore fusionnée ni appliquée. Aucun déploiement de cette extension n'a été confirmé.
 
 Après CI verte et revue du diff :
-1. fusionner la PR dans `main` ;
-2. appliquer `14_session_question_history.sql` une seule fois sur le projet Supabase `xqvxorvvjmwzpcqmqnqv` ;
-3. vérifier la présence de la colonne et les définitions/grants des deux RPC ;
-4. régénérer `a-deux-source.tar.gz` avec `npm run pack:source` depuis le dépôt complet ;
-5. déployer Render uniquement après build et tests verts ;
-6. vérifier en production une reconnexion en cours de partie et deux nouvelles parties dans la même salle.
+1. obtenir une CI verte, puis fusionner la PR catalogue dans `main` ;
+2. appliquer `15_expand_session_catalog.sql` une seule fois sur le projet Supabase `xqvxorvvjmwzpcqmqnqv` (la migration 14 est déjà appliquée) ;
+3. vérifier 192 cartes, 48 par palier, et les grants des RPC ;
+4. laisser Render déployer le commit `main` (le service compile directement le dépôt avec `npm ci && npm run build`) ;
+5. vérifier le déploiement `live`, puis une reconnexion et deux sessions de 24 questions sans recouvrement dans la même salle.
 
 ## Ne pas faire
 
 - Ne pas effacer `played_interaction_ids` dans `restart_game` ou `restart_duo_game` : cela réintroduirait les répétitions.
 - Ne pas remplacer le paquet en cours lors d'une reconnexion : `interaction_ids` + `current_index` sont la source de vérité.
 - Ne pas remettre à zéro tout l'historique quand un seul palier/catégorie est épuisé.
-- Ne pas prétendre que le volume de contenu suffit : l'expansion à 48+ cartes par palier reste nécessaire pour plusieurs sessions complètes.
+- Garder le catalogue source `src/catalog.json` et le SQL `supabase/02_catalog.sql` synchronisés avec `npm run catalog:sync`.
 
 ## État technique connu
 

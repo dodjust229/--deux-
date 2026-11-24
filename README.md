@@ -6,7 +6,7 @@ réfléchissent et prennent la parole.
 
 En ligne : https://dodjust229.github.io/--deux-/ (version finale vérifiée) et
 https://a-deux-jeu.onrender.com (service Render, à redéployer). Identité officielle QSPICY
-(logo et illustration du propriétaire), 43 cartes réécrites avec niveau et audience,
+(logo et illustration du propriétaire), 192 cartes avec niveau, formats variés et audience,
 confidences privées.
 
 Réservé aux adultes de 18 ans et plus. Gratuit, sans compte, sans installation pour les joueurs.
@@ -28,8 +28,7 @@ npm run build   # TypeScript strict + build Vite
 
 ## Contenu du dépôt
 
-Le code de l'application est à la racine (`src/`). L'archive `a-deux-source.tar.gz` est le
-paquet utilisé par Render et par GitHub Actions ; elle est régénérée avec :
+Le code de l'application est à la racine (`src/`). Le service Render actuel compile directement le dépôt (`npm ci && npm run build`). L'archive `a-deux-source.tar.gz` reste un paquet de compatibilité pour les anciens workflows ; elle est régénérée si ce paquet est utilisé avec :
 
 ```bash
 npm run pack:source

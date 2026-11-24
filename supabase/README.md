@@ -6,7 +6,7 @@ dans l'éditeur SQL du projet `xqvxorvvjmwzpcqmqnqv` ou via `psql`.
 | Fichier | Contenu | Remarque |
 |---|---|---|
 | `01_schema.sql` | mode deux joueurs : tables, RLS, RPC, droits | à exécuter en premier |
-| `02_catalog.sql` | catalogue des 43 interactions | TRUNCATE puis insert |
+| `02_catalog.sql` | catalogue des 192 interactions (48 par palier) | TRUNCATE puis insert |
 | `03_reconnexion_securisee.sql` | reprise de place par jeton uniquement | remplace `join_room` |
 | `04_duo_consent_default_off.sql` | correctif historique DUOS | **obsolète** : voir ci-dessous |
 | `05_duo_rpc_anon_only.sql` | correctif historique des droits | **obsolète** : repris par `06` |
@@ -78,9 +78,16 @@ La migration est additive et ne supprime aucune donnée. La recette locale couvr
 deux sessions successives sans recouvrement, puis la remise à zéro du cycle après
 épuisement du pool, dans les deux modes.
 
-**Limite de contenu à garder en tête :** le catalogue actuel contient 24 cartes par
-palier. Une partie peut donc consommer tout le pool d'un palier en une session si
-les catégories communes couvrent toutes ses cartes. Pour offrir plusieurs sessions
-complètes sans répétition, il faudra augmenter le catalogue au-delà de 24 cartes
-par palier. L'historique fonctionne déjà pour des pools plus larges et pour les
-sélections de catégories plus restreintes.
+Le catalogue compte maintenant 48 cartes par palier. Avec une sélection couvrant tout
+le pool du palier, deux sessions complètes de 24 questions peuvent être jouées sans
+répétition. Si les catégories communes ne couvrent qu'une partie du pool, le nombre
+de sessions inédites dépend du nombre de cartes restantes dans ces catégories.
+
+
+### Extension du catalogue — 48 cartes par palier
+
+Appliquer ensuite `15_expand_session_catalog.sql`. Le catalogue passe à 192 cartes
+(48 par palier). Une session de 24 questions peut ainsi être suivie d'une deuxième
+session complète sans aucune répétition, tant que les joueurs conservent un ensemble
+de catégories qui couvre le pool correspondant. La migration 15 est un UPSERT non
+destructif ; les textes, titres et formulations complets sont dans `src/catalog.json`.
