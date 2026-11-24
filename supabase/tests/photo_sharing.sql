@@ -116,6 +116,7 @@ declare
   photo jsonb;
   path text;
   media_id uuid;
+  duo_media_id uuid;
   state jsonb;
 begin
   host_data := public.create_duo_room('DuoHost','masculin');
@@ -135,6 +136,9 @@ begin
   path := room::text || '/' || gen_random_uuid()::text || '.jpg';
   photo := public.qspicy_media_register(room,host_token,'group',path,'image/jpeg',1024);
   media_id := (photo->>'id')::uuid;
+  path := room::text || '/' || gen_random_uuid()::text || '.jpg';
+  photo := public.qspicy_media_register(room,host_token,'duo',path,'image/jpeg',1024);
+  duo_media_id := (photo->>'id')::uuid;
 
   state := public.qspicy_media_list(room,token3);
   if jsonb_array_length(state->'items') <> 1 then
@@ -158,7 +162,12 @@ begin
   if jsonb_array_length(state->'items') <> 1 then
     raise exception 'Other consenting group recipients lost their access permanently';
   end if;
+  state := public.qspicy_media_list(room,p2->>'player_token');
+  if jsonb_array_length(state->'items') <> 2 then
+    raise exception 'Revoking cross participation incorrectly removed the own-duo photo';
+  end if;
 
   perform public.qspicy_media_delete(room,host_token,media_id);
+  perform public.qspicy_media_delete(room,host_token,duo_media_id);
 end
 $duo_photo_test$;
