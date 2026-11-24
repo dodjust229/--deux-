@@ -54,7 +54,8 @@ export function Settings({
   };
   const changeVolume = (value: number) => {
     update({ volume: value });
-    if (ambienceActive) setAmbience(prefs.ambience, value);
+    if (ambienceActive && value > 0) setAmbience(prefs.ambience, value);
+    else if (value <= 0) { stopAmbience(); setAmbienceActive(false); }
   };
   const stop = () => {
     stopAmbience();
@@ -116,7 +117,7 @@ export function Settings({
           </select>
           <button className="secondary full" type="button" disabled={prefs.ambience === "off" && !ambienceActive}
             onClick={() => ambienceActive ? stop() : startAmbience()}>
-            <Icon name={ambienceActive ? "volume-x" : "volume-2"} size={17} />
+            <Icon name="sound" size={17} />
             {ambienceActive
               ? (lang === "en" ? "Turn atmosphere off" : "Couper l'ambiance")
               : (lang === "en" ? "Play atmosphere" : "Lancer l'ambiance")}
