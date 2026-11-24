@@ -100,3 +100,65 @@ begin
   end if;
 end
 $photo_test$;
+
+
+-- Recette DUOS : l'espace commun exige les quatre accords et le retrait est permanent.
+do $duo_photo_test$
+declare
+  host_data jsonb;
+  p2 jsonb;
+  p3 jsonb;
+  p4 jsonb;
+  room uuid;
+  host_token text;
+  token3 text;
+  token4 text;
+  photo jsonb;
+  path text;
+  media_id uuid;
+  state jsonb;
+begin
+  host_data := public.create_duo_room('DuoHost','masculin');
+  room := (host_data->>'room_id')::uuid;
+  host_token := host_data->>'player_token';
+  p2 := public.join_duo_room(room,'DuoSecond','feminin');
+  p3 := public.join_duo_room(room,'DuoThird','masculin');
+  p4 := public.join_duo_room(room,'DuoFourth','feminin');
+  token3 := p3->>'player_token';
+  token4 := p4->>'player_token';
+
+  perform public.set_duo_permissions(room,host_token,true,true,false);
+  perform public.set_duo_permissions(room,p2->>'player_token',true,true,false);
+  perform public.set_duo_permissions(room,token3,true,true,false);
+  perform public.set_duo_permissions(room,token4,true,true,false);
+
+  path := room::text || '/' || gen_random_uuid()::text || '.jpg';
+  photo := public.qspicy_media_register(room,host_token,'group',path,'image/jpeg',1024);
+  media_id := (photo->>'id')::uuid;
+
+  state := public.qspicy_media_list(room,token3);
+  if jsonb_array_length(state->'items') <> 1 then
+    raise exception 'DUOS group photo is not visible to a consenting player';
+  end if;
+
+  perform public.set_duo_permissions(room,token3,true,false,false);
+  perform public.set_duo_permissions(room,token3,true,true,false);
+  state := public.qspicy_media_list(room,token3);
+  if jsonb_array_length(state->'items') <> 0 then
+    raise exception 'DUOS photo access returned after receive_media was re-enabled';
+  end if;
+
+  perform public.set_duo_permissions(room,token3,false,true,false);
+  state := public.qspicy_media_list(room,token4);
+  if jsonb_array_length(state->'items') <> 0 then
+    raise exception 'Group photo remained visible while cross participation was withdrawn';
+  end if;
+  perform public.set_duo_permissions(room,token3,true,true,false);
+  state := public.qspicy_media_list(room,token4);
+  if jsonb_array_length(state->'items') <> 1 then
+    raise exception 'Other consenting group recipients lost their access permanently';
+  end if;
+
+  perform public.qspicy_media_delete(room,host_token,media_id);
+end
+$duo_photo_test$;
