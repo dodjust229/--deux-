@@ -230,6 +230,27 @@ begin
 end
 $$;
 
+create or replace function public.qspicy_media_delete_path(
+  p_room_id uuid,
+  p_player_token text,
+  p_media_id uuid
+)
+returns text
+language plpgsql
+security definer
+set search_path = public, extensions, pg_temp
+as $
+declare me public.players; v_path text;
+begin
+  me := public._player_for(p_room_id,p_player_token);
+  select object_path into v_path
+    from public.room_media
+   where id=p_media_id and room_id=p_room_id and sender_player_id=me.id;
+  if v_path is null then raise exception 'E_MEDIA_DELETE: Photo introuvable ou suppression non autorisée.'; end if;
+  return v_path;
+end
+$;
+
 create or replace function public.qspicy_media_delete(
   p_room_id uuid,
   p_player_token text,
@@ -256,8 +277,10 @@ revoke execute on function public.qspicy_media_targets(uuid,text,text) from publ
 revoke execute on function public.qspicy_media_register(uuid,text,text,text,text,integer) from public, authenticated;
 revoke execute on function public.qspicy_media_list(uuid,text) from public, authenticated;
 revoke execute on function public.qspicy_media_delete(uuid,text,uuid) from public, authenticated;
+revoke execute on function public.qspicy_media_delete_path(uuid,text,uuid) from public, authenticated;
 grant execute on function public.set_room_media_permission(uuid,text,boolean) to anon, service_role;
 grant execute on function public.qspicy_media_targets(uuid,text,text) to service_role;
 grant execute on function public.qspicy_media_register(uuid,text,text,text,text,integer) to service_role;
 grant execute on function public.qspicy_media_list(uuid,text) to service_role;
 grant execute on function public.qspicy_media_delete(uuid,text,uuid) to service_role;
+grant execute on function public.qspicy_media_delete_path(uuid,text,uuid) to service_role;
