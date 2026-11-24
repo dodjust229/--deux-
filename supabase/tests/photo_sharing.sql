@@ -9,6 +9,7 @@ declare
   guest_id uuid;
   media_id uuid;
   object_path text;
+  orphan_path text;
   state jsonb;
   denied boolean := false;
   deleted_path text;
@@ -98,6 +99,17 @@ begin
   if jsonb_array_length(state->'items') <> 0 then
     raise exception 'Deleted photo remains visible to its recipient';
   end if;
+
+  orphan_path := room::text || '/' || gen_random_uuid()::text || '.jpg';
+  perform public.qspicy_media_register(room,owner_token,'partner',orphan_path,'image/jpeg',1024);
+  delete from public.rooms where id=room;
+  if not exists (
+    select 1 from public.room_media
+    where object_path=orphan_path and room_id is null and sender_player_id is null
+  ) then
+    raise exception 'Room purge removed media metadata before Storage cleanup could process it';
+  end if;
+  delete from public.room_media where object_path=orphan_path;
 end
 $photo_test$;
 
