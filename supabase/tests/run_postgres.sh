@@ -42,11 +42,32 @@ for migration in \
   06_duo_schema \
   07_security_fixes \
   09_duo_replay \
-  10_custom_room
+  10_custom_room \
+  11_game_levels
 do
   echo "Applying supabase/${migration}.sql"
   "${PSQL[@]}" -d "$DB" -f "supabase/${migration}.sql"
 done
+
+echo "Checking level-aware catalog and RPCs"
+"${PSQL[@]}" -d "$DB" <<'SQL'
+DO $
+BEGIN
+  IF (SELECT count(*) FROM public.catalog) <> 63 THEN
+    RAISE EXCEPTION 'Expected 63 catalog cards after level migration';
+  END IF;
+  IF (SELECT count(DISTINCT level) FROM public.catalog) <> 4 THEN
+    RAISE EXCEPTION 'Expected all four game levels in catalog';
+  END IF;
+  IF to_regprocedure('public.start_game_by_level(uuid,text,integer)') IS NULL THEN
+    RAISE EXCEPTION 'Missing start_game_by_level RPC';
+  END IF;
+  IF to_regprocedure('public.start_duo_game_by_level(uuid,text,integer)') IS NULL THEN
+    RAISE EXCEPTION 'Missing start_duo_game_by_level RPC';
+  END IF;
+END
+$;
+SQL
 
 echo "Applying test-only join_room_any shim"
 "${PSQL[@]}" -d "$DB" -f supabase/tests/bootstrap_custom_room.sql
