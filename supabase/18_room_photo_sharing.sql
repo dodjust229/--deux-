@@ -23,6 +23,7 @@ create index if not exists room_media_expiry_idx
 
 alter table public.room_media enable row level security;
 revoke all on public.room_media from public, anon, authenticated;
+grant select, delete on public.room_media to service_role;
 
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values ('qspicy-private-media','qspicy-private-media',false,5242880,
