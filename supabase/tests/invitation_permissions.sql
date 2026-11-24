@@ -77,6 +77,7 @@ begin
   -- ===== 5. Une salle legacy sans type conserve le fallback du lien =====
   v_couple := public.create_room('HoteLegacy', 'masculin');
   v_room := (v_couple->>'room_id')::uuid;
+  v_token := v_couple->>'player_token';
   update public.rooms set room_kind = null where id = v_room;
   v_guest := public.join_room_any(v_room, 'InviteLegacy', 'feminin');
   if v_guest ? 'room_kind' and v_guest->>'room_kind' is not null then
