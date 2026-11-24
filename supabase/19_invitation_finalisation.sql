@@ -34,6 +34,26 @@ update public.rooms set room_kind = 'duos' where mode = 'duos' and room_kind is 
 update public.rooms set room_kind = 'custom'
  where mode = 'couple' and custom_deck is not null and room_kind is null;
 
+-- Les salles créées après la migration reçoivent un type explicite, sans requalifier
+-- les salles historiques qui restent NULL et utilisent le mode du lien comme fallback.
+create or replace function public._set_new_room_kind()
+returns trigger
+language plpgsql
+set search_path = public, extensions, pg_temp
+as $
+begin
+  if new.room_kind is null then
+    new.room_kind := case when new.mode = 'duos' then 'duos' else 'couple' end;
+  end if;
+  return new;
+end
+$;
+
+drop trigger if exists rooms_set_new_room_kind on public.rooms;
+create trigger rooms_set_new_room_kind
+before insert on public.rooms
+for each row execute function public._set_new_room_kind();
+
 -- Un salon DUOS créé après cette migration doit naître avec le bon type : le défaut de colonne
 -- est 'couple', on le corrige à la création.
 create or replace function public.create_duo_room(p_nickname text, p_avatar text)
