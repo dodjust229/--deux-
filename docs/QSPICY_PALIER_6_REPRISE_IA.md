@@ -45,3 +45,12 @@ Le navigateur peut suspendre Web Audio en arrière-plan ou en mode économie d'�
 
 ## Statut
 Ne pas déclarer le palier terminé avant CI réussie, fusion, déploiement Render en statut live et recette audio sur de vrais appareils.
+
+## Production — livraison Palier 6
+
+- PR #24 fusionnée : https://github.com/dodjust229/--deux-/pull/24.
+- Commit de fusion : `a0fba2bdcc77c60e4d72fd907a0d9c7f15811ed4`.
+- GitHub Actions run `45372319685` : succès complet — TypeScript, tests unitaires/catalogue, compilation Vite et intégration PostgreSQL 16.
+- Render : déploiement `dep-dc2m65ss728c73b0u7c0`, commit `a0fba2bdcc77c60e4d72fd907a0d9c7f15811ed4`, statut `live`.
+- Application : https://a-deux-jeu.onrender.com.
+- Statut : code et déploiement livrés. La validation du rendu audio sur de vrais appareils reste à effectuer ; aucune lecture audio réelle n'a été entendue/confirmée par l'agent.
