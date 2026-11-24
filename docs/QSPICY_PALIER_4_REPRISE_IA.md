@@ -105,16 +105,17 @@ Les notifications de présence actuelles sont des toasts dans l'application, dé
 
 ## 6. Vérifications et livraison
 
-À faire sur cette branche :
-1. Exécuter `npm test` et `npm run build`.
-2. Exécuter `bash supabase/tests/run_postgres.sh` sur PostgreSQL 16.
-3. Corriger toute erreur avant PR.
-4. Revoir les privilèges RPC et exécuter les Supabase Advisors.
-5. Fusionner uniquement après CI verte.
-6. Appliquer migration 17 en production après revue des requêtes de normalisation des seuls salons en attente.
-7. Déployer Render depuis `main`, puis vérifier le statut `live`.
+### Déjà vérifié le 24 novembre 2026
+- PR #20 fusionnée dans main : commit `5f0ffe237123a57fcb024d07e904338d771e7d8f`.
+- GitHub Actions run `45364829560` : TypeScript, tests unitaires/catalogue, build et intégration PostgreSQL 16 réussis, y compris la migration 17 et ses tests.
+- Migration `17_invitation_permissions.sql` appliquée au projet Supabase `xqvxorvvjmwzpcqmqnqv`.
+- Vérification SQL : défaut de `selected_categories` = `['decouverte']` ; aucun joueur actif des salons en attente ne conserve plusieurs intérêts ; les 16 joueurs des parties déjà en cours avec plusieurs catégories n'ont pas été modifiés.
+- Droits RPC vérifiés : les trois moteurs de lancement restent exécutables par `anon` uniquement et refusent `authenticated` ; l'ancien `start_game` non gradué n'est plus exécutable.
+- Render `dep-dc2lhgk9v7es73d0lnlg` : statut `live`, build terminé, aucun log d'erreur applicatif observé après le déploiement.
+- Supabase Advisors : 24 avertissements génériques sur des fonctions SECURITY DEFINER exécutables par anon (les RPC de jeu reposent sur les jetons de joueur et doivent être revus individuellement) ; deux avertissements de performance RLS et deux index inutilisés. Ne pas faire de GRANT global ni retirer les RPC de jeu sans audit de chaque fonction.
 
-À tester manuellement : créer une salle avec deux appareils ; vérifier hôte/invité, intérêts différents, consentement 18+, lancement par l'hôte seul, notifications d'arrivée et de départ. Refaire avec quatre appareils pour DUOS.
+### Recette manuelle encore nécessaire
+Créer une salle avec deux appareils ; vérifier hôte/invité, intérêts différents, consentement 18+, lancement par l'hôte seul, notifications d'arrivée et de départ. Refaire avec quatre appareils pour DUOS. Aucun test réel multi-appareils n'a été effectué par l'agent.
 
 ## 7. Limites et reprise
 
