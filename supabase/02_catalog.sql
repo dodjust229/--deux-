@@ -48,9 +48,19 @@ insert into public.catalog(id,category,kind,options,level) values
   ('a07','audacieux','free',null,4),
   ('a08','audacieux','free',null,4),
   ('a09','audacieux','cross',null,4),
-  ('a10','audacieux','prediction',null,4)
-on conflict (id) do update set
-  category=excluded.category,
-  kind=excluded.kind,
-  options=excluded.options,
-  level=excluded.level;
+  ('a10','audacieux','prediction',null,4),
+  ('a11','audacieux','secret','["Ma bouche et ma façon d''embrasser","Mon regard quand je te fixe","Ma voix quand je te parle tout près","Ma façon de te toucher avec douceur"]'::jsonb,4),
+  ('a12','audacieux','free',null,4),
+  ('a13','audacieux','challenge',null,4),
+  ('a14','audacieux','prediction',null,4),
+  ('a15','audacieux','free',null,4),
+  ('a16','audacieux','secret','["Un baiser dans le cou","Une main posée à la taille","Des mots soufflés à l''oreille","Un regard qui ne lâche pas"]'::jsonb,4),
+  ('a17','audacieux','cross',null,4),
+  ('a18','audacieux','free',null,4),
+  ('a19','audacieux','challenge',null,4),
+  ('a20','audacieux','secret','["Une chambre à la lumière tamisée","Une douche chaude à deux, si on en a tous les deux envie","Des baisers qui prennent leur temps","Une conversation très intime qui dérape en flirt"]'::jsonb,4),
+  ('a21','audacieux','free',null,4),
+  ('a22','audacieux','prediction',null,4),
+  ('a23','audacieux','challenge',null,4),
+  ('a24','audacieux','free',null,4)
+on conflict (id) do update set category=excluded.category, kind=excluded.kind, options=excluded.options, level=excluded.level;
