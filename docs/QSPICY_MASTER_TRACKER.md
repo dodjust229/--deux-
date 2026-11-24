@@ -26,12 +26,14 @@ L'utilisateur ne peut pas joindre de fichiers dans cette conversation. Travaille
 | 4 | Invitations, rôles, intérêts individuels | Livré côté code | `docs/QSPICY_PALIER_4_REPRISE_IA.md` ; PR #20 fusionnée, migration 17 appliquée, Render live. Tests réels à 2/4 appareils encore à faire. |
 | 5 | Confidentialité et photos personnelles depuis la galerie | Livré côté code et infrastructure | `docs/QSPICY_PALIER_5_REPRISE_IA.md` ; PR #21, #22, #23 fusionnées ; migration 18 et Edge Function déployées ; Render live. Recette photo multi-appareils restante. |
 | 6 | Musique et ambiance | Livré code et déployé | PR #24 fusionnée ; CI #45372319685 réussie ; Render `dep-dc2m65ss728c73b0u7c0` live. Recette audio réelle mobile/desktop restante. |
-| 7 | Tests globaux, bugs et stabilisation | En cours de livraison | Course réseau entre salles corrigée ; tests de régression de sécurité/DUOS ajoutés à la CI. CI, fusion, Render et recette terrain à confirmer. Voir `docs/QSPICY_PALIER_7_REPRISE_IA.md`. |
+| 7 | Tests globaux, bugs et stabilisation | Livré code et déployé | PR #25 fusionnée ; CI #45374406093 réussie, dont recette PostgreSQL 16 ; Render `dep-dc2mc1m7bikc7394161g` live. Recette terrain à deux/quatre appareils encore nécessaire. Voir `docs/QSPICY_PALIER_7_REPRISE_IA.md`. |
 
 ## Palier 7 — stabilisation finale
 - Correctif de course réseau : les réponses tardives d'une ancienne salle ne peuvent plus écraser la session courante ; isolation par salle/jeton/mode.
 - Nouvelle recette PostgreSQL Palier 7 : accès directs, privilèges RPC, jetons, hôte, confidentialité des réponses DUOS et retrait du consentement croisé.
-- CI, fusion et déploiement à confirmer ; recette terrain sur deux/quatre appareils encore nécessaire.
+- PR #25 fusionnée ; CI #45374406093 : TypeScript, tests, build et PostgreSQL 16 réussis, y compris `PALIER 7 SECURITY REGRESSION OK`.
+- Render `dep-dc2mc1m7bikc7394161g` live sur commit `e8617dda400578ea7b282bc0f0b7e2107a886e5d`.
+- Reste la recette terrain sur deux/quatre appareils et les vérifications réelles photo/audio des paliers 5–6.
 - Voir `docs/QSPICY_PALIER_7_REPRISE_IA.md`.
 
 ## Éléments encore ouverts
@@ -65,8 +67,9 @@ L'utilisateur ne peut pas joindre de fichiers dans cette conversation. Travaille
 - PR #21 — nettoyage des confidences locales : fusionnée.
 - PR #22 — nettoyage centralisé lors de la fermeture de session : fusionnée.
 - PR #23 — partage privé de photos depuis la galerie : fusionnée.
-- Dernier commit applicatif Render live (Palier 6) : `a0fba2bdcc77c60e4d72fd907a0d9c7f15811ed4`.
-- Déploiement Render Palier 6 : `dep-dc2m65ss728c73b0u7c0`, statut live.
+- Dernier commit applicatif Render live (Palier 7) : `e8617dda400578ea7b282bc0f0b7e2107a886e5d`.
+- Déploiement Render Palier 7 : `dep-dc2mc1m7bikc7394161g`, statut live.
+- Livraison précédente Palier 6 : commit `a0fba2bdcc77c60e4d72fd907a0d9c7f15811ed4`, déploiement `dep-dc2m65ss728c73b0u7c0`.
 - Livraison précédente Palier 5 : commit `6bdfb67a522e1a0c8b625d3ddf9d3a8102cefb42`, déploiement `dep-dc2m1ee8bjmc738425s0`.
 - Migration Supabase 18 : appliquée.
 - Edge Function `qspicy-room-media` : ACTIVE, version 1.
