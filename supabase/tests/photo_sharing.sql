@@ -67,6 +67,13 @@ begin
     raise exception 'Sender cannot list their own photo';
   end if;
 
+  perform public.set_room_media_permission(room,guest_token,false);
+  state := public.qspicy_media_list(room,guest_token);
+  if jsonb_array_length(state->'items') <> 0 then
+    raise exception 'Photo remains visible after recipient withdraws consent';
+  end if;
+  perform public.set_room_media_permission(room,guest_token,true);
+
   begin
     perform public.qspicy_media_delete(room,guest_token,media_id);
     raise exception 'Recipient unexpectedly deleted another player photo';
