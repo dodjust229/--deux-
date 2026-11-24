@@ -16,6 +16,10 @@ for (const it of items) {
   if (![1,2,3,4].includes(it.level)) errors.push(`${it.id} : palier invalide (1 à 4)`);
   if (it.kind === "secret" && !(it.options?.length >= 2)) errors.push(`${it.id} : un choix secret exige des options`);
 }
+for (const level of [1,2,3,4]) {
+  const count = items.filter((item) => item.level === level).length;
+  if (count !== 48) errors.push(`Le palier ${level} doit contenir exactement 48 cartes (actuellement : ${count}).`);
+}
 if (errors.length) { console.error("✗ Catalogue invalide :\n  - " + errors.join("\n  - ")); process.exit(1); }
 const q = v => v.replace(/'/g, "''");
 const rows = items.map(i => `  ('${i.id}','${i.category}','${i.kind}',${i.options ? `'${q(JSON.stringify(i.options))}'::jsonb` : "null"},${i.level})`).join(",\n");
