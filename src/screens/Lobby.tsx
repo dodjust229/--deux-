@@ -41,6 +41,7 @@ interface LobbyProps {
   onLaunchCustom?: () => void;
   customError?: string;
   isHost?: boolean;
+  gameLevel?: 1 | 2 | 3 | 4;
   onOpenGuide?: () => void;
   onOpenSettings?: () => void;
 }
@@ -68,12 +69,13 @@ export function Lobby({
   onLaunchCustom,
   customError,
   isHost = true,
+  gameLevel = 2,
   onOpenGuide,
   onOpenSettings
 }: LobbyProps) {
   const custom = kind === "custom";
   const bothPresent = Boolean(other);
-  const wantsAdult = shared.includes("audacieux");
+  const wantsAdult = shared.includes("audacieux") || gameLevel >= 3;
   const blocked = busy || shared.length === 0 || (wantsAdult && !(myConsent && otherConsent));
 
   return (
@@ -191,9 +193,9 @@ export function Lobby({
                 onChange={(event) => onToggleConsent(event.target.checked)}
               />
               <span>
-                <strong>J'ai 18 ans ou plus et j'accepte la catégorie « Audacieux »</strong>
+                <strong>{gameLevel >= 3 ? "J'ai 18 ans ou plus et j'accepte les paliers 3–4." : "J'ai 18 ans ou plus et j'accepte la catégorie « Audacieux »."}</strong>
                 <small>
-                  Facultative, sans contenu explicite, révocable à tout moment. Il faut l'accord des deux.
+                  Facultatif, révocable à tout moment. L'accord des deux est nécessaire pour les paliers 3–4 et Audacieux.
                 </small>
               </span>
             </label>
