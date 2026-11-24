@@ -18,7 +18,7 @@ for (const it of items) {
 }
 if (errors.length) { console.error("✗ Catalogue invalide :\n  - " + errors.join("\n  - ")); process.exit(1); }
 const q = v => v.replace(/'/g, "''");
-const rows = items.map(i => `  ('${i.id}','${i.category}','${i.kind}',${i.options ? `'${q(JSON.stringify(i.options))}'::jsonb` : "null"},${i.level})`).join(",\\n");
+const rows = items.map(i => `  ('${i.id}','${i.category}','${i.kind}',${i.options ? `'${q(JSON.stringify(i.options))}'::jsonb` : "null"},${i.level})`).join(",\n");
 const sql = `-- GÉNÉRÉ par scripts/sync-catalog.mjs — ne pas modifier à la main.\ninsert into public.catalog(id,category,kind,options,level) values\n${rows}\non conflict (id) do update set category=excluded.category, kind=excluded.kind, options=excluded.options, level=excluded.level;\n`;
 if (process.argv.includes("--check")) {
   const cur = fs.existsSync("supabase/02_catalog.sql") ? fs.readFileSync("supabase/02_catalog.sql","utf8") : "";
