@@ -61,7 +61,7 @@ BEGIN
     RAISE EXCEPTION 'Expected 192 catalog cards after level migration';
   END IF;
   IF EXISTS (SELECT 1 FROM public.catalog GROUP BY level HAVING count(*) <> 48) THEN
-    RAISE EXCEPTION 'Expected exactly 24 cards in each game level';
+    RAISE EXCEPTION 'Expected exactly 48 cards in each game level';
   END IF;
   IF (SELECT count(DISTINCT level) FROM public.catalog) <> 4 THEN
     RAISE EXCEPTION 'Expected all four game levels in catalog';
