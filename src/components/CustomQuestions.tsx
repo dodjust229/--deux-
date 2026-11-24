@@ -63,7 +63,7 @@ export function CustomQuestions({ lang, catalog, onLaunch, isHost, partnerHere, 
       </p>
 
       <button type="button" className="secondary full" data-testid="custom-generate" disabled={busy || eligibleCount < CUSTOM.min} onClick={generate}>
-        <Icon name="shuffle" size={16} /> {generated ? (en ? "Shuffle another selection" : "Mélanger une autre sélection") : (en ? "Generate a question selection" : "Générer une sélection de questions")}
+        <Icon name="rotate" size={16} /> {generated ? (en ? "Shuffle another selection" : "Mélanger une autre sélection") : (en ? "Generate a question selection" : "Générer une sélection de questions")}
       </button>
 
       {generated && (
