@@ -5,8 +5,18 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$ROOT"
 
 DB="${TEST_DB:-qspicy_test}"
-if [[ ! "$DB" =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]]; then
-  echo "TEST_DB doit être un nom PostgreSQL simple." >&2
+if [[ ! "$DB" =~ ^(qspicy_test|qspicy_invite_e2e)(_[A-Za-z0-9_]+)?$ ]]; then
+  echo "TEST_DB doit utiliser le préfixe réservé qspicy_test ou qspicy_invite_e2e." >&2
+  exit 2
+fi
+for host in "${PGHOST:-}" "${PGHOSTADDR:-}"; do
+  if [[ -n "$host" && "$host" != "localhost" && "$host" != "127.0.0.1" && "$host" != "::1" ]]; then
+    echo "Connexion PostgreSQL distante interdite pour cette recette (hôte: $host)." >&2
+    exit 2
+  fi
+done
+if [[ -n "${PGSERVICE:-}" || -n "${PGSERVICEFILE:-}" ]]; then
+  echo "Les profils PG service sont interdits pour éviter une cible de base inattendue." >&2
   exit 2
 fi
 
@@ -74,8 +84,7 @@ for migration in \
   12_level_consent_guard \
   13_expand_balanced_catalog \
   14_session_question_history \
-  15_expand_session_catalog \
-  19_invitation_finalisation
+  15_expand_session_catalog
 do
   echo "Applying supabase/${migration}.sql"
   "${PSQL[@]}" -d "$DB" -f "supabase/${migration}.sql"
@@ -130,6 +139,9 @@ python3 supabase/tests/palier4_invitation_permissions.py
 
 echo "Applying Palier 5 private gallery photo rules"
 "${PSQL[@]}" -d "$DB" -f "supabase/18_room_photo_sharing.sql"
+
+echo "Applying invitation finalisation (after 16, 17 and 18)"
+"${PSQL[@]}" -d "$DB" -f "supabase/19_invitation_finalisation.sql"
 
 echo "Running Palier 5 private gallery photo integration recipe"
 "${PSQL[@]}" -d "$DB" -f "supabase/tests/photo_sharing.sql"
