@@ -23,7 +23,7 @@ export function checkQuestions(raw: readonly string[]): CustomCheck {
 export function customMessage(lang: Lang, error: CustomError): string { return MESSAGES[lang][error]; }
 export function explainCustomError(lang: Lang, message: string): string {
   if (/could not find the function|does not exist/i.test(message)) return lang === "fr" ? "Le moteur Personnalisé doit être mis à jour sur le serveur. Réessaie après la mise à jour." : "The Custom engine needs a server update. Please retry after the update.";
-  if (!message.includes("E_CUSTOM")) return message;
+  if (!message.includes("E_CUSTOM") && !message.includes("E_CONSENT")) return message;
   if (/24|5 et 24|between 5 and 24/i.test(message)) return customMessage(lang, "count");
   if (/consent/i.test(message)) return lang === "fr" ? "Les deux joueurs doivent accepter le contenu 18+ pour cette sélection." : "Both players must accept 18+ content for this selection.";
   if (/repeat|déjà jouées/i.test(message)) return lang === "fr" ? "Cette sélection contient des questions déjà jouées. Mélange-la à nouveau." : "This selection contains questions already played. Shuffle again.";
