@@ -70,6 +70,9 @@ END
 $qspicy$;
 SQL
 
+echo "Running level engine integration recipe"
+"${PSQL[@]}" -d "$DB" -f supabase/tests/level_engine.sql
+
 echo "Applying test-only join_room_any shim"
 "${PSQL[@]}" -d "$DB" -f supabase/tests/bootstrap_custom_room.sql
 
