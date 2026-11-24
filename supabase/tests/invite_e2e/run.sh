@@ -75,16 +75,15 @@ for migration in \
   01_schema 02_catalog 03_reconnexion_securisee 06_duo_schema 07_security_fixes \
   09_duo_replay 10_custom_room 11_game_levels 12_level_consent_guard \
   13_expand_balanced_catalog 14_session_question_history 15_expand_session_catalog \
-  16_custom_catalog_engine 17_invitation_permissions 18_room_photo_sharing
+  16_custom_catalog_engine 17_invitation_permissions 18_room_photo_sharing \
+  19_invitation_finalisation
 do
   echo "   migration $migration"
   "${PSQL[@]}" -d "$DB" -f "supabase/$migration.sql" >/dev/null
 done
 
-# `join_room_any` existe sur le serveur déployé mais dans AUCUNE migration du dépôt.
-# Sans cet adaptateur de test, une base neuve n'accepte aucune invitation.
-echo "   adaptateur de test join_room_any"
-"${PSQL[@]}" -d "$DB" -f supabase/tests/bootstrap_custom_room.sql >/dev/null
+# Aucun adaptateur de test : `join_room_any` est versionné par 19_invitation_finalisation.sql.
+# La base de recette est donc exactement celle que produirait le dépôt seul.
 # La limitation de débit par client bloquerait une rafale de créations de test.
 "${PSQL[@]}" -d "$DB" -c "truncate public.rate_events" >/dev/null
 
@@ -127,5 +126,7 @@ if [[ ! -d "$HERE/node_modules/puppeteer-core" ]]; then
   echo "→ installation de puppeteer-core (une fois)"
   npm install --prefix "$HERE" --no-audit --no-fund >/dev/null
 fi
-echo "→ recette d'invitation"
+echo "→ recette d'invitation (Personnalisé)"
 BASE_URL="http://127.0.0.1:$APP_PORT/" node "$HERE/invite.spec.mjs"
+echo "→ recette d'invitation (DUOS et lien tronqué)"
+BASE_URL="http://127.0.0.1:$APP_PORT/" node "$HERE/invite_duos.spec.mjs"

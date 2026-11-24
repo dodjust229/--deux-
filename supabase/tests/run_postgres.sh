@@ -46,6 +46,11 @@ if ! "${PSQL[@]}" -d postgres -Atqc "SELECT 1 FROM pg_database WHERE datname = '
   "${CREATEDB[@]}" "$DB"
 fi
 
+# Base recréée à chaque exécution : les recettes doivent tourner sur une base construite
+# uniquement à partir des migrations du dépôt, jamais sur un état laissé par un run précédent.
+"${PSQL[@]}" -d postgres -c "DROP DATABASE IF EXISTS \"$DB\" WITH (FORCE);" >/dev/null
+"${CREATEDB[@]}" "$DB"
+
 "${PSQL[@]}" -d "$DB" <<'SQL'
 CREATE SCHEMA IF NOT EXISTS storage;
 CREATE TABLE IF NOT EXISTS storage.buckets (
@@ -69,7 +74,8 @@ for migration in \
   12_level_consent_guard \
   13_expand_balanced_catalog \
   14_session_question_history \
-  15_expand_session_catalog
+  15_expand_session_catalog \
+  19_invitation_finalisation
 do
   echo "Applying supabase/${migration}.sql"
   "${PSQL[@]}" -d "$DB" -f "supabase/${migration}.sql"
@@ -101,9 +107,6 @@ SQL
 echo "Running level engine integration recipe"
 "${PSQL[@]}" -d "$DB" -f supabase/tests/level_engine.sql
 
-echo "Applying test-only join_room_any shim"
-"${PSQL[@]}" -d "$DB" -f supabase/tests/bootstrap_custom_room.sql
-
 echo "Running legacy custom-room integration recipe"
 python3 supabase/tests/custom_room.py
 
@@ -127,3 +130,6 @@ echo "Running Palier 5 private gallery photo integration recipe"
 
 echo "Running Palier 7 security and privacy regression recipe"
 "${PSQL[@]}" -d "$DB" -f "supabase/tests/palier7_security_regression.sql"
+
+echo "Running invitation permissions and dispatcher recipe"
+"${PSQL[@]}" -d "$DB" -f "supabase/tests/invitation_permissions.sql"

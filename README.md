@@ -83,7 +83,7 @@ Aucune base de production n'est touchée. Sur une machine avec PostgreSQL 16 :
 bash supabase/tests/run_postgres.sh
 ```
 
-La recette prépare une base jetable, applique les migrations documentées, installe le petit adaptateur de test `join_room_any` (absent des migrations versionnées mais présent sur le serveur actuel), puis vérifie 21 points : création, arrivée du deuxième joueur, refus de lancement pour
+La recette prépare une base jetable, applique les migrations documentées (dont `19_invitation_finalisation.sql`, qui versionne `join_room_any`), puis vérifie 21 points : création, arrivée du deuxième joueur, refus de lancement pour
 l'invité, refus de remplacement des questions, validations (5 à 24, longueur, doublons),
 lancement, relecture après reconnexion, révélation simultanée, passage, fin de partie, et
 absence de palier 18+.

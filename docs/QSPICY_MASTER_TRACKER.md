@@ -3,7 +3,8 @@
 Dernière mise à jour : 24 novembre 2026  
 Dépôt : https://github.com/dodjust229/--deux-  
 Application : https://a-deux-jeu.onrender.com  
-Branche principale : `main`
+Branche principale : `main`  
+Branche en cours d'examen : `qspicy/test-invitation-personnalise` (finalisation du parcours d'invitation)
 
 ## Règle de reprise — éviter les audits en boucle
 
@@ -27,6 +28,28 @@ L'utilisateur ne peut pas joindre de fichiers dans cette conversation. Travaille
 | 5 | Confidentialité et photos personnelles depuis la galerie | Livré côté code et infrastructure | `docs/QSPICY_PALIER_5_REPRISE_IA.md` ; PR #21, #22, #23 fusionnées ; migration 18 et Edge Function déployées ; Render live. Recette photo multi-appareils restante. |
 | 6 | Musique et ambiance | Livré code et déployé | PR #24 fusionnée ; CI #45372319685 réussie ; Render `dep-dc2m65ss728c73b0u7c0` live. Recette audio réelle mobile/desktop restante. |
 | 7 | Tests globaux, bugs et stabilisation | Livré code et déployé | PR #25 fusionnée ; CI #45374406093 réussie, dont recette PostgreSQL 16 ; Render `dep-dc2mc1m7bikc7394161g` live. Recette terrain à deux/quatre appareils encore nécessaire. Voir `docs/QSPICY_PALIER_7_REPRISE_IA.md`. |
+| 8 | Finalisation du parcours d'invitation | Livré sur branche, PR à examiner | Branche `qspicy/test-invitation-personnalise` ; migration 19 ; recettes E2E 13/13 + 6/6 et suite SQL complète au vert sur base neuve. Voir ci-dessous. |
+
+## Palier 8 — finalisation du parcours d'invitation
+
+Branche de travail : `qspicy/test-invitation-personnalise`. Aucune fusion dans `main`, aucun
+déploiement de production, aucune écriture sur la base Supabase de production.
+
+- **`join_room_any` versionné** (migration `19_invitation_finalisation.sql`). C'était le seul
+  point d'entrée utilisé par le client pour rejoindre une salle, mais il n'était défini dans
+  aucune migration : une base neuve construite à partir du dépôt refusait toute invitation, et
+  les recettes locales le recréaient par un adaptateur jetable. Le dispatcher est désormais
+  versionné (DUOS → `join_duo_room`, sinon → `join_room`) et renvoie `room_kind`.
+- **`get_custom_deck` corrigé** : il renvoyait `[]` pour les salons Personnalisés du moteur
+  catalogue (migration 16). Il renvoie maintenant la séquence réelle (`rooms.interaction_ids`).
+- **Type de salon porté par la salle** (`rooms.room_kind`) : un lien tronqué (sans `&mode=custom`)
+  ne fait plus arriver l'invité dans le mauvais format. `set_room_kind` réservé à l'hôte.
+- **Privilèges RPC resserrés** : API anonyme, `authenticated` sans droit d'exécution.
+- **Recettes** : `supabase/tests/invite_e2e/run.sh` (13/13 Personnalisé + 6/6 DUOS et lien
+  tronqué) et `supabase/tests/run_postgres.sh` (21/21, 10/10, 9/9, Palier 7 OK, permissions
+  d'invitation OK) tournent sur une base construite uniquement à partir des migrations, sans
+  adaptateur de test. `run_postgres.sh` recrée désormais sa base à chaque exécution.
+- **Reste à faire** : revue de la PR, puis recette terrain à deux/quatre appareils (inchangée).
 
 ## Palier 7 — stabilisation finale
 - Correctif de course réseau : les réponses tardives d'une ancienne salle ne peuvent plus écraser la session courante ; isolation par salle/jeton/mode.

@@ -14,6 +14,7 @@ dans l'éditeur SQL du projet `xqvxorvvjmwzpcqmqnqv` ou via `psql`.
 | `07_security_fixes.sql` | médias désactivés par défaut, réponses DUOS masquées avant révélation, cloisonnement des modes | sécurité et consentement |
 | `08_duo_lifecycle.sql` | première version du redémarrage DUOS | remplacée par `09` |
 | `09_duo_replay.sql` | revanche DUOS : vote des quatre joueurs, `players.replay_vote` | remplace `restart_duo_game` |
+| `19_invitation_finalisation.sql` | `join_room_any` versionné, `get_custom_deck` corrigé, type de salon (`rooms.room_kind`), droits `anon` | finalise le parcours d'invitation |
 
 ## Installation neuve
 
@@ -139,3 +140,31 @@ l'application ne gère pas encore l'Auth hôte, le paiement ni le contrôle d'ab
 à la création des salles. Le modèle actif dans les Edge Functions est 750 XOF / 15 jours,
 hôte payeur et invités gratuits. Ne jamais remplacer la vérification serveur par un
 booléen côté navigateur. Voir `docs/QSPICY_PALIER_4_REPRISE_IA.md` pour la reprise.
+
+
+## Finalisation du parcours d'invitation — `19_invitation_finalisation.sql`
+
+Appliquer ensuite `19_invitation_finalisation.sql`. Elle rend le parcours d'invitation
+reproductible sur une base neuve et corrige quatre écarts :
+
+- **`join_room_any` est versionné.** C'est le seul point d'entrée utilisé par le client pour
+  rejoindre une salle (`src/api.ts`), mais il n'était défini dans aucune migration : il
+  n'existait que sur le serveur déployé, et les recettes locales le recréaient par un
+  adaptateur jetable. Une base construite uniquement à partir du dépôt refusait donc toute
+  invitation. La migration le définit à l'identique du dispatcher de production
+  (DUOS → `join_duo_room`, sinon → `join_room`) et renvoie `room_kind` avec la réponse.
+- **`get_custom_deck` renvoie la séquence réelle.** Pour les salons Personnalisés créés par le
+  moteur catalogue (migration 16), `rooms.custom_deck` n'est plus rempli : la séquence vit dans
+  `rooms.interaction_ids`. La fonction renvoie désormais cette séquence (les énoncés ne sont pas
+  en base : `public.catalog` ne porte que `id/category/kind/options/level`, le texte vit dans
+  `src/content.ts`).
+- **Le type du salon est porté par la salle** (`rooms.room_kind` : `couple`, `custom`, `duos`).
+  Un lien d'invitation tronqué (sans `&mode=custom`) ou un favori enregistré ne fait plus
+  arriver l'invité dans le mauvais format. L'hôte le déclare via `set_room_kind` ; un invité ne
+  peut pas le modifier.
+- **Les privilèges RPC sont resserrés** : l'API de jeu est anonyme, `authenticated` n'a aucun
+  droit d'exécution (intention de `05_duo_rpc_anon_only.sql`, jamais appliquée par les recettes).
+
+La migration est additive et idempotente : aucune donnée n'est supprimée, aucune salle en cours
+n'est modifiée. Les recettes `supabase/tests/run_postgres.sh` et
+`supabase/tests/invite_e2e/run.sh` l'appliquent et ne dépendent plus d'aucun adaptateur de test.

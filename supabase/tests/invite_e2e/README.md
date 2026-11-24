@@ -19,10 +19,13 @@ Le script, à chaque exécution :
 
 1. télécharge PostgREST 16.6 dans `/tmp/qspicy-invite-e2e` (une fois) ;
 2. recrée la base jetable `qspicy_invite_e2e` et applique les migrations dans l'ordre de
-   `supabase/tests/run_postgres.sh` (01 → 18) ;
-3. installe l'adaptateur de test `supabase/tests/bootstrap_custom_room.sql` ;
-4. démarre PostgREST puis le front compilé, tous deux sur `127.0.0.1` ;
-5. joue la recette dans trois navigateurs isolés et affiche `n/n vérifications réussies`.
+   `supabase/tests/run_postgres.sh` (01 → 19) ;
+3. démarre PostgREST puis le front compilé, tous deux sur `127.0.0.1` ;
+4. joue les recettes dans des navigateurs isolés et affiche `n/n vérifications réussies`.
+
+Aucun adaptateur de test n'est appliqué : `join_room_any` est versionné par
+`19_invitation_finalisation.sql`, donc la base de recette est exactement celle que produirait
+le dépôt seul.
 
 Variables utiles : `TEST_DB`, `PGRST_PORT` (3199), `APP_PORT` (5299), `CHROME_PATH`.
 
@@ -47,22 +50,28 @@ Variables utiles : `TEST_DB`, `PGRST_PORT` (3199), `APP_PORT` (5299), `CHROME_PA
 Le script écrit aussi `/tmp/qspicy-invite-calls.json` : tous les appels RPC avec leur code et
 leur réponse, pour diagnostiquer un échec.
 
+## Deuxième recette — DUOS et lien tronqué (`invite_duos.spec.mjs`)
+
+| # | Vérification |
+|---|--------------|
+| D01 | le lien DUOS porte l'identifiant du salon |
+| D02 | les quatre joueurs DUOS sont réunis par le même lien |
+| D03 | un cinquième joueur DUOS est refusé avec un message lisible |
+| D04 | le lien tronqué a bien perdu son paramètre de mode |
+| D05 | un lien tronqué fait quand même arriver l'invité dans le salon Personnalisé |
+| D06 | l'invité du lien tronqué ne voit aucun bouton de lancement catalogue |
+
 ## Constats de la dernière exécution (2026-11-24)
 
-- **13/13.** Le parcours d'invitation complet fonctionne sur une base construite uniquement
-  à partir du dépôt.
-- **`join_room_any` n'est versionné dans aucune migration.** Il existe sur le serveur
-  déployé (vérifié le 23/11) mais une base neuve — projet Supabase de test compris — n'accepte
-  aucune invitation sans l'adaptateur `bootstrap_custom_room.sql`. C'est la première chose à
-  versionner avant d'ouvrir un projet de test.
-- **`get_custom_deck` renvoie `[]`** pour les salons Personnalisés créés par le moteur
-  catalogue (migration 16) : `rooms.custom_deck` n'est plus rempli, la séquence vit dans
-  `interaction_ids`. Le front s'en sort parce que les identifiants sont ceux du catalogue,
-  mais l'appel est inutile et la séquence n'est pas lisible par l'API.
-- **Le mode d'un salon vient du lien, pas du serveur.** Un invité qui ouvre
-  `?room=<id>` sans `&mode=custom` (lien tronqué, favori enregistré) arrive dans le lobby
-  Couple. Il ne peut pas lancer la partie — le serveur réserve le lancement à l'hôte — mais
-  l'écran d'attente ne lui explique pas le format Personnalisé.
+- **13/13 (Personnalisé) et 6/6 (DUOS et lien tronqué).** Le parcours d'invitation complet
+  fonctionne sur une base construite uniquement à partir du dépôt, sans adaptateur de test.
+- **`join_room_any` est désormais versionné** par `19_invitation_finalisation.sql`. Il n'existait
+  auparavant que sur le serveur déployé : une base neuve n'acceptait aucune invitation sans
+  l'adaptateur `bootstrap_custom_room.sql`, qui n'est plus utilisé.
+- **`get_custom_deck` renvoie la séquence réelle** (`rooms.interaction_ids`) pour les salons
+  Personnalisés du moteur catalogue. Il renvoyait `[]` auparavant.
+- **Le type du salon est porté par la salle** (`rooms.room_kind`) : un lien tronqué (sans
+  `&mode=custom`) fait maintenant arriver l'invité dans le bon format (D05).
 - **La fonction Edge de photos est bouchonnée** (`server.mjs`) : elle n'existe pas sur une
   base locale. Un 200 non-JSON ferait blanchir tout l'écran d'attente, lien d'invitation
   compris.

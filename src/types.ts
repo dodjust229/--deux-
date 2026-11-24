@@ -10,7 +10,7 @@ export interface Interaction {
 export interface Player { id: string; seat: Seat; duo_no?: 1 | 2; cross_participation?: boolean; receive_media?: boolean; nickname: string; avatar: "masculin" | "feminin"; online: boolean; adult_consent: boolean; selected_categories?: Category[]; replay_vote?: boolean; }
 export interface Answer { player_id: string; answer: string; passed: boolean; visibility?: "private" | "duo" | "group"; }
 export interface Snapshot {
-  room: { id: string; mode?: "couple" | "duos"; status: "waiting" | "playing" | "paused" | "finished"; current_index: number; total: number; adult_enabled: boolean };
+  room: { id: string; mode?: "couple" | "duos"; room_kind?: "couple" | "custom" | "duos"; status: "waiting" | "playing" | "paused" | "finished"; current_index: number; total: number; adult_enabled: boolean };
   players: Player[]; my_categories?: Category[]; other_categories?: Category[]; my_player_id: string; my_seat: Seat; my_consent: boolean;
   interaction_id: string | null; interaction: Interaction | null;
   my_answer: string | null; other_submitted: boolean; revealed: boolean; answers: Answer[]; first_answer: string | null; first_player_present: boolean;
