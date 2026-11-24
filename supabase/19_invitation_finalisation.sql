@@ -40,14 +40,14 @@ create or replace function public._set_new_room_kind()
 returns trigger
 language plpgsql
 set search_path = public, extensions, pg_temp
-as $
+as $room_kind$
 begin
   if new.room_kind is null then
     new.room_kind := case when new.mode = 'duos' then 'duos' else 'couple' end;
   end if;
   return new;
 end
-$;
+$room_kind$;
 
 drop trigger if exists rooms_set_new_room_kind on public.rooms;
 create trigger rooms_set_new_room_kind
