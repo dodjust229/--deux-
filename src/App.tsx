@@ -122,6 +122,7 @@ export default function App() {
   const [selected, setSelected] = useState<Category[]>(() => categoriesForIntensity(prefs.intensity, prefs.exclusions));
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [partnerLeft, setPartnerLeft] = useState<string | null>(null);
   const [offline, setOffline] = useState(false);
   const [busy, setBusy] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(() => import.meta.env.DEV && new URLSearchParams(location.search).has("reglages"));
@@ -158,6 +159,7 @@ export default function App() {
     saveIdentity(null);
     setIdentity(null);
     setSnapshot(null);
+    setPartnerLeft(null);
     setSettingsOpen(false);
     history.replaceState({}, "", location.pathname);
     setNotice(message);
@@ -184,7 +186,21 @@ export default function App() {
       if (before) {
         if (!before.revealed && data.revealed) playSound("reveal", prefs);
         else if (before.room.current_index !== data.room.current_index) playSound("turn", prefs);
-        if (before.players.length === 1 && data.players.length === 2) playSound("join", prefs);
+
+        const joined = data.players.filter((player) => !before.players.some((old) => old.id === player.id));
+        const departed = before.players.filter((player) => !data.players.some((current) => current.id === player.id));
+        if (joined.length > 0) {
+          playSound("join", prefs);
+          setNotice(`${joined[0].nickname} a rejoint le salon.`);
+          setPartnerLeft(null);
+        }
+        if (departed.length > 0) {
+          if (identity.gameMode === "duos") setNotice(`${departed[0].nickname} a quitté le salon.`);
+          else {
+            setNotice("");
+            setPartnerLeft(departed[0].nickname);
+          }
+        }
       }
       previous.current = data;
     } catch (caught) {
@@ -277,6 +293,7 @@ export default function App() {
       lastQuestion.current = null;
       previous.current = null;
       setNotice("");
+      setPartnerLeft(null);
       setIdentity(nextIdentity);
       setEntry(null);
       history.replaceState({}, "", `${location.pathname}?room=${result.room_id}`);
@@ -315,6 +332,7 @@ export default function App() {
   };
 
   async function exitRoom() {
+    setPartnerLeft(null);
     if (identity) {
       try {
         await leaveRoom(identity.roomId, identity.token);
@@ -471,8 +489,27 @@ export default function App() {
           <Icon name="wifiOff" size={16} /> Reconnexion… la partie est conservée.
         </div>
       )}
-      {notice && !identity && toast(notice, "notice")}
+      {notice && toast(notice, "notice")}
       {error && toast(error, "error")}
+      {partnerLeft && identity && identity.gameMode !== "duos" && (
+        <div className="sheet" role="alertdialog" aria-modal="true" aria-labelledby="partner-left-title">
+          <button className="sheet__backdrop" type="button" aria-label="Fermer" onClick={() => setPartnerLeft(null)} />
+          <div className="sheet__panel">
+            <header className="sheet__head">
+              <h2 id="partner-left-title">{partnerLeft} a quitté le salon.</h2>
+            </header>
+            <p className="sheet__note">Voulez-vous toujours continuer ? Tu peux poursuivre seul(e), ou quitter la partie.</p>
+            <div className="sheet__actions">
+              <button className="primary full" type="button" onClick={() => setPartnerLeft(null)}>
+                Continuer la partie
+              </button>
+              <button className="secondary full" type="button" onClick={() => void exitRoom()}>
+                Retourner à l'accueil
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {!isConfigured && !previewMode ? (
         <main className="setup page">
