@@ -115,7 +115,7 @@ L'audit initial et son plan ci-dessus sont historiques. L'implémentation a depu
 - Vérification production : ancien RPC absent ; nouveau RPC présent ; exécution autorisée à `anon` uniquement (authentification par jeton dans la fonction) ; `authenticated` non autorisé ; catalogue toujours à 192 cartes ; historique de session présent.
 
 ### Déploiement et reste à faire
-- Déploiement Render `dep-dc2l7r68bjmc73823420`, commit `2c73cac7...` : statut observé au dernier contrôle `build_in_progress`. Ne pas annoncer le mode Personnalisé comme disponible en production tant que ce déploiement n'est pas confirmé `live`.
+- Déploiement Render `dep-dc2l7r68bjmc73823420`, commit `2c73cac7...` : statut confirmé `live` ; build terminé avec succès.
 - Les tests automatisés PostgreSQL couvrent la sélection, le contrôle d'hôte, les IDs canoniques, le consentement, la révocation et l'anti-répétition.
 - Il reste une recette manuelle sur deux appareils réels pour vérifier le parcours visuel, les cinq types de cartes, la reconnexion et la synchronisation des consentements. Aucun test réel sur deux appareils n'a été effectué par l'agent.
 
