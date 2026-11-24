@@ -129,7 +129,7 @@ export function DuoLobby({ snap, inviteUrl, copied, onCopy, selected, shared, on
         </label>
         <label className="duo-toggle">
           <input type="checkbox" checked={perm.receive_media} onChange={(e) => onPermissions({ ...perm, receive_media: e.target.checked })} />
-          <span>J'accepte de recevoir des emojis et des messages.</span>
+          <span>J'accepte de recevoir des messages et des photos personnelles.</span>
         </label>
         <label className="duo-toggle">
           <input type="checkbox" data-testid="duo-share" checked={perm.share_answers} onChange={(e) => onPermissions({ ...perm, share_answers: e.target.checked })} />
