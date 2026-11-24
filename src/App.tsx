@@ -119,7 +119,7 @@ export default function App() {
   const [stage, setStage] = useState<FlowStage>(() =>
     new URLSearchParams(location.search).get("room") ? "enter" : "home"
   );
-  const [selected, setSelected] = useState<Category[]>(() => categoriesForIntensity(prefs.intensity, prefs.exclusions));
+  const [selected, setSelected] = useState<Category[]>(() => categoriesForIntensity(prefs.gameLevel >= 3 ? "veryHot" : prefs.intensity, prefs.exclusions));
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [partnerLeft, setPartnerLeft] = useState<string | null>(null);
@@ -567,7 +567,7 @@ export default function App() {
             prefs={prefs}
             onChange={setPrefs}
             onContinue={() => {
-              setSelected(categoriesForIntensity(prefs.intensity, prefs.exclusions));
+              setSelected(categoriesForIntensity(prefs.gameLevel >= 3 ? "veryHot" : prefs.intensity, prefs.exclusions));
               setEntry({ mode: "create", code: "", gameMode: flowMode });
               setError("");
               setStage("enter");
