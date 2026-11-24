@@ -6,7 +6,7 @@ dans l'éditeur SQL du projet `xqvxorvvjmwzpcqmqnqv` ou via `psql`.
 | Fichier | Contenu | Remarque |
 |---|---|---|
 | `01_schema.sql` | mode deux joueurs : tables, RLS, RPC, droits | à exécuter en premier |
-| `02_catalog.sql` | catalogue des 192 interactions (48 par palier) | TRUNCATE puis insert |
+| `02_catalog.sql` | catalogue initial V2 (220 cartes, intensité 1–5) | généré, UPSERT + retrait des anciennes cartes |
 | `03_reconnexion_securisee.sql` | reprise de place par jeton uniquement | remplace `join_room` |
 | `04_duo_consent_default_off.sql` | correctif historique DUOS | **obsolète** : voir ci-dessous |
 | `05_duo_rpc_anon_only.sql` | correctif historique des droits | **obsolète** : repris par `06` |
@@ -79,19 +79,12 @@ La migration est additive et ne supprime aucune donnée. La recette locale couvr
 deux sessions successives sans recouvrement, puis la remise à zéro du cycle après
 épuisement du pool, dans les deux modes.
 
-Le catalogue compte maintenant 48 cartes par palier. Avec une sélection couvrant tout
-le pool du palier, deux sessions complètes de 24 questions peuvent être jouées sans
-répétition. Si les catégories communes ne couvrent qu'une partie du pool, le nombre
-de sessions inédites dépend du nombre de cartes restantes dans ces catégories.
+Le catalogue historique comptait 48 cartes par palier. Le master V2 remplace cette répartition par 220 cartes et conserve les niveaux techniques 1–4, avec un champ éditorial distinct `intensity` de 1 à 5.
 
 
 ### Extension du catalogue — 48 cartes par palier
 
-Appliquer ensuite `15_expand_session_catalog.sql`. Le catalogue passe à 192 cartes
-(48 par palier). Une session de 24 questions peut ainsi être suivie d'une deuxième
-session complète sans aucune répétition, tant que les joueurs conservent un ensemble
-de catégories qui couvre le pool correspondant. La migration 15 est un UPSERT non
-destructif ; les textes, titres et formulations complets sont dans `src/catalog.json`.
+La migration historique `15_expand_session_catalog.sql` amène l'ancien catalogue à 192 cartes. Après les migrations 20 et 21, appliquer `22_catalogue_maitre_v2.sql` : elle ajoute `intensity`, remplace le catalogue par les 220 cartes du master V2 et retire les identifiants obsolètes. Elle ne supprime ni les salles ni les réponses. Les textes complets restent dans `src/catalog.json`.
 
 
 ## Palier 3 — moteur Personnalisé adossé au catalogue
@@ -190,3 +183,8 @@ les règles de la 17 (hôte seul, union des centres d'intérêt, consentement 18
 
 Recette : `supabase/tests/level_and_mode_integrity.sql`, exécutée par `run_postgres.sh`
 après la migration 20.
+
+
+## Catalogue maître V2 — mise à jour à appliquer
+
+Sur une base existante, exécuter `22_catalogue_maitre_v2.sql` **après** `21_explicit_content_floor.sql`. Cette migration est idempotente, ajoute `catalog.intensity` (1–5), synchronise les 220 cartes et supprime les anciennes cartes absentes du master. Elle doit être exécutée par le propriétaire du projet Supabase avant le déploiement du nouveau frontend. Ne pas appliquer cette migration à la production sans sauvegarde préalable.
