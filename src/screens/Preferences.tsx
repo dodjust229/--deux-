@@ -1,8 +1,6 @@
 import { Icon } from "../components/Icon";
 import { InfoTip } from "../components/InfoTip";
 import { translator, type Lang } from "../lib/i18n";
-import { categoryLabels } from "../content";
-import type { Category } from "../types";
 import type { Intensity, Preferences as Prefs } from "../lib/prefs";
 import { clampVolume } from "../lib/prefs";
 
@@ -14,19 +12,11 @@ interface PreferencesProps {
   onBack: () => void;
 }
 
-const INTENSITIES: Intensity[] = ["soft", "hot", "veryHot"];
-const CATEGORIES: Category[] = ["decouverte", "complicite", "profondeur", "seduction", "audacieux"];
+const INTENSITIES: Intensity[] = ["soft", "audacious", "all"];
 
 export function Preferences({ lang, prefs, onChange, onContinue, onBack }: PreferencesProps) {
   const t = translator(lang);
   const set = (patch: Partial<Prefs>) => onChange({ ...prefs, ...patch });
-
-  const toggleExclusion = (category: Category) => {
-    const next = prefs.exclusions.includes(category)
-      ? prefs.exclusions.filter((value) => value !== category)
-      : [...prefs.exclusions, category];
-    set({ exclusions: next });
-  };
 
   return (
     <main className="flow page">
@@ -65,70 +55,22 @@ export function Preferences({ lang, prefs, onChange, onContinue, onBack }: Prefe
         </div>
 
         <div className="prefs-block">
-          <span className="prefs-row__label">
-            {t("prefs.intensity")} <InfoTip tip="intensity" lang={lang} />
-          </span>
+          <span className="prefs-row__label">{t("prefs.intensity")}</span>
           <div className="intensity-grid" role="radiogroup" aria-label={t("prefs.intensity")}>
             {INTENSITIES.map((value) => (
               <button
                 key={value}
                 type="button"
                 role="radio"
+                data-testid={"prefs-ambience-" + value}
                 aria-checked={prefs.intensity === value}
-                className={`intensity ${prefs.intensity === value ? "is-selected" : ""} intensity--${value}`}
+                className={"intensity intensity--" + value + (prefs.intensity === value ? " is-selected" : "")}
                 onClick={() => set({ intensity: value })}
               >
-                <strong>{t(`prefs.intensity.${value}` as const)}</strong>
-                <small>{t(`prefs.intensity.${value}.desc` as const)}</small>
+                <strong>{t(("prefs.intensity." + value) as "prefs.intensity.soft" | "prefs.intensity.audacious" | "prefs.intensity.all")}</strong>
+                <small>{t(("prefs.intensity." + value + ".desc") as "prefs.intensity.soft.desc" | "prefs.intensity.audacious.desc" | "prefs.intensity.all.desc")}</small>
               </button>
             ))}
-          </div>
-        </div>
-
-        <div className="prefs-block">
-          <span className="prefs-row__label">
-            {lang === "en" ? "Game level" : "Palier de jeu"}
-            <InfoTip tip="levels" lang={lang} />
-          </span>
-          <p className="muted small">
-            {lang === "en"
-              ? "Choose the level you want to play directly. Previous levels do not need to be unlocked. At levels 3–4, all non-excluded categories are offered by default to provide enough cards."
-              : "Choisis directement le palier que tu veux jouer. Aucun passage obligatoire par les niveaux précédents. Aux paliers 3–4, toutes les catégories non exclues sont proposées par défaut pour garantir un choix suffisant de cartes."}
-          </p>
-          <div className="intensity-grid" role="radiogroup" aria-label={lang === "en" ? "Game level" : "Palier de jeu"}>
-            {([1, 2, 3, 4] as const).map((value) => (
-              <button
-                key={value}
-                type="button"
-                role="radio"
-                aria-checked={prefs.gameLevel === value}
-                className={`intensity ${prefs.gameLevel === value ? "is-selected" : ""} intensity--${value === 4 ? "veryHot" : value === 1 ? "soft" : "hot"}`}
-                onClick={() => set({ gameLevel: value })}
-              >
-                <strong>{lang === "en" ? `Level ${value}` : `Palier ${value}`}</strong>
-                <small>{lang === "en"
-                  ? ["Warm-up", "Growing tension", "Bold", "No holding back"][value - 1]
-                  : ["Découverte", "La tension monte", "Audacieux", "Très audacieux"][value - 1]}</small>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="prefs-block">
-          <span className="prefs-row__label">
-            {t("prefs.exclusions")} <InfoTip tip="categories" lang={lang} />
-          </span>
-          <p className="muted small">{t("prefs.exclusions.desc")}</p>
-          <div className="chips chips--tight">
-            {CATEGORIES.map((category) => {
-              const off = prefs.exclusions.includes(category);
-              return (
-                <button key={category} type="button" aria-pressed={off} className={`chip chip--${category} ${off ? "is-off" : "is-on"}`} onClick={() => toggleExclusion(category)}>
-                  <span className="chip__check" aria-hidden="true">{off ? "✕" : "✓"}</span>
-                  <strong>{categoryLabels[category]}</strong>
-                </button>
-              );
-            })}
           </div>
         </div>
 
