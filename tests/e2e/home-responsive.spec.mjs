@@ -39,9 +39,12 @@ for (const viewport of viewports) {
         logoWidth: logo.width,
         logoHeight: logo.height,
         documentWidth: document.documentElement.scrollWidth,
+        heroTop: hero.top,
         heroBottom: hero.bottom,
+        pictureTop: picture.top,
         pictureBottom: picture.bottom,
         copyTop: copy.top,
+        copyBottom: copy.bottom,
         headingTop: heading.top,
         enterLeft: enter.left,
         enterRight: enter.right,
@@ -53,8 +56,12 @@ for (const viewport of viewports) {
     expect(layout.logoWidth).toBeGreaterThanOrEqual(viewport.width <= 640 ? 95 : 111);
     expect(layout.logoHeight).toBeGreaterThanOrEqual(viewport.width <= 640 ? 95 : 111);
     if (viewport.width <= 699) {
-      expect(layout.copyTop).toBeGreaterThanOrEqual(layout.pictureBottom - 1);
-      expect(layout.headingTop).toBeGreaterThanOrEqual(layout.pictureBottom - 1);
+      // L'illustration est le fond plein cadre : le contenu se superpose au visuel,
+      // il ne doit plus être repoussé sous un panneau image séparé.
+      expect(layout.pictureTop).toBeLessThanOrEqual(layout.heroTop + 1);
+      expect(layout.pictureBottom).toBeGreaterThanOrEqual(layout.heroBottom - 1);
+      expect(layout.copyTop).toBeGreaterThanOrEqual(layout.heroTop - 1);
+      expect(layout.copyBottom).toBeLessThanOrEqual(layout.heroBottom + 1);
     }
     expect(layout.enterLeft).toBeGreaterThanOrEqual(0);
     expect(layout.enterRight).toBeLessThanOrEqual(viewport.width + 1);
