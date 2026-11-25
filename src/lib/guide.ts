@@ -60,7 +60,7 @@ const FR: GuideSection[] = [
     body: [
       "À Deux : réponses cachées jusqu'à la révélation, validation à deux pour avancer, pause partagée, stickers remplacés par des emojis natifs.",
       "DUOS : chaque réponse choisit sa visibilité (moi, mon duo, les quatre). Le salon commun n'est ouvert que si les quatre l'autorisent. Le duo opposé ne voit jamais vos échanges privés.",
-      "Personnalisé : vous écrivez vos questions (5 à 24) et vous les jouez dans l'ordre choisi, sinon tout fonctionne comme À Deux.",
+      "Personnalisé : QSPICY tire 5 à 24 cartes existantes du catalogue selon vos catégories communes. Vous ne rédigez pas les questions. Après chaque révélation, vous pouvez commenter les réponses et envoyer des réactions dans votre échange privé à deux.",
       "Anonyme, Côte à Côte et Vocal restent verrouillés : leur moteur et leur confidentialité ne sont pas terminés, les ouvrir promettrait ce qui n'existe pas."
     ]
   },
@@ -159,7 +159,7 @@ const EN: GuideSection[] = [
     body: [
       "À Deux: answers stay hidden until the reveal, both must confirm to move on, the pause is shared, stickers are replaced by native emojis.",
       "DUOS: each answer chooses who sees it (me, my duo, all four). The shared room opens only if all four allow it. The opposite duo never sees your private exchanges.",
-      "Custom: you write your own questions (5 to 24) and play them in the order you choose; everything else works like À Deux.",
+      "Custom: QSPICY draws 5 to 24 existing catalogue cards from your shared categories. You do not write the questions. After each reveal, you can comment on the answers and send reactions in your private two-person exchange.",
       "Anonymous, Side by side and Voice stay locked: their engine and their privacy are unfinished, opening them would promise what does not exist."
     ]
   },
@@ -177,7 +177,7 @@ const EN: GuideSection[] = [
     title: "Personalisation options",
     body: [
       "Preferences: default moods, game level, exclusions, language, theme, sound and motion, stored on your device.",
-      "Custom room: you write 5 to 24 questions, played in the order of your list, with the same hidden answers, the same reveal and the same Pass button.",
+      "Custom room: QSPICY draws 5 to 24 existing catalogue cards from your shared categories. You do not write the questions. The cards play in the order shown; after each reveal, you can comment on the answers and react in your private two-person exchange.",
       "That room never opens the 18+ tier: a free-text question cannot be withdrawn mid-game if a consent changes, so 18+ stays in the catalogue."
     ]
   },
@@ -213,7 +213,7 @@ const TIPS_FR: Record<TipId, { title: string; body: string }> = {
   lobby: { title: "Salle d'attente", body: "La partie démarre quand tout le monde est là, qu'une catégorie est commune et que les accords 18+ nécessaires sont donnés." },
   safe: { title: "SAFE", body: "Pause pour les deux, sortie immédiate ou sortie avec blocage mémorisé sur cet appareil." },
   levels: { title: "Paliers de jeu", body: "Choisis directement le palier que tu veux jouer : aucun déblocage des précédents n’est nécessaire. Aux paliers 3–4, toutes les catégories non exclues sont proposées par défaut. Ces paliers exigent l’accord 18+ de tous les joueurs." },
-  custom: { title: "Tes questions", body: "Entre 5 et 24 questions, jouées dans l'ordre affiché. Le serveur vérifie la longueur et les doublons au lancement. Pas de palier 18+ ici." },
+  custom: { title: "Votre sélection", body: "QSPICY tire 5 à 24 cartes existantes du catalogue. Vous ne rédigez pas les questions. Après chaque révélation, vous pouvez commenter et réagir dans votre échange privé. Pas de palier 18+ ici." },
   duos: { title: "Salon DUOS", body: "Quatre joueurs, deux duos. Chaque réponse choisit qui la voit ; le salon commun n'ouvre que si les quatre l'autorisent." }
 };
 
@@ -226,7 +226,7 @@ const TIPS_EN: Record<TipId, { title: string; body: string }> = {
   lobby: { title: "Waiting room", body: "The game starts when everyone is here, one category is shared and the required 18+ consents are given." },
   safe: { title: "SAFE", body: "Pause for both, leave immediately, or leave with a block remembered on this device." },
   levels: { title: "Game levels", body: "Choose the exact level you want to play; previous levels do not need to be unlocked. At levels 3–4, all non-excluded categories are offered by default. These levels require 18+ consent from everyone." },
-  custom: { title: "Your questions", body: "5 to 24 questions, played in the order shown. The server checks length and duplicates when the game starts. No 18+ tier here." },
+  custom: { title: "Your selection", body: "QSPICY draws 5 to 24 existing catalogue cards. You do not write the questions. After each reveal, you can comment and react in your private exchange. No 18+ tier here." },
   duos: { title: "DUOS room", body: "Four players, two duos. Each answer chooses who sees it; the shared room opens only if all four allow it." }
 };
 
