@@ -30,7 +30,9 @@ const rows = items.map(i => "  ('" + q(i.id) + "','" + q(i.category) + "','" + q
 const ids = items.map(i => "'" + q(i.id) + "'").join(",");
 const upsert = "insert into public.catalog(id,category,kind,options,level,intensity) values\n" + rows +
   "\non conflict (id) do update set category=excluded.category, kind=excluded.kind, options=excluded.options, level=excluded.level, intensity=excluded.intensity;\n";
-const cleanup = "\ndelete from public.catalog where id not in (" + ids + ");\n";
+const cleanup = "\ndelete from public.catalog c where c.id not in (" + ids + ")\n" +
+  "  and not exists (select 1 from public.rooms r where r.status in ('waiting','playing','paused')\n" +
+  "    and c.id = any(coalesce(r.interaction_ids, '{}'::text[])));\n";
 const sql = "-- GÉNÉRÉ par scripts/sync-catalog.mjs — ne pas modifier à la main.\n" + upsert + cleanup;
 const migration = "-- QSPICY · Remplacement intégral du catalogue par le master V2 (" + items.length + " cartes).\n" +
   "-- Migration additive/idempotente : préserve salles/réponses, remplace uniquement les cartes du catalogue.\n" +
