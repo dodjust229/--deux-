@@ -2,7 +2,7 @@ name: Vérification du projet
 
 on:
   push:
-    branches: [main, genspark/qspicy-refonte, 'qspicy/**', 'fix/**']
+    branches: [main, genspark/qspicy-refonte, 'qspicy/**', 'fix/**', 'release/**']
   pull_request:
     branches: [main, 'integrate/**']
 
@@ -51,8 +51,15 @@ jobs:
       - name: Recette d'intégration PostgreSQL 16
         run: bash supabase/tests/run_postgres.sh
       - name: Installer Playwright pour la recette navigateur
-        run: npm install --no-save --package-lock=false @playwright/test
+        run: npm install --no-save --package-lock=false @playwright/test playwright
       - name: Installer Chromium
         run: npx playwright install --with-deps chromium
       - name: Recettes navigateur responsive et Zone 2
         run: npx playwright test
+      - name: Installer les dépendances E2E invitation
+        run: npm ci --prefix supabase/tests/invite_e2e
+      - name: Recette navigateur des invitations Couple, Personnalisé et DUOS
+        run: |
+          CHROME_PATH="$(node --input-type=module -e 'import { chromium } from "playwright"; process.stdout.write(chromium.executablePath())')" \
+          TEST_DB=qspicy_invite_e2e \
+          bash supabase/tests/invite_e2e/run.sh
