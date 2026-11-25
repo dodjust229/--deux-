@@ -110,7 +110,7 @@ export default function App() {
   const previewDuo = Boolean(previewMode?.startsWith("duo-"));
   const [identity, setIdentity] = useState<Identity | null>(() =>
     previewMode && previewMode !== "home"
-      ? { roomId: "demo", token: "demo", nickname: "Tao", avatar: "masculin", gameMode: previewDuo ? "duos" : "couple" }
+      ? { roomId: "demo", token: "demo", nickname: "Tao", avatar: "masculin", gameMode: previewDuo ? "duos" : new URLSearchParams(location.search).get("mode") === "custom" ? "custom" : "couple" }
       : readIdentity()
   );
   const [snapshot, setSnapshot] = useState<Snapshot | null>(() =>
