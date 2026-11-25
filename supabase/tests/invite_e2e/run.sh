@@ -86,7 +86,8 @@ for migration in \
   09_duo_replay 10_custom_room 11_game_levels 12_level_consent_guard \
   13_expand_balanced_catalog 14_session_question_history 15_expand_session_catalog \
   16_custom_catalog_engine 17_invitation_permissions 18_room_photo_sharing \
-  19_invitation_finalisation 20_level_and_mode_integrity 21_explicit_content_floor
+  19_invitation_finalisation 20_level_and_mode_integrity 21_explicit_content_floor \
+  22_catalogue_maitre_v2 24_qcm_options_from_server
 do
   echo "   migration $migration"
   "${PSQL[@]}" -d "$DB" -f "supabase/$migration.sql" >/dev/null
