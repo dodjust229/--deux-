@@ -1649,7 +1649,7 @@
   background: rgba(240, 192, 106, 0.1);
 }
 
-.intensity--veryHot.is-selected {
+.intensity--audacious.is-selected {
   border-color: var(--pepper);
   background: rgba(227, 59, 78, 0.1);
 }
