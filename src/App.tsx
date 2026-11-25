@@ -602,6 +602,11 @@ export default function App() {
               setError("");
               setStage("enter");
             }}
+            onChooseSalon={(mode) => {
+              setFlowMode(mode);
+              setError("");
+              setStage("prefs");
+            }}
           />
         ) : stage === "mode" ? (
           <Mode
