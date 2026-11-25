@@ -18,13 +18,13 @@ renvoie « Option invalide ».
 
 ## Correction
 
-Migration `supabase/24_qcm_options_from_server.sql` :
-- ajoute `interaction_options` au résultat de `get_room_snapshot`, directement depuis
+Migration `supabase/23_qcm_options_from_server.sql` :
+- ajoute `interaction_options` aux résultats de `get_room_snapshot` et `get_duo_snapshot`, directement depuis
   `public.catalog` ;
 - ne désactive ni ne relâche la validation serveur.
 
 Côté client :
-- `getSnapshot` remplace les options locales d'une carte `secret` par les options reçues
+- `getSnapshot` et `getDuoSnapshot` remplacent les options locales d'une carte `secret` par les options reçues
   du serveur ;
 - si le serveur renvoie explicitement `null`, aucun faux choix local n'est présenté ;
 - les autres types de cartes ne changent pas.
@@ -33,8 +33,8 @@ Côté client :
 
 - Tests unitaires : options serveur prioritaires, réponse vide en cas d'options serveur
   absentes, autres types de cartes inchangés.
-- PostgreSQL 16 : snapshot identique à `public.catalog.options` et validation des quatre
-  propositions de la carte `p03` (palier 3) par `submit_answer`.
+- PostgreSQL 16 : snapshot À Deux identique à `public.catalog.options`, validation des quatre
+  propositions de la carte `p03` (palier 3) par `submit_answer`, et vérification du snapshot DUOS.
 - Build, TypeScript, catalogue et suite SQL complète exécutés par GitHub Actions.
 
 ## Limites
