@@ -19,7 +19,7 @@ Le script, à chaque exécution :
 
 1. télécharge PostgREST 16.6 dans `/tmp/qspicy-invite-e2e` (une fois) ;
 2. recrée la base jetable `qspicy_invite_e2e` et applique les migrations dans l'ordre de
-   `supabase/tests/run_postgres.sh` (01 → 19) ;
+   `supabase/tests/run_postgres.sh` : migrations 01 → 22, puis 24 ;
 3. démarre PostgREST puis le front compilé, tous deux sur `127.0.0.1` ;
 4. joue les recettes dans des navigateurs isolés et affiche `n/n vérifications réussies`.
 
