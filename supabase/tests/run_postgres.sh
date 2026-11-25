@@ -222,6 +222,9 @@ echo "Running QCM options synchronization recipe"
 echo "Rechecking Couple, DUOS and custom union-of-interests after all migrations"
 python3 supabase/tests/palier4_invitation_permissions.py
 
+# Vérifie que la migration 25 rétablit le helper même si une base intermédiaire l’a perdu.
+"${PSQL[@]}" -d "$DB" -c "DROP FUNCTION IF EXISTS public._pick_catalog_deck(text[],integer,text[])"
+
 echo "Applying QSPICY audit correction 25"
 "${PSQL[@]}" -d "$DB" -f "supabase/25_audacieux_floor_and_deck.sql"
 
