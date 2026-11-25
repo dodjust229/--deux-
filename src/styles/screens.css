@@ -130,18 +130,18 @@
     display: block;
     flex: 0 0 auto;
     width: 100%;
-    height: clamp(280px, 54svh, 440px);
+    height: clamp(260px, 45svh, 380px);
     overflow: hidden;
   }
 
   .home__bg img {
-    object-position: 70% center;
+    object-position: 70% 34%;
   }
 
   /* Fondu discret au bas de l'image ; la copie reste dans son propre panneau. */
   .home__scrim {
     inset: 64px 0 auto;
-    height: clamp(280px, 54svh, 440px);
+    height: clamp(260px, 45svh, 380px);
     background: linear-gradient(180deg, rgba(14, 9, 8, 0.28) 0%, rgba(14, 9, 8, 0) 48%, rgba(14, 9, 8, 0.62) 100%);
   }
 
