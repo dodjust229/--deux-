@@ -33,3 +33,43 @@ test("la préférence Audacieux ne laisse apparaître que cette catégorie dans 
   await expect(page.getByRole("radio", { name: /Découverte/ })).toHaveCount(0);
   await expect(page.getByRole("radio", { name: /Confidence/ })).toHaveCount(0);
 });
+
+test("les trois ambiances filtrent correctement les catégories dans À Deux et DUOS", async ({ browser }) => {
+  const presets = [
+    {
+      intensity: "soft",
+      visible: ["Découverte", "Complicité", "Confidence", "Séduction"],
+      hidden: ["Audacieux"]
+    },
+    {
+      intensity: "audacious",
+      visible: ["Audacieux"],
+      hidden: ["Découverte", "Complicité", "Confidence", "Séduction"]
+    },
+    {
+      intensity: "all",
+      visible: ["Découverte", "Complicité", "Confidence", "Séduction", "Audacieux"],
+      hidden: []
+    }
+  ];
+
+  for (const mode of ["couple", "duos"]) {
+    for (const preset of presets) {
+      const context = await browser.newContext();
+      await context.addInitScript((intensity) => {
+        localStorage.setItem("qspicy.prefs.v1", JSON.stringify({ intensity }));
+      }, preset.intensity);
+      const page = await context.newPage();
+      await page.goto(mode === "duos" ? "/?apercu=duo-lobby" : "/?apercu=zone2-lobby");
+
+      for (const category of preset.visible) {
+        await expect(page.getByRole("radio", { name: new RegExp(category, "i") })).toBeVisible();
+      }
+      for (const category of preset.hidden) {
+        await expect(page.getByRole("radio", { name: new RegExp(category, "i") })).toHaveCount(0);
+      }
+
+      await context.close();
+    }
+  }
+});
