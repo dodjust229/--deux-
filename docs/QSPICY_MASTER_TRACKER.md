@@ -146,6 +146,16 @@ déploiement de production, aucune écriture sur la base Supabase de production.
 
 ## Éléments encore ouverts
 
+### Priorité 1 — recette terrain commune des paliers 4 à 7
+- [Matrice et fiche de preuves](QSPICY_RECETTE_TERRAIN.md) : scénarios, résultats attendus et statut par appareil. Aucun test terrain n'est déclaré acquis.
+- `main` (`3f14afe`) contient la livraison applicative `e8617dd`. [CI de main](https://github.com/dodjust229/--deux-/actions/runs/45374583686) confirmée et bundle Render public identique au build local.
+- Point bloquant Palier 5 : vérifier l'accès photo déjà accordé après révocation, pas seulement la disparition de la galerie. Le nettoyage périodique reste à évaluer séparément.
+
+### Après la stabilisation — évolutions non livrées
+- Priorité 2 : messagerie du mode Personnalisé uniquement ; commentaires liés à la réponse et héritant de sa visibilité ; réutilisation du partage photo existant.
+- Priorité 3 : identité sonore et console audio, sans lecture automatique.
+- Priorités 4 et 5 : achever VIP1 séparément, puis étudier la voix.
+
 ### Palier 6 — recette audio après déploiement
 - Code et infrastructure livrés ; PR #24 fusionnée et Render live.
 - CI GitHub Actions run `45372319685` : TypeScript, tests unitaires/catalogue, build et intégration PostgreSQL 16 réussis.

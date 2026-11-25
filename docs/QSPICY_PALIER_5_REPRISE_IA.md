@@ -47,7 +47,7 @@ Parcours prévu :
 
 La migration ajoute `room_media`, active RLS et révoque l'accès direct. Les RPC sensibles vérifient le jeton de joueur via `_player_for`. Seule l'Edge Function, exécutée avec la clé serveur conservée côté Supabase, peut enregistrer ou signer les médias. La clé serveur n'est jamais envoyée au navigateur.
 
-Le bucket est privé et limité aux types MIME autorisés. La fonction vérifie les signatures binaires JPEG/PNG/WebP, puis revalide les droits au moment de l'enregistrement. Les URL signées expirent après cinq minutes ; supprimer le fichier retire l'accès futur.
+Le bucket est privé et limité au JPEG. La fonction vérifie le type réel du fichier, puis revalide les droits au moment de l'enregistrement. Les URL signées expirent après cinq minutes ; supprimer le fichier retire l'accès futur. Après une révocation, vérifier séparément l'accès déjà accordé et l'absence du média dans la galerie ([cas 5.3](QSPICY_RECETTE_TERRAIN.md)).
 
 ## 5. Livraisons déjà validées
 
