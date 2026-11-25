@@ -1,5 +1,5 @@
 -- QSPICY · Remplacement intégral du catalogue par le master V2 (220 cartes).
--- Migration additive/idempotente : préserve les salles actives et les cartes qu'elles utilisent.
+-- Migration additive/idempotente : préserve les salles actives et leurs cartes référencées.
 alter table public.catalog add column if not exists intensity integer;
 update public.catalog set intensity = least(5, greatest(1, coalesce(intensity, level))) where intensity is null;
 alter table public.catalog alter column intensity set default 1;
