@@ -101,6 +101,12 @@ begin
 
   v_level := p_level;
 
+  -- Audacieux n'existe qu'aux paliers 3 et 4. Une catégorie plus douce
+  -- sélectionnée par l'autre joueur ne doit jamais masquer ce choix.
+  if 'audacieux' = any(coalesce(p_categories, '{}'::text[])) then
+    v_level := greatest(v_level, 3);
+  end if;
+
   if not exists (
     select 1 from public.catalog
      where category = any(p_categories) and level = v_level
@@ -112,7 +118,47 @@ begin
   end if;
 
   return v_level;
-end $$;
+end $;
+
+-- Un choix Audacieux doit réellement apparaître dans le paquet combiné,
+-- même si l'autre joueur a choisi une catégorie disponible à un palier plus bas.
+-- On réserve jusqu'à 8 cartes Audacieux, puis on complète avec les autres cartes
+-- disponibles du même palier. Si Audacieux est le seul choix, on remplit autant
+-- que le catalogue le permet.
+create or replace function public._pick_catalog_deck(
+  p_categories text[],
+  p_level integer,
+  p_excluded text[]
+)
+returns text[]
+language sql
+volatile
+security definer
+set search_path = public, extensions, pg_temp
+as $
+  with priority as (
+    select c.id
+      from public.catalog c
+     where 'audacieux' = any(coalesce(p_categories, '{}'::text[]))
+       and c.category = 'audacieux'
+       and c.level = p_level
+       and not (c.id = any(coalesce(p_excluded, '{}'::text[])))
+     order by random()
+     limit 8
+  ),
+  rest as (
+    select c.id
+      from public.catalog c
+     where c.category = any(p_categories)
+       and c.level = p_level
+       and not (c.id = any(coalesce(p_excluded, '{}'::text[])))
+       and not exists (select 1 from priority p where p.id = c.id)
+     order by random()
+     limit greatest(0, 24 - (select count(*) from priority))
+  )
+  select array_agg(deck.id order by random())
+    from (select id from priority union all select id from rest) deck
+$;
 
 -- ===== 4. Couple : palier effectif, règles de la migration 17 conservées =====
 create or replace function public.start_game_by_level(
@@ -167,14 +213,9 @@ begin
     raise exception 'E_CONSENT: La catégorie 18+ exige l''accord explicite des deux joueurs.';
   end if;
 
-  select array_agg(id order by random()) into v_ids
-    from (
-      select id from public.catalog
-       where category = any(v_categories) and level = v_level
-         and not (id = any(coalesce(r.played_interaction_ids, '{}'::text[])))
-       order by random()
-       limit 24
-    ) cards;
+  v_ids := public._pick_catalog_deck(
+    v_categories, v_level, coalesce(r.played_interaction_ids, '{}'::text[])
+  );
 
   if coalesce(cardinality(v_ids), 0) = 0 then
     update public.rooms
@@ -187,13 +228,7 @@ begin
           )
        )
      where id = p_room_id;
-    select array_agg(id order by random()) into v_ids
-      from (
-        select id from public.catalog
-         where category = any(v_categories) and level = v_level
-         order by random()
-         limit 24
-      ) cards;
+    v_ids := public._pick_catalog_deck(v_categories, v_level, '{}'::text[]);
   end if;
 
   if coalesce(cardinality(v_ids), 0) = 0 then
@@ -268,14 +303,9 @@ begin
     raise exception 'E_CONSENT: Les paliers 3–4 et la catégorie Audacieux exigent l''accord des quatre joueurs.';
   end if;
 
-  select array_agg(id order by random()) into v_ids
-    from (
-      select id from public.catalog
-       where category = any(v_categories) and level = v_level
-         and not (id = any(coalesce(r.played_interaction_ids, '{}'::text[])))
-       order by random()
-       limit 24
-    ) cards;
+  v_ids := public._pick_catalog_deck(
+    v_categories, v_level, coalesce(r.played_interaction_ids, '{}'::text[])
+  );
 
   if coalesce(cardinality(v_ids), 0) = 0 then
     update public.rooms
@@ -288,13 +318,7 @@ begin
           )
        )
      where id = p_room_id;
-    select array_agg(id order by random()) into v_ids
-      from (
-        select id from public.catalog
-         where category = any(v_categories) and level = v_level
-         order by random()
-         limit 24
-      ) cards;
+    v_ids := public._pick_catalog_deck(v_categories, v_level, '{}'::text[]);
   end if;
 
   if coalesce(cardinality(v_ids), 0) = 0 then
@@ -398,4 +422,5 @@ revoke execute on function public.start_duo_game_by_level(uuid,text,integer) fro
 grant execute on function public.start_game_by_level(uuid,text,integer) to anon;
 grant execute on function public.start_duo_game_by_level(uuid,text,integer) to anon;
 revoke execute on function public._effective_level(text[],integer) from public, anon, authenticated;
+revoke execute on function public._pick_catalog_deck(text[],integer,text[]) from public, anon, authenticated;
 revoke execute on function public._sync_current_level() from public, anon, authenticated;
