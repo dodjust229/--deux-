@@ -4,7 +4,7 @@ on:
   push:
     branches: [main, genspark/qspicy-refonte, 'qspicy/**', 'fix/**']
   pull_request:
-    branches: [main]
+    branches: [main, 'integrate/**']
 
 permissions:
   contents: read
