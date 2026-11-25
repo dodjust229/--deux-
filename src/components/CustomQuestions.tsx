@@ -22,10 +22,10 @@ export function CustomQuestions({ lang, catalog, selectedCategories, onLaunch, i
 
   return (
     <section className="custom-panel" aria-labelledby="custom-title">
-      <h2 id="custom-title">{isHost ? (en ? "Compose your QSPICY session" : "Composez votre partie QSPICY") : (en ? "QSPICY is preparing your game" : "QSPICY prépare votre partie")}</h2>
+      <h2 id="custom-title">{isHost ? (en ? "Prepare your QSPICY selection" : "Préparez votre sélection QSPICY") : (en ? "QSPICY is preparing your game" : "QSPICY prépare votre partie")}</h2>
       <p className="muted small">{en
-        ? "QSPICY builds a varied selection from your shared categories: open questions, secret choices, predictions and challenges. Both players can set their 18+ agreement in advance."
-        : "QSPICY compose une sélection variée dans vos catégories communes : questions ouvertes, choix secrets, prédictions et défis. Les deux joueurs peuvent donner leur accord 18+ à l'avance."}</p>
+        ? "QSPICY draws a varied set of existing catalogue cards from your shared categories: open questions, secret choices, predictions and challenges. You do not write the questions; you choose the path to play."
+        : "QSPICY tire une sélection variée de cartes déjà présentes dans le catalogue et vos catégories communes : questions ouvertes, choix secrets, prédictions et défis. Vous ne rédigez pas les questions ; vous choisissez le parcours à jouer."}</p>
       <section className="consent">
         <label className="consent__line">
           <input type="checkbox" checked={myConsent} disabled={busy} onChange={event => onToggleConsent(event.target.checked)} />
@@ -41,9 +41,9 @@ export function CustomQuestions({ lang, catalog, selectedCategories, onLaunch, i
         </select>
         <p className="muted small">{eligibleCount} {en ? "questions available in the selected shared categories." : "questions disponibles dans vos catégories communes."}</p>
         <button type="button" className="secondary full" data-testid="custom-generate" disabled={busy || eligibleCount < CUSTOM.min} onClick={generate}>
-          <Icon name="rotate" size={16} /> {generated ? (en ? "Shuffle another selection" : "Mélanger une autre sélection") : (en ? "Generate a selection" : "Générer une sélection")}
+          <Icon name="rotate" size={16} /> {generated ? (en ? "Shuffle another selection" : "Tirer une autre sélection") : (en ? "Draw a selection" : "Tirer une sélection")}
         </button>
-        {generated && <ol className="custom-list" aria-label={en ? "Selected questions" : "Questions sélectionnées"}>
+        {generated && <ol className="custom-list" aria-label={en ? "Question path" : "Parcours de questions"}>
           {deck.map((card, index) => <li key={card.id} className="custom-list__row">
             <span className="custom-list__num" aria-hidden="true">{index + 1}</span>
             <div><p className="custom-list__preview">{card.prompt}</p><small className="muted">{card.title} · {({ free: en ? "Open question" : "Question ouverte", secret: en ? "Secret choice" : "Choix secret", prediction: en ? "Prediction" : "Prédiction", challenge: en ? "Challenge" : "Défi", cross: en ? "Cross-question" : "Question croisée" })[card.kind]} · {en ? "Level" : "Palier"} {card.level}</small></div>
