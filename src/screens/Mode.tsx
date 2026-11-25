@@ -25,7 +25,6 @@ export function Mode({ lang, onSelect, onBack }: ModeProps) {
       <header className="flow__head">
         <span className="eyebrow">QSPICY</span>
         <h1>{t("mode.title")}</h1>
-        <p className="muted">{t("mode.sub")}</p>
       </header>
 
       <ul className="mode-list">
