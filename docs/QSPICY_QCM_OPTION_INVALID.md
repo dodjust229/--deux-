@@ -18,7 +18,7 @@ renvoie « Option invalide ».
 
 ## Correction
 
-Migration `supabase/24_qcm_options_from_server.sql` :
+Migration `supabase/24_qcm_options_from_server.sql` (après le catalogue maître V2) :
 - ajoute `interaction_options` aux résultats de `get_room_snapshot` et `get_duo_snapshot`, directement depuis
   `public.catalog` ;
 - ne désactive ni ne relâche la validation serveur.
