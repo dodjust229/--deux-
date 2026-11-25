@@ -12,7 +12,11 @@ interface PreferencesProps {
   onBack: () => void;
 }
 
-const INTENSITIES: Intensity[] = ["soft", "audacious", "all"];
+const INTENSITIES: { value: Intensity; label: string; description: string }[] = [
+  { value: "soft", label: "prefs.intensity.soft", description: "prefs.intensity.soft.desc" },
+  { value: "audacious", label: "prefs.intensity.audacious", description: "prefs.intensity.audacious.desc" },
+  { value: "all", label: "prefs.intensity.all", description: "prefs.intensity.all.desc" }
+];
 
 export function Preferences({ lang, prefs, onChange, onContinue, onBack }: PreferencesProps) {
   const t = translator(lang);
@@ -57,7 +61,7 @@ export function Preferences({ lang, prefs, onChange, onContinue, onBack }: Prefe
         <div className="prefs-block">
           <span className="prefs-row__label">{t("prefs.intensity")}</span>
           <div className="intensity-grid" role="radiogroup" aria-label={t("prefs.intensity")}>
-            {INTENSITIES.map((value) => (
+            {INTENSITIES.map(({ value, label, description }) => (
               <button
                 key={value}
                 type="button"
@@ -67,8 +71,8 @@ export function Preferences({ lang, prefs, onChange, onContinue, onBack }: Prefe
                 className={"intensity intensity--" + value + (prefs.intensity === value ? " is-selected" : "")}
                 onClick={() => set({ intensity: value })}
               >
-                <strong>{t(("prefs.intensity." + value) as "prefs.intensity.soft" | "prefs.intensity.audacious" | "prefs.intensity.all")}</strong>
-                <small>{t(("prefs.intensity." + value + ".desc") as "prefs.intensity.soft.desc" | "prefs.intensity.audacious.desc" | "prefs.intensity.all.desc")}</small>
+                <strong>{t(label as "prefs.intensity.soft" | "prefs.intensity.audacious" | "prefs.intensity.all")}</strong>
+                <small>{t(description as "prefs.intensity.soft.desc" | "prefs.intensity.audacious.desc" | "prefs.intensity.all.desc")}</small>
               </button>
             ))}
           </div>
