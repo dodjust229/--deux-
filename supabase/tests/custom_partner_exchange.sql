@@ -19,6 +19,16 @@ BEGIN
     (v_room_id,1,'Partenaire A','masculin',encode(extensions.digest(v_token_a,'sha256'),'hex'),true,ARRAY['profondeur']),
     (v_room_id,2,'Partenaire B','feminin',encode(extensions.digest(v_token_b,'sha256'),'hex'),true,ARRAY['profondeur']);
 
+  BEGIN
+    PERFORM public.send_custom_partner_message(v_room_id,v_token_a,v_body);
+    RAISE EXCEPTION 'Un message avant révélation aurait dû être refusé';
+  EXCEPTION WHEN OTHERS THEN
+    IF SQLERRM NOT LIKE 'E_STATE:%' THEN RAISE; END IF;
+  END;
+
+  PERFORM public.submit_answer(v_room_id,v_token_a,(SELECT options->>0 FROM public.catalog WHERE id='p03'),false);
+  PERFORM public.submit_answer(v_room_id,v_token_b,(SELECT options->>1 FROM public.catalog WHERE id='p03'),false);
+
   v_message_id := public.send_custom_partner_message(v_room_id,v_token_a,v_body);
   IF v_message_id IS NULL THEN
     RAISE EXCEPTION 'Le message privé n''a pas été créé';
