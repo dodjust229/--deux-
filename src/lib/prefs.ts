@@ -4,7 +4,7 @@ import type { Category } from "../types";
 import type { Lang } from "./i18n";
 
 export type Theme = "dark" | "light";
-export type Intensity = "soft" | "hot" | "veryHot";
+export type Intensity = "soft" | "audacious" | "all";
 export type GameLevel = 1 | 2 | 3 | 4;
 export type Ambience = "off" | "lounge" | "velvet" | "rain";
 
@@ -32,18 +32,18 @@ export const DEFAULT_PREFERENCES: Preferences = {
   volume: 0.4,
   ambience: "off",
   language: "fr",
-  intensity: "hot",
+  intensity: "soft",
   gameLevel: 2,
   exclusions: []
 };
 
-const CATEGORIES: Category[] = ["decouverte", "complicite", "profondeur", "seduction", "audacieux"];
+export const ALL_CATEGORIES: Category[] = ["decouverte", "complicite", "profondeur", "seduction", "audacieux"];
 
 export function categoriesForIntensity(intensity: Intensity, exclusions: Category[] = []): Category[] {
   const base: Record<Intensity, Category[]> = {
-    soft: ["decouverte", "complicite"],
-    hot: ["decouverte", "complicite", "profondeur", "seduction"],
-    veryHot: ["decouverte", "complicite", "profondeur", "seduction", "audacieux"]
+    soft: ["decouverte", "complicite", "profondeur", "seduction"],
+    audacious: ["audacieux"],
+    all: ALL_CATEGORIES
   };
   return base[intensity].filter((category) => !exclusions.includes(category));
 }
@@ -57,9 +57,13 @@ export function clampVolume(value: unknown): number {
 /** Accepte n'importe quelle valeur stockée (ancienne version, JSON corrompu) sans jamais planter. */
 export function sanitizePreferences(raw: unknown): Preferences {
   const source = raw && typeof raw === "object" ? (raw as Record<string, unknown>) : {};
-  const exclusions = Array.isArray(source.exclusions)
-    ? source.exclusions.filter((value): value is Category => CATEGORIES.includes(value as Category))
-    : [];
+  // Les anciennes exclusions individuelles sont abandonnées au profit des trois choix
+  // simples : Douce, Audacieux ou Toutes.
+  const intensity: Intensity = source.intensity === "audacious"
+    ? "audacious"
+    : source.intensity === "all" || source.intensity === "veryHot"
+      ? "all"
+      : "soft";
   const ambience: Ambience = source.ambience === "lounge" || source.ambience === "velvet" || source.ambience === "rain"
     ? source.ambience
     : "off";
@@ -70,9 +74,10 @@ export function sanitizePreferences(raw: unknown): Preferences {
     volume: clampVolume(source.volume),
     ambience,
     language: source.language === "en" ? "en" : "fr",
-    intensity: source.intensity === "soft" || source.intensity === "veryHot" ? source.intensity : "hot",
-    gameLevel: source.gameLevel === 1 || source.gameLevel === 3 || source.gameLevel === 4 ? source.gameLevel : 2,
-    exclusions: [...new Set(exclusions)]
+    intensity,
+    // Le palier technique n'est plus un choix joueur. Le moteur le déduit du contenu servi.
+    gameLevel: 2,
+    exclusions: []
   };
 }
 

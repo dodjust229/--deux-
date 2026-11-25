@@ -31,7 +31,7 @@ export function explainCustomError(lang: Lang, message: string): string {
 }
 /** Legacy resolver for sessions already playing with perso-N identifiers. */
 export function customInteraction(id: string, text: string, index: number): Interaction {
-  return { id, category: "decouverte", kind: "free", title: `Question ${index + 1}`, prompt: text, level: 2, audience: "partner", visibility: "partagee" };
+  return { id, category: "decouverte", kind: "free", title: `Question ${index + 1}`, prompt: text, level: 2, intensity: 2, audience: "partner", visibility: "partagee" };
 }
 export function resolveCustomInteraction(interactionId: string | null, deck: readonly string[]): Interaction | null {
   if (!interactionId || !interactionId.startsWith("perso-")) return null;

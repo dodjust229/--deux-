@@ -71,6 +71,26 @@ BEGIN
   IF bad <> 0 THEN RAISE EXCEPTION 'La partie Audacieux contient % cartes hors catégorie', bad; END IF;
   DELETE FROM public.rooms WHERE id=room_couple;
 
+  -- ===== 2 bis. Audacieux ne disparaît pas dans une sélection combinée =====
+  -- Un joueur choisit Audacieux, l'autre Séduction : le palier 2 demandé
+  -- doit monter à 3 et le paquet doit réellement contenir des cartes Audacieux.
+  INSERT INTO public.rooms(mode,status,selected_level) VALUES ('couple','waiting',2) RETURNING id INTO room_couple;
+  INSERT INTO public.players(room_id,seat,nickname,avatar,token_hash,adult_consent,selected_categories)
+  VALUES
+    (room_couple,1,'Mix A','masculin',encode(extensions.digest(token_a,'sha256'),'hex'),true,ARRAY['audacieux']),
+    (room_couple,2,'Mix B','feminin',encode(extensions.digest(token_b,'sha256'),'hex'),true,ARRAY['seduction']);
+
+  SELECT public.start_game_by_level(room_couple,token_a,2) INTO ok;
+  IF NOT ok THEN RAISE EXCEPTION 'Le lancement combiné Audacieux + Séduction a échoué'; END IF;
+  SELECT current_level INTO lv FROM public.rooms WHERE id=room_couple;
+  IF lv <> 3 THEN RAISE EXCEPTION 'Audacieux combiné à Séduction devait relever au palier 3, obtenu %', lv; END IF;
+  SELECT count(*) INTO bad
+    FROM unnest((SELECT interaction_ids FROM public.rooms WHERE id=room_couple)) q(id)
+    JOIN public.catalog c ON c.id=q.id
+   WHERE c.category='audacieux';
+  IF bad < 8 THEN RAISE EXCEPTION 'Le paquet combiné ne garantit pas 8 cartes Audacieux (obtenu %)', bad; END IF;
+  DELETE FROM public.rooms WHERE id=room_couple;
+
   -- ===== 3. L'intensité n'est pas rabaissée =====
   -- L'accord 18+ doit survivre à un redémarrage, sinon _advance saute les
   -- cartes audacieux et la partie dérive vers du contenu plus doux.

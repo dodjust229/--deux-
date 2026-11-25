@@ -7,7 +7,7 @@
 #   3. le front compilé branché sur cette base de test ;
 #   4. deux navigateurs : l'hôte ouvre un salon Personnalisé, l'invité entre par le lien seul.
 #
-# Prérequis : PostgreSQL 16 local, node/npm, google-chrome, curl, python3.
+# Prérequis : PostgreSQL 16 local ou service local via PGHOST, node/npm, Chrome/Chromium, curl, python3.
 # Usage : bash supabase/tests/invite_e2e/run.sh
 set -euo pipefail
 
@@ -38,7 +38,15 @@ if [[ -n "${PGSERVICE:-}" || -n "${PGSERVICEFILE:-}" ]]; then
 fi
 
 mkdir -p "$CACHE"
-PSQL=(sudo -u postgres psql -X -q -v ON_ERROR_STOP=1)
+if [[ -n "${PGHOST:-}" ]]; then
+  PSQL=(psql -X -q -v ON_ERROR_STOP=1 -h "$PGHOST" -p "${PGPORT:-5432}" -U "${PGUSER:-postgres}")
+  CREATEDB=(createdb -h "$PGHOST" -p "${PGPORT:-5432}" -U "${PGUSER:-postgres}")
+  DROPDB=(dropdb -h "$PGHOST" -p "${PGPORT:-5432}" -U "${PGUSER:-postgres}")
+else
+  PSQL=(sudo -u postgres psql -X -q -v ON_ERROR_STOP=1)
+  CREATEDB=(sudo -u postgres createdb)
+  DROPDB=(sudo -u postgres dropdb)
+fi
 
 cleanup() {
   [[ -n "${PGRST_PID:-}" ]] && kill "$PGRST_PID" 2>/dev/null || true
@@ -70,8 +78,8 @@ BEGIN
 END $$;
 GRANT anon TO authenticator;
 SQL
-sudo -u postgres dropdb --if-exists "$DB"
-sudo -u postgres createdb "$DB"
+"${DROPDB[@]}" --if-exists "$DB"
+"${CREATEDB[@]}" "$DB"
 "${PSQL[@]}" -d "$DB" <<'SQL'
 CREATE SCHEMA IF NOT EXISTS storage;
 CREATE TABLE IF NOT EXISTS storage.buckets (
@@ -86,7 +94,8 @@ for migration in \
   09_duo_replay 10_custom_room 11_game_levels 12_level_consent_guard \
   13_expand_balanced_catalog 14_session_question_history 15_expand_session_catalog \
   16_custom_catalog_engine 17_invitation_permissions 18_room_photo_sharing \
-  19_invitation_finalisation 20_level_and_mode_integrity 21_explicit_content_floor
+  19_invitation_finalisation 20_level_and_mode_integrity 21_explicit_content_floor \
+  22_catalogue_maitre_v2 24_qcm_options_from_server
 do
   echo "   migration $migration"
   "${PSQL[@]}" -d "$DB" -f "supabase/$migration.sql" >/dev/null

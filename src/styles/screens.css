@@ -18,8 +18,8 @@
   padding: 0;
   width: 100vw;
   margin-left: calc(50% - 50vw);
-  margin-top: -84px;
-  padding-top: 84px;
+  margin-top: -124px;
+  padding-top: 124px;
   min-height: clamp(620px, 86vh, 880px);
   overflow: hidden;
   isolation: isolate;
@@ -114,29 +114,48 @@
 @media (max-width: 699px) {
   .home--hero {
     flex-direction: column;
-    justify-content: flex-end;
+    justify-content: flex-start;
     align-items: stretch;
-    margin-top: -64px;
-    padding-top: 64px;
-    min-height: calc(100dvh - 64px);
+    margin-top: -104px;
+    padding-top: 104px;
+    min-height: max(620px, calc(100svh - 64px));
+    overflow: visible;
+    background: #0e0908;
+  }
+
+  /* L'image portrait est un vrai bloc en haut, pas un fond recadré derrière le texte. */
+  .home__bg {
+    position: relative;
+    inset: auto;
+    display: block;
+    flex: 0 0 auto;
+    width: 100%;
+    height: clamp(240px, 38svh, 340px);
+    overflow: hidden;
   }
 
   .home__bg img {
-    object-position: center 16%;
+    object-position: 70% 20%;
   }
 
+  /* Fondu discret au bas de l'image ; la copie reste dans son propre panneau. */
   .home__scrim {
-    background:
-      linear-gradient(180deg, rgba(14, 9, 8, 0.7) 0%, rgba(14, 9, 8, 0) 18%),
-      linear-gradient(0deg, rgba(14, 9, 8, 0.985) 0%, rgba(14, 9, 8, 0.95) 34%, rgba(14, 9, 8, 0.78) 52%, rgba(14, 9, 8, 0.18) 70%, rgba(14, 9, 8, 0) 82%);
+    inset: 104px 0 auto;
+    height: clamp(240px, 38svh, 340px);
+    background: linear-gradient(180deg, rgba(14, 9, 8, 0.28) 0%, rgba(14, 9, 8, 0) 48%, rgba(14, 9, 8, 0.62) 100%);
   }
 
   .home--hero .home__hero {
-    padding: 0 20px 44px;
+    flex: 1 0 auto;
+    width: 100%;
+    padding: 22px 20px 34px;
+    background: #0e0908;
     text-align: left;
   }
 
   .home--hero .home__copy {
+    width: 100%;
+    max-width: 560px;
     text-align: left;
   }
 
@@ -1630,7 +1649,7 @@
   background: rgba(240, 192, 106, 0.1);
 }
 
-.intensity--veryHot.is-selected {
+.intensity--audacious.is-selected {
   border-color: var(--pepper);
   background: rgba(227, 59, 78, 0.1);
 }

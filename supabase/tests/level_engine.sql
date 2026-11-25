@@ -1,4 +1,6 @@
 -- Test d’intégration du moteur de niveaux et de la révocation du consentement.
+-- Ce test isole les paliers 1–4 sans la catégorie Audacieux, qui force
+-- désormais un minimum de palier 3 (règle couverte par level_and_mode_integrity.sql).
 DO $qspicy$
 DECLARE
   room_couple uuid;
@@ -15,8 +17,8 @@ BEGIN
   INSERT INTO public.rooms(status,selected_level) VALUES ('waiting',4) RETURNING id INTO room_couple;
   INSERT INTO public.players(room_id,seat,nickname,avatar,token_hash,adult_consent,selected_categories)
   VALUES
-    (room_couple,1,'Test A','masculin',encode(extensions.digest(token_a,'sha256'),'hex'),true,ARRAY['decouverte','complicite','profondeur','seduction','audacieux']),
-    (room_couple,2,'Test B','feminin',encode(extensions.digest(token_b,'sha256'),'hex'),true,ARRAY['decouverte','complicite','profondeur','seduction','audacieux']);
+    (room_couple,1,'Test A','masculin',encode(extensions.digest(token_a,'sha256'),'hex'),true,ARRAY['decouverte','complicite','profondeur','seduction']),
+    (room_couple,2,'Test B','feminin',encode(extensions.digest(token_b,'sha256'),'hex'),true,ARRAY['decouverte','complicite','profondeur','seduction']);
   FOR level_no IN 1..4 LOOP
     UPDATE public.rooms SET status='waiting' WHERE id=room_couple;
     SELECT public.start_game_by_level(room_couple,token_a,level_no) INTO ok;
@@ -35,10 +37,10 @@ BEGIN
   INSERT INTO public.rooms(mode,status,selected_level) VALUES ('duos','waiting',4) RETURNING id INTO room_duos;
   INSERT INTO public.players(room_id,seat,nickname,avatar,token_hash,adult_consent,selected_categories,duo_no)
   VALUES
-    (room_duos,1,'Test A','masculin',encode(extensions.digest(token_a,'sha256'),'hex'),true,ARRAY['decouverte','complicite','profondeur','seduction','audacieux'],1),
-    (room_duos,2,'Test B','feminin',encode(extensions.digest(token_b,'sha256'),'hex'),true,ARRAY['decouverte','complicite','profondeur','seduction','audacieux'],1),
-    (room_duos,3,'Test C','masculin',encode(extensions.digest(token_c,'sha256'),'hex'),true,ARRAY['decouverte','complicite','profondeur','seduction','audacieux'],2),
-    (room_duos,4,'Test D','feminin',encode(extensions.digest(token_d,'sha256'),'hex'),true,ARRAY['decouverte','complicite','profondeur','seduction','audacieux'],2);
+    (room_duos,1,'Test A','masculin',encode(extensions.digest(token_a,'sha256'),'hex'),true,ARRAY['decouverte','complicite','profondeur','seduction'],1),
+    (room_duos,2,'Test B','feminin',encode(extensions.digest(token_b,'sha256'),'hex'),true,ARRAY['decouverte','complicite','profondeur','seduction'],1),
+    (room_duos,3,'Test C','masculin',encode(extensions.digest(token_c,'sha256'),'hex'),true,ARRAY['decouverte','complicite','profondeur','seduction'],2),
+    (room_duos,4,'Test D','feminin',encode(extensions.digest(token_d,'sha256'),'hex'),true,ARRAY['decouverte','complicite','profondeur','seduction'],2);
   FOR level_no IN 1..4 LOOP
     UPDATE public.rooms SET status='waiting' WHERE id=room_duos;
     SELECT public.start_duo_game_by_level(room_duos,token_a,level_no) INTO ok;
@@ -72,12 +74,14 @@ DECLARE
   third_ids text[];
   ok boolean;
   overlap_count integer;
+  remaining_count integer;
 BEGIN
   INSERT INTO public.catalog(id,category,kind,options,level)
   VALUES
     ('t98','decouverte','free',null,1),
     ('t99','decouverte','free',null,1)
   ON CONFLICT (id) DO UPDATE SET category=excluded.category,kind=excluded.kind,options=excluded.options,level=excluded.level;
+  SELECT count(*) INTO remaining_count FROM public.catalog WHERE category IN ('decouverte','complicite') AND level=1;
 
   INSERT INTO public.rooms(status,selected_level) VALUES ('waiting',1) RETURNING id INTO room_couple;
   INSERT INTO public.players(room_id,seat,nickname,avatar,token_hash,adult_consent,selected_categories)
@@ -103,7 +107,7 @@ BEGIN
   SELECT interaction_ids INTO third_ids FROM public.rooms WHERE id=room_couple;
   SELECT count(*) INTO overlap_count FROM unnest(third_ids) x WHERE x=ANY(first_ids) OR x=ANY(second_ids);
   IF overlap_count<>0 THEN RAISE EXCEPTION 'Couple history repeated % cards in the final pool before reset', overlap_count; END IF;
-  IF cardinality(third_ids)<>2 THEN RAISE EXCEPTION 'Couple history expected the 2 final unused cards, got %', cardinality(third_ids); END IF;
+  IF cardinality(third_ids)<>remaining_count-48 THEN RAISE EXCEPTION 'Couple history expected % final unused cards, got %', remaining_count-48, cardinality(third_ids); END IF;
   UPDATE public.rooms SET status='finished' WHERE id=room_couple;
   PERFORM public.restart_game(room_couple,token_a);
   SELECT public.start_game_by_level(room_couple,token_a,1) INTO ok;
@@ -145,7 +149,7 @@ BEGIN
   SELECT interaction_ids INTO third_ids FROM public.rooms WHERE id=room_duos;
   SELECT count(*) INTO overlap_count FROM unnest(third_ids) x WHERE x=ANY(first_ids) OR x=ANY(second_ids);
   IF overlap_count<>0 THEN RAISE EXCEPTION 'DUOS history repeated % cards in the final pool before reset', overlap_count; END IF;
-  IF cardinality(third_ids)<>2 THEN RAISE EXCEPTION 'DUOS history expected the 2 final unused cards, got %', cardinality(third_ids); END IF;
+  IF cardinality(third_ids)<>remaining_count-48 THEN RAISE EXCEPTION 'DUOS history expected % final unused cards, got %', remaining_count-48, cardinality(third_ids); END IF;
   UPDATE public.rooms SET status='finished' WHERE id=room_duos;
   PERFORM public.restart_duo_game(room_duos,token_a);
   PERFORM public.restart_duo_game(room_duos,token_b);

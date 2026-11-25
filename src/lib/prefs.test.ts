@@ -17,6 +17,7 @@ function memoryStorage(initial: Record<string, string> = {}) {
 test("préférences : valeurs par défaut sans stockage", () => {
   assert.deepEqual(readPreferences(null), DEFAULT_PREFERENCES);
   assert.deepEqual(readPreferences(memoryStorage()), DEFAULT_PREFERENCES);
+  assert.equal(DEFAULT_PREFERENCES.intensity, "soft");
 });
 
 test("préférences : ancien réglage de réduction des animations repris", () => {
@@ -24,23 +25,39 @@ test("préférences : ancien réglage de réduction des animations repris", () =
   assert.equal(readPreferences(memoryStorage({ [LEGACY_REDUCED_KEY]: "0" })).reducedMotion, false);
 });
 
-test("préférences : JSON corrompu ou valeurs invalides ne cassent rien", () => {
+test("préférences : anciennes intensités migrées vers Douce, Audacieux ou Toutes", () => {
+  assert.equal(sanitizePreferences({ intensity: "hot" }).intensity, "soft");
+  assert.equal(sanitizePreferences({ intensity: "soft" }).intensity, "soft");
+  assert.equal(sanitizePreferences({ intensity: "veryHot" }).intensity, "all");
+  assert.equal(sanitizePreferences({ intensity: "audacious" }).intensity, "audacious");
+  assert.equal(sanitizePreferences({ intensity: "all" }).intensity, "all");
+});
+
+test("préférences : choix d'ambiance filtre exactement les catégories attendues", () => {
+  assert.deepEqual(categoriesForIntensity("soft"), ["decouverte", "complicite", "profondeur", "seduction"]);
+  assert.deepEqual(categoriesForIntensity("audacious"), ["audacieux"]);
+  assert.deepEqual(categoriesForIntensity("all"), ["decouverte", "complicite", "profondeur", "seduction", "audacieux"]);
+});
+
+test("préférences : données invalides et anciens paliers ne réintroduisent pas les choix supprimés", () => {
   assert.deepEqual(readPreferences(memoryStorage({ [PREFS_KEY]: "{oups" })), DEFAULT_PREFERENCES);
-  const sanitized = sanitizePreferences({ theme: "neon", reducedMotion: "oui", sound: 1, volume: 4, language: "de", intensity: "extreme", exclusions: ["seduction", "inconnue"], ambience: "ultrasonic" });
+  const sanitized = sanitizePreferences({
+    theme: "neon", reducedMotion: "oui", sound: 1, volume: 4, language: "de",
+    intensity: "extreme", gameLevel: 4, exclusions: ["seduction", "inconnue"], ambience: "ultrasonic"
+  });
   assert.equal(sanitized.theme, "dark");
   assert.equal(sanitized.reducedMotion, false);
   assert.equal(sanitized.sound, false);
   assert.equal(sanitized.volume, 1);
   assert.equal(sanitized.ambience, "off");
   assert.equal(sanitized.language, "fr");
-  assert.equal(sanitized.intensity, "hot");
+  assert.equal(sanitized.intensity, "soft");
   assert.equal(sanitized.gameLevel, 2);
-  assert.equal(sanitizePreferences({ gameLevel: 4 }).gameLevel, 4);
-  assert.equal(sanitizePreferences({ gameLevel: 9 }).gameLevel, 2);
+  assert.deepEqual(sanitized.exclusions, []);
+  assert.equal(sanitizePreferences({ gameLevel: 1 }).gameLevel, 2);
+  assert.equal(sanitizePreferences({ gameLevel: 3 }).gameLevel, 2);
+  assert.equal(sanitizePreferences({ gameLevel: 4 }).gameLevel, 2);
   assert.equal(sanitizePreferences({ ambience: "rain" }).ambience, "rain");
-  assert.deepEqual(sanitized.exclusions, ["seduction"]);
-  assert.deepEqual(categoriesForIntensity("soft"), ["decouverte", "complicite"]);
-  assert.deepEqual(categoriesForIntensity("veryHot", ["audacieux"]), ["decouverte", "complicite", "profondeur", "seduction"]);
   assert.equal(clampVolume(-2), 0);
   assert.equal(clampVolume("0.42"), 0.42);
 });
