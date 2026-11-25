@@ -13,6 +13,8 @@ export interface Snapshot {
   room: { id: string; mode?: "couple" | "duos"; room_kind?: "couple" | "custom" | "duos"; status: "waiting" | "playing" | "paused" | "finished"; current_index: number; total: number; adult_enabled: boolean; level?: 1 | 2 | 3 | 4; selected_level?: 1 | 2 | 3 | 4; explicit_floor?: 1 | 2 | 3 | 4 };
   players: Player[]; my_categories?: Category[]; other_categories?: Category[]; my_player_id: string; my_seat: Seat; my_consent: boolean;
   interaction_id: string | null; interaction: Interaction | null;
+  /** Options QCM canoniques renvoyées par le catalogue serveur. */
+  interaction_options?: string[] | null;
   my_answer: string | null; other_submitted: boolean; revealed: boolean; answers: Answer[]; first_answer: string | null; first_player_present: boolean;
   i_acked: boolean; other_acked: boolean; summary: { answered: number; passed: number; total: number } | null;
 }
