@@ -193,7 +193,7 @@ echo "Running explicit content floor recipe"
 "${PSQL[@]}" -d "$DB" -f "supabase/tests/explicit_content_floor.sql"
 
 echo "Applying QCM options snapshot fix"
-"${PSQL[@]}" -d "$DB" -f "supabase/23_qcm_options_from_server.sql"
+"${PSQL[@]}" -d "$DB" -f "supabase/24_qcm_options_from_server.sql"
 
 echo "Running QCM options synchronization recipe"
 "${PSQL[@]}" -d "$DB" -f "supabase/tests/qcm_options_from_server.sql"
