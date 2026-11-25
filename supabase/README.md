@@ -208,3 +208,17 @@ La validation serveur reste stricte : chaque réponse doit toujours correspondre
 Recette dédiée : `supabase/tests/qcm_options_from_server.sql`. Elle vérifie que le snapshot
 renvoie les quatre options de la carte QCM de palier 3 et que chacune est acceptée par
 `submit_answer`. Aucune donnée de production n'est modifiée par la migration.
+
+
+## Messagerie privée du mode Personnalisé
+
+Appliquer `25_custom_partner_exchange.sql` après la migration 24. La fonction
+`send_custom_partner_message` autorise uniquement les messages texte dans une salle
+`room_kind='custom'` active, avec exactement deux partenaires présents. Les messages
+utilisent l'espace `partner` de `duo_messages`, restent protégés par les fonctions RPC
+et sont renvoyés dans `get_room_snapshot.partner_messages`. Le salon À Deux standard et
+les espaces DUOS ne sont pas modifiés.
+
+Les réactions rapides sont envoyées comme de courts messages texte. Les messages sont
+limités à 2 000 caractères et 40 envois par minute et par joueur. La recette dédiée est
+`supabase/tests/custom_partner_exchange.sql`.
