@@ -55,7 +55,7 @@ export function CustomQuestions({ lang, catalog, selectedCategories, onLaunch, i
         {serverError && <p className="custom-errors" role="alert" data-testid="custom-server-error">{serverError}</p>}
         <button type="button" className="primary full" data-testid="custom-launch" disabled={busy || !partnerHere || !generated || deck.length < CUSTOM.min || !consentReady} onClick={() => onLaunch(deck.map(card => card.id))}>
           {!partnerHere ? (en ? "Waiting for the other person" : "En attente de l'autre personne")
-            : !generated ? (en ? "Generate the questions first" : "Génère d'abord une sélection")
+            : !generated ? (en ? "Draw a selection first" : "Génère d'abord une sélection")
             : !consentReady ? (en ? "Waiting for both 18+ agreements" : "En attente des deux accords 18+")
             : (en ? "Start the custom game" : "Lancer la partie personnalisée")}
           {partnerHere && generated && consentReady && !busy && <Icon name="arrow" />}
