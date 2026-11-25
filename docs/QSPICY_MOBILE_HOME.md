@@ -16,7 +16,8 @@ coupait une partie du couple et plaçait le texte sur l'image.
 - Sur téléphone, l'image est un bloc portrait distinct en haut de l'écran.
 - Le texte, les actions et l'invitation sont dans un panneau bordeaux séparé sous l'image :
   le texte ne recouvre plus le couple.
-- Le bouton d'entrée reste dans la zone visible sur les petites hauteurs courantes.
+- Le logo officiel retrouve une présence dominante : 72 px sur bureau/tablette et 64 px sur téléphone.
+- Le visuel mobile est volontairement plus court sur les petits écrans pour laisser voir le bouton d'entrée sans activer le mode ordinateur.
 - Le layout peut défiler verticalement si nécessaire ; il ne dépend pas du mode ordinateur.
 
 ## Recette navigateur
