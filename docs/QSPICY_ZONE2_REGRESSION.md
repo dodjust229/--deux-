@@ -60,3 +60,8 @@ ni ne remplace les cartes.
 - Aucun déploiement Render ou GitHub Pages.
 - Aucune fusion dans `main`.
 - La validation finale des scénarios navigateur dépend du résultat CI de cette branche.
+
+
+## Intégration avec le catalogue maître V2
+
+La recette de régression du parcours doit également passer lorsque cette branche est évaluée avec le catalogue maître V2 (220 cartes) : les catégories affichées dépendent du choix Douce / Audacieux / Toutes, tandis que l'intensité éditoriale 1–5 reste distincte du palier technique interne 1–4. Aucun sélecteur de palier technique ne doit réapparaître dans les préférences joueur.
