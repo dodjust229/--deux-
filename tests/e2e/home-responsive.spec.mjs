@@ -23,11 +23,16 @@ for (const viewport of viewports) {
     expect(currentSrc).toContain(viewport.image);
 
     const layout = await page.evaluate(() => {
-      const hero = document.querySelector(".home--hero")!.getBoundingClientRect();
-      const picture = document.querySelector(".home__bg")!.getBoundingClientRect();
-      const copy = document.querySelector(".home__hero")!.getBoundingClientRect();
-      const heading = document.querySelector(".home__tagline")!.getBoundingClientRect();
-      const enter = document.querySelector('[data-testid="enter"]')!.getBoundingClientRect();
+      const rect = (selector) => {
+        const element = document.querySelector(selector);
+        if (!element) throw new Error(`Missing element: ${selector}`);
+        return element.getBoundingClientRect();
+      };
+      const hero = rect(".home--hero");
+      const picture = rect(".home__bg");
+      const copy = rect(".home__hero");
+      const heading = rect(".home__tagline");
+      const enter = rect('[data-testid="enter"]');
       return {
         viewportWidth: window.innerWidth,
         documentWidth: document.documentElement.scrollWidth,
