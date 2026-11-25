@@ -149,7 +149,7 @@ reproductible sur une base neuve et corrige quatre écarts :
 - **`get_custom_deck` renvoie la séquence réelle.** Pour les salons Personnalisés créés par le
   moteur catalogue (migration 16), `rooms.custom_deck` n'est plus rempli : la séquence vit dans
   `rooms.interaction_ids`. La fonction renvoie désormais cette séquence (les énoncés ne sont pas
-  en base : `public.catalog` ne porte que `id/category/kind/options/level`, le texte vit dans
+  en base : `public.catalog` porte les métadonnées `id/category/kind/options/level/intensity`, le texte vit dans
   `src/content.ts`).
 - **Le type du salon est porté par la salle** (`rooms.room_kind` : `couple`, `custom`, `duos`).
   Un lien d'invitation tronqué (sans `&mode=custom`) ou un favori enregistré ne fait plus
