@@ -221,3 +221,13 @@ echo "Running QCM options synchronization recipe"
 "${PSQL[@]}" -d "$DB" -c "TRUNCATE public.rate_events"
 echo "Rechecking Couple, DUOS and custom union-of-interests after all migrations"
 python3 supabase/tests/palier4_invitation_permissions.py
+
+echo "Applying QSPICY audit correction 25"
+"${PSQL[@]}" -d "$DB" -f "supabase/25_audacieux_floor_and_deck.sql"
+
+echo "Running post-migration audit regression recipe"
+"${PSQL[@]}" -d "$DB" -f "supabase/tests/audit_regressions.sql"
+
+echo "Rechecking invitation and multi-interest flows after migration 25"
+"${PSQL[@]}" -d "$DB" -c "TRUNCATE public.rate_events"
+python3 supabase/tests/palier4_invitation_permissions.py
