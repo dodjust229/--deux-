@@ -118,25 +118,29 @@
     align-items: stretch;
     margin-top: -64px;
     padding-top: 64px;
-    min-height: calc(100dvh - 64px);
+    min-height: max(680px, calc(100svh - 64px));
   }
 
+  /* Composition portrait dédiée : le couple reste dans le cadre sur téléphone. */
   .home__bg img {
-    object-position: center 16%;
+    object-position: 70% center;
   }
 
+  /* Le texte repose dans une zone sombre en bas, sans passer sur les visages. */
   .home__scrim {
     background:
-      linear-gradient(180deg, rgba(14, 9, 8, 0.7) 0%, rgba(14, 9, 8, 0) 18%),
-      linear-gradient(0deg, rgba(14, 9, 8, 0.985) 0%, rgba(14, 9, 8, 0.95) 34%, rgba(14, 9, 8, 0.78) 52%, rgba(14, 9, 8, 0.18) 70%, rgba(14, 9, 8, 0) 82%);
+      linear-gradient(180deg, rgba(14, 9, 8, 0.22) 0%, rgba(14, 9, 8, 0.08) 28%, rgba(14, 9, 8, 0.62) 44%, rgba(14, 9, 8, 0.96) 59%, #0e0908 72%);
   }
 
   .home--hero .home__hero {
-    padding: 0 20px 44px;
+    width: 100%;
+    padding: 0 20px 28px;
     text-align: left;
   }
 
   .home--hero .home__copy {
+    width: 100%;
+    max-width: 560px;
     text-align: left;
   }
 
