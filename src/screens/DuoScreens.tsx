@@ -25,11 +25,11 @@ function Hosts({ note }: { note: string }) {
   );
 }
 
-export function DuoLobby({ snap, inviteUrl, copied, onCopy, selected, shared, onToggleCategory, onToggleConsent, onStart, onPermissions, busy, onSafe, onOpenGuide, lang = "fr", gameLevel = 2, isHost = false }: {
+export function DuoLobby({ snap, inviteUrl, copied, onCopy, selected, shared, onToggleCategory, onToggleConsent, onStart, onPermissions, busy, onSafe, onOpenGuide, lang = "fr", gameLevel = 2, isHost = false, allowedCategories = CATEGORIES }: {
   snap: DuoSnapshot; inviteUrl: string; copied: boolean; onCopy: () => void; selected: Category[]; shared: Category[];
   onToggleCategory: (c: Category) => void; onToggleConsent: (v: boolean) => void; onStart: () => void;
   onPermissions: (p: { cross_participation: boolean; receive_media: boolean; share_answers: boolean }) => void; busy: boolean; onSafe: () => void;
-  onOpenGuide?: () => void; lang?: "fr" | "en"; gameLevel?: 1 | 2 | 3 | 4; isHost?: boolean;
+  onOpenGuide?: () => void; lang?: "fr" | "en"; gameLevel?: 1 | 2 | 3 | 4; isHost?: boolean; allowedCategories?: Category[];
 }) {
   const ready = snap.players.length === 4;
   const adult = shared.includes("audacieux") || gameLevel >= 3;
@@ -96,7 +96,7 @@ export function DuoLobby({ snap, inviteUrl, copied, onCopy, selected, shared, on
         <h2>Ton centre d'intérêt</h2>
         <p className="muted small">Chaque participant choisit un seul intérêt. QSPICY combine les choix des quatre joueurs.</p>
         <div className="chips" role="radiogroup" aria-label="Ton centre d'intérêt">
-          {CATEGORIES.map((c) => (
+          {allowedCategories.map((c) => (
             <button key={c} role="radio" aria-checked={selected.includes(c)} className={`chip chip--${c} ${selected.includes(c) ? "is-on" : ""}`} onClick={() => onToggleCategory(c)} disabled={busy}>
               <span className="chip__check" aria-hidden="true">{selected.includes(c) ? "✓" : "+"}</span>
               <strong>{categoryLabels[c]}</strong>

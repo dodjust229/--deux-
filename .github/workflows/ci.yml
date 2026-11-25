@@ -2,9 +2,9 @@ name: Vérification du projet
 
 on:
   push:
-    branches: [main, genspark/qspicy-refonte, 'qspicy/**']
+    branches: [main, genspark/qspicy-refonte, 'qspicy/**', 'fix/**']
   pull_request:
-    branches: [main]
+    branches: [main, 'integrate/**']
 
 permissions:
   contents: read
@@ -50,3 +50,9 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y postgresql-client
       - name: Recette d'intégration PostgreSQL 16
         run: bash supabase/tests/run_postgres.sh
+      - name: Installer Playwright pour la recette navigateur
+        run: npm install --no-save --package-lock=false @playwright/test
+      - name: Installer Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Recettes navigateur responsive et Zone 2
+        run: npx playwright test
