@@ -2287,3 +2287,72 @@
   justify-content: flex-end;
   flex-wrap: wrap;
 }
+
+
+/* Échange privé du mode Personnalisé */
+.partner-chat {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 18px;
+  padding: 16px;
+  border-color: rgba(217, 160, 91, 0.28);
+  background: linear-gradient(145deg, rgba(48, 22, 26, 0.94), rgba(20, 12, 15, 0.98));
+}
+.partner-chat__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.partner-chat__head h3 { margin: 3px 0 5px; }
+.partner-chat__head p { margin: 0; color: var(--ink-mute); font-size: 13px; }
+.partner-chat__eyebrow {
+  color: var(--gold);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .16em;
+}
+.partner-chat__messages {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 220px;
+  overflow: auto;
+  padding: 4px;
+}
+.partner-chat__message {
+  align-self: flex-start;
+  max-width: 88%;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 14px 14px 14px 4px;
+  background: var(--panel);
+}
+.partner-chat__message.is-mine {
+  align-self: flex-end;
+  border-color: rgba(217, 160, 91, .38);
+  border-radius: 14px 14px 4px 14px;
+}
+.partner-chat__message small { display: block; margin-bottom: 4px; color: var(--ink-mute); font-size: 11px; }
+.partner-chat__message p { margin: 0; overflow-wrap: anywhere; }
+.partner-chat__empty { margin: 0; color: var(--ink-mute); font-size: 13px; }
+.partner-chat__reactions { display: flex; flex-wrap: wrap; gap: 8px; }
+.partner-chat__reaction {
+  min-width: 42px;
+  min-height: 38px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--panel);
+  font-size: 19px;
+  cursor: pointer;
+}
+.partner-chat__reaction:disabled { opacity: .45; cursor: not-allowed; }
+.partner-chat__composer { display: flex; gap: 8px; }
+.partner-chat__composer input { flex: 1 1 auto; min-width: 0; }
+.partner-chat__composer .primary { flex: 0 0 auto; }
+@media (max-width: 700px) {
+  .partner-chat { padding: 13px; }
+  .partner-chat__composer { flex-direction: column; }
+  .partner-chat__composer .primary { width: 100%; justify-content: center; }
+}
