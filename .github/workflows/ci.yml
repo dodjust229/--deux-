@@ -50,3 +50,14 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y postgresql-client
       - name: Recette d'intégration PostgreSQL 16
         run: bash supabase/tests/run_postgres.sh
+      - name: Installer Chromium pour les parcours d'invitation
+        run: |
+          npm install --no-save --package-lock=false playwright
+          npx playwright install --with-deps chromium
+      - name: Installer les dépendances E2E invitation
+        run: npm ci --prefix supabase/tests/invite_e2e
+      - name: Recette navigateur des invitations Couple, Personnalisé et DUOS
+        run: |
+          CHROME_PATH="$(node --input-type=module -e 'import { chromium } from "playwright"; process.stdout.write(chromium.executablePath())')" \
+          TEST_DB=qspicy_invite_e2e \
+          bash supabase/tests/invite_e2e/run.sh
