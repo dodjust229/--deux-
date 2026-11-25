@@ -35,7 +35,7 @@ const cleanup = "\ndelete from public.catalog c where c.id not in (" + ids + ")\
   "    and c.id = any(coalesce(r.interaction_ids, '{}'::text[])));\n";
 const sql = "-- GÉNÉRÉ par scripts/sync-catalog.mjs — ne pas modifier à la main.\n" + upsert + cleanup;
 const migration = "-- QSPICY · Remplacement intégral du catalogue par le master V2 (" + items.length + " cartes).\n" +
-  "-- Migration additive/idempotente : préserve salles/réponses, remplace uniquement les cartes du catalogue.\n" +
+  "-- Migration additive/idempotente : préserve les salles actives et leurs cartes référencées.\n" +
   "alter table public.catalog add column if not exists intensity integer;\n" +
   "update public.catalog set intensity = least(5, greatest(1, coalesce(intensity, level))) where intensity is null;\n" +
   "alter table public.catalog alter column intensity set default 1;\n" +
