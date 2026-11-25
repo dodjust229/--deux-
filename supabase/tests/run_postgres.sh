@@ -211,6 +211,12 @@ END
 $catalogue$;
 SQL
 
+echo "Applying QCM options snapshot fix after the catalogue V2"
+"${PSQL[@]}" -d "$DB" -f "supabase/24_qcm_options_from_server.sql"
+
+echo "Running QCM options synchronization recipe"
+"${PSQL[@]}" -d "$DB" -f "supabase/tests/qcm_options_from_server.sql"
+
 # Re-run the multi-interest custom flow after migration 21, which replaces start_custom_game.
 "${PSQL[@]}" -d "$DB" -c "TRUNCATE public.rate_events"
 echo "Rechecking Couple, DUOS and custom union-of-interests after all migrations"
