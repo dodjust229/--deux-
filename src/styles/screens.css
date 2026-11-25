@@ -114,35 +114,72 @@
 @media (max-width: 699px) {
   .home--hero {
     flex-direction: column;
-    justify-content: flex-end;
+    justify-content: flex-start;
     align-items: stretch;
-    margin-top: -64px;
-    padding-top: 64px;
-    min-height: calc(100dvh - 64px);
+    margin-top: -76px;
+    padding-top: 76px;
+    min-height: max(620px, calc(100svh - 76px));
+    overflow: visible;
+    background: #0e0908;
+  }
+
+  /* L'image portrait est un vrai bloc en haut, pas un fond recadré derrière le texte. */
+  .home__bg {
+    position: relative;
+    inset: auto;
+    display: block;
+    flex: 0 0 auto;
+    width: 100%;
+    height: clamp(190px, 33svh, 260px);
+    overflow: hidden;
   }
 
   .home__bg img {
-    object-position: center 16%;
+    object-position: 70% 34%;
   }
 
+  /* Fondu discret au bas de l'image ; la copie reste dans son propre panneau. */
   .home__scrim {
-    background:
-      linear-gradient(180deg, rgba(14, 9, 8, 0.7) 0%, rgba(14, 9, 8, 0) 18%),
-      linear-gradient(0deg, rgba(14, 9, 8, 0.985) 0%, rgba(14, 9, 8, 0.95) 34%, rgba(14, 9, 8, 0.78) 52%, rgba(14, 9, 8, 0.18) 70%, rgba(14, 9, 8, 0) 82%);
+    inset: 76px 0 auto;
+    height: clamp(190px, 33svh, 260px);
+    background: linear-gradient(180deg, rgba(14, 9, 8, 0.28) 0%, rgba(14, 9, 8, 0) 48%, rgba(14, 9, 8, 0.62) 100%);
   }
 
   .home--hero .home__hero {
-    padding: 0 20px 44px;
+    flex: 1 0 auto;
+    width: 100%;
+    padding: 16px 18px 24px;
+    background: #0e0908;
     text-align: left;
   }
 
   .home--hero .home__copy {
+    width: 100%;
+    max-width: 560px;
     text-align: left;
   }
 
   .home--hero .home__lead {
     margin: 0;
     font-size: 15px;
+  }
+
+  .home--hero .home__tagline {
+    margin: 8px 0 10px;
+    font-size: clamp(28px, 7.5vw, 34px);
+  }
+
+  .home--hero .home__actions {
+    margin-top: 16px;
+  }
+
+  .home--hero .link-button {
+    margin-top: 8px;
+    padding: 4px 0;
+  }
+
+  .home--hero .home__age {
+    margin-top: 10px;
   }
 
   .home--hero .home__actions,
