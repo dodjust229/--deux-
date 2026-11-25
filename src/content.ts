@@ -6,7 +6,7 @@ import catalog from "./catalog.json";
 export const interactions = catalog as Interaction[];
 
 export const categoryLabels: Record<string, string> = {
-  decouverte: "Découverte", complicite: "Complicité", profondeur: "Profondeur",
+  decouverte: "Découverte", complicite: "Complicité", profondeur: "Confidence",
   seduction: "Séduction", audacieux: "Audacieux · 18+"
 };
 
