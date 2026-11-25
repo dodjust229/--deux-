@@ -40,6 +40,9 @@ export function CustomQuestions({ lang, catalog, selectedCategories, onLaunch, i
           {[5, 8, 12, 16, 19, 24].map(value => <option key={value} value={value}>{value} {en ? "questions" : "questions"}</option>)}
         </select>
         <p className="muted small">{eligibleCount} {en ? "questions available in the selected shared categories." : "questions disponibles dans vos catégories communes."}</p>
+      <p className="muted small">{en
+        ? "After each reveal, you can comment on the answers and send private reactions to your partner."
+        : "Après chaque révélation, vous pourrez commenter les réponses et envoyer des réactions privées à votre partenaire."}</p>
         <button type="button" className="secondary full" data-testid="custom-generate" disabled={busy || eligibleCount < CUSTOM.min} onClick={generate}>
           <Icon name="rotate" size={16} /> {generated ? (en ? "Shuffle another selection" : "Tirer une autre sélection") : (en ? "Draw a selection" : "Tirer une sélection")}
         </button>
