@@ -151,7 +151,7 @@
     align-items: flex-end;
     width: 100%;
     min-height: max(720px, calc(100svh - 64px));
-    padding: 340px 20px 34px;
+    padding: clamp(180px, calc(100svh - 333px), 340px) 20px 34px;
     background: transparent;
     text-align: left;
   }
