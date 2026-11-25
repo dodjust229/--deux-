@@ -22,8 +22,10 @@ La migration `supabase/20_level_and_mode_integrity.sql` apporte les règles mét
 3. `_effective_level` relève le palier demandé jusqu'au premier palier supérieur qui contient
    des cartes pour les catégories choisies. La catégorie `audacieux`, disponible aux paliers
    3 et 4, peut donc démarrer depuis une préférence de palier 1 ou 2.
-4. Le snapshot expose le palier de session au client.
-5. Le composant de jeu privilégie `room.level` au niveau technique de la carte courante.
+4. Si `audacieux` fait partie de l'union des choix, le palier effectif monte au minimum à 3, même si l'autre joueur a choisi une catégorie disponible plus tôt.
+5. Le paquet réserve jusqu'à 8 cartes Audacieux avant de le compléter avec les autres cartes du même palier, afin que le choix ne disparaisse pas dans le tirage aléatoire.
+6. Le snapshot expose le palier de session au client.
+7. Le composant de jeu privilégie `room.level` au niveau technique de la carte courante.
 
 La recette SQL `supabase/tests/level_and_mode_integrity.sql` couvre déjà le palier non
 décroissant, le lancement Audacieux et la conservation de l'accord 18+ lors d'une relance.
@@ -39,6 +41,7 @@ Elle est exécutée par `supabase/tests/run_postgres.sh`.
   - les deux choix Audacieux sont réunis ;
   - un lancement demandé au palier 2 appelle le serveur avec la catégorie Audacieux ;
   - le serveur renvoie le premier palier disponible (3) et la carte correspondante s'affiche ;
+  - un cas mixte Audacieux + Séduction relève aussi le palier 2 vers 3 et garantit au moins 8 cartes Audacieux dans le paquet ;
   - l'interface conserve le palier de session 4 même si la carte courante est de palier 3.
 - La CI installe Chromium et exécute ces deux scénarios.
 
