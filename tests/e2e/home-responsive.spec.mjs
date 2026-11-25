@@ -1,10 +1,10 @@
 import { test, expect } from "@playwright/test";
 
 const viewports = [
-  { name: "petit mobile", width: 360, height: 640, image: "accueil-mobile.webp" },
-  { name: "mobile courant", width: 390, height: 844, image: "accueil-mobile.webp" },
-  { name: "tablette", width: 768, height: 1024, image: "accueil-tablette.webp" },
-  { name: "bureau", width: 1365, height: 900, image: "accueil-bureau.webp" }
+  { name: "petit mobile", width: 360, height: 640, image: "accueil-qspicy.webp" },
+  { name: "mobile courant", width: 390, height: 844, image: "accueil-qspicy.webp" },
+  { name: "tablette", width: 768, height: 1024, image: "accueil-qspicy.webp" },
+  { name: "bureau", width: 1365, height: 900, image: "accueil-qspicy.webp" }
 ];
 
 for (const viewport of viewports) {
