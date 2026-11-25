@@ -534,7 +534,7 @@ export default function App() {
       ) && (
         <header className={`topbar${!identity && stage === "home" ? " topbar--over" : ""}`}>
           <button className="topbar__brand" type="button" onClick={() => { if (!identity) { setEntry(null); setError(""); } }}>
-            <Wordmark size={!identity && stage === "home" ? 54 : 38} />
+            <Wordmark size={!identity && stage === "home" ? 112 : 38} />
           </button>
           <div className="topbar__right">
             <span className="topbar__private">

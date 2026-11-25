@@ -2,7 +2,7 @@ name: Vérification du projet
 
 on:
   push:
-    branches: [main, genspark/qspicy-refonte, 'qspicy/**']
+    branches: [main, genspark/qspicy-refonte, 'qspicy/**', 'fix/**']
   pull_request:
     branches: [main]
 
@@ -54,5 +54,5 @@ jobs:
         run: npm install --no-save --package-lock=false @playwright/test
       - name: Installer Chromium
         run: npx playwright install --with-deps chromium
-      - name: Recette navigateur Zone 2
+      - name: Recettes navigateur responsive et Zone 2
         run: npx playwright test
