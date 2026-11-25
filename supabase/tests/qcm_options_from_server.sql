@@ -16,7 +16,7 @@ BEGIN
   VALUES ('couple','playing',0,ARRAY['p03'],3)
   RETURNING id INTO v_room_id;
 
-  INSERT INTO public.players(v_room_id,seat,nickname,avatar,token_hash,adult_consent,selected_categories)
+  INSERT INTO public.players(room_id,seat,nickname,avatar,token_hash,adult_consent,selected_categories)
   VALUES (v_room_id,1,'QCM test','masculin',encode(extensions.digest(token_a,'sha256'),'hex'),true,ARRAY['profondeur']);
 
   v_snapshot := public.get_room_snapshot(v_room_id,token_a);
@@ -29,7 +29,7 @@ BEGIN
     SELECT jsonb_array_elements_text(options) FROM public.catalog WHERE id='p03'
   LOOP
     PERFORM public.submit_answer(v_room_id,token_a,v_option,false);
-    DELETE FROM public.answers WHERE v_room_id=v_room_id;
+    DELETE FROM public.answers WHERE public.answers.room_id = v_room_id;
     v_count := v_count + 1;
   END LOOP;
 
