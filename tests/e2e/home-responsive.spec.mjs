@@ -33,6 +33,7 @@ for (const viewport of viewports) {
       const copy = rect(".home__hero");
       const heading = rect(".home__tagline");
       const enter = rect('[data-testid="enter"]');
+      const logo = rect('.topbar--over .wordmark__logo');
       return {
         viewportWidth: window.innerWidth,
         documentWidth: document.documentElement.scrollWidth,
@@ -42,11 +43,13 @@ for (const viewport of viewports) {
         headingTop: heading.top,
         enterLeft: enter.left,
         enterRight: enter.right,
-        enterBottom: enter.bottom
+        enterBottom: enter.bottom,
+        logoHeight: logo.height
       };
     });
 
     expect(layout.documentWidth).toBeLessThanOrEqual(layout.viewportWidth + 1);
+    expect(layout.logoHeight).toBeGreaterThanOrEqual(viewport.width <= 640 ? 60 : 70);
     if (viewport.width <= 699) {
       expect(layout.copyTop).toBeGreaterThanOrEqual(layout.pictureBottom - 1);
       expect(layout.headingTop).toBeGreaterThanOrEqual(layout.pictureBottom - 1);
