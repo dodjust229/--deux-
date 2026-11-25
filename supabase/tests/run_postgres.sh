@@ -192,19 +192,33 @@ echo "Replacing active catalogue with the 220-card master V2"
 "${PSQL[@]}" -d "$DB" -f "supabase/22_catalogue_maitre_v2.sql"
 "${PSQL[@]}" -d "$DB" <<'SQL'
 DO $catalogue$
+DECLARE
+  v_master_ids text[] := ARRAY['d01','d02','d03','d04','d05','d06','d07','d08','d10','d11','x02','c01','c02','c03','c04','c05','c06','c07','c08','c09','c10','x01','p01','p02','p03','p04','p05','p06','p07','p08','p09','x03','s01','s02','s03','s04','s05','s06','x04','a01','a02','a03','a04','a05','a06','a07','a08','a09','a10','a11','a12','a13','a14','a15','a16','a17','a18','a19','a20','a21','a22','a23','a24','d13','d14','d15','d16','d17','d18','d20','c12','c15','c16','c17','c18','s07','p10','p11','p12','p13','p14','p15','p16','p17','s08','s09','s10','a25','a26','a28','b01','b02','b03','b04','b05','b06','b07','b08','b09','b10','b11','b12','b13','b14','b15','b16','b17','b18','b19','b20','b21','b22','b23','b24','e02','e03','e04','e06','e07','e08','e09','e10','e11','e12','e13','e14','e15','e16','e17','e18','e20','e21','e22','e23','e24','f01','f03','f04','f05','f06','f07','f08','f09','f10','f11','f12','f13','f14','f15','f16','f17','f18','f19','f20','f21','f22','f23','f24','g01','g02','g03','g04','g05','g06','g07','g08','g09','g10','g11','g12','g13','g14','g15','g17','g18','g19','g20','g21','g22','g24','n01','n02','n03','n04','n05','n06','n07','n08','n09','n10','n11','n12','n13','n14','n15','n16','n17','n18','n19','n20','n21','n22','n23','n24','n25','n26','n27','n28','n29','n30','n31','n32','n33','n34','n35','n36','n37','n38','n39','n40']::text[];
 BEGIN
-  IF (SELECT count(*) FROM public.catalog) <> 220 THEN
+  IF (SELECT count(*) FROM public.catalog c WHERE c.id = ANY(v_master_ids)) <> 220 THEN
     RAISE EXCEPTION 'Catalogue V2 incomplet';
   END IF;
+  IF EXISTS (
+    SELECT 1 FROM public.catalog c
+     WHERE NOT (c.id = ANY(v_master_ids))
+       AND NOT EXISTS (
+         SELECT 1 FROM public.rooms r
+          WHERE r.status IN ('waiting','playing','paused')
+            AND c.id = ANY(coalesce(r.interaction_ids, '{}'::text[]))
+       )
+  ) THEN
+    RAISE EXCEPTION 'Une carte legacy non utilisée subsiste après le nettoyage';
+  END IF;
   IF EXISTS (SELECT 1 FROM (VALUES (1,52),(2,53),(3,54),(4,61)) expected(level,total)
-             WHERE (SELECT count(*) FROM public.catalog c WHERE c.level=expected.level) <> expected.total) THEN
+             WHERE (SELECT count(*) FROM public.catalog c WHERE c.id = ANY(v_master_ids) AND c.level=expected.level) <> expected.total) THEN
     RAISE EXCEPTION 'Répartition des niveaux techniques incorrecte';
   END IF;
   IF EXISTS (SELECT 1 FROM (VALUES (1,52),(2,53),(3,49),(4,32),(5,34)) expected(intensity,total)
-             WHERE (SELECT count(*) FROM public.catalog c WHERE c.intensity=expected.intensity) <> expected.total) THEN
+             WHERE (SELECT count(*) FROM public.catalog c WHERE c.id = ANY(v_master_ids) AND c.intensity=expected.intensity) <> expected.total) THEN
     RAISE EXCEPTION 'Répartition des intensités éditoriales incorrecte';
   END IF;
-  IF EXISTS (SELECT 1 FROM public.catalog WHERE intensity NOT BETWEEN 1 AND 5 OR explicit_rank <> least(4,intensity)) THEN
+  IF EXISTS (SELECT 1 FROM public.catalog c WHERE c.id = ANY(v_master_ids)
+             AND (c.intensity NOT BETWEEN 1 AND 5 OR c.explicit_rank <> least(4,c.intensity))) THEN
     RAISE EXCEPTION 'Intensité ou explicite incohérent';
   END IF;
 END
