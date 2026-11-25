@@ -2,7 +2,7 @@ name: Vérification du projet
 
 on:
   push:
-    branches: [main, genspark/qspicy-refonte, 'qspicy/**']
+    branches: [main, genspark/qspicy-refonte, 'qspicy/**', 'fix/**']
   pull_request:
     branches: [main]
 
