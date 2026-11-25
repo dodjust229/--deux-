@@ -110,46 +110,49 @@
   }
 }
 
-/* Téléphone : image en haut, copie posée sur un voile montant. */
+/* Mobile : la même illustration reste le fond plein écran, sans panneau séparé. */
 @media (max-width: 699px) {
   .home--hero {
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: stretch;
     margin-top: -104px;
     padding-top: 104px;
-    min-height: max(620px, calc(100svh - 64px));
-    overflow: visible;
-    background: #0e0908;
+    min-height: max(720px, calc(100svh - 64px));
+    overflow: hidden;
+    background: #080607;
   }
 
-  /* L'image portrait est un vrai bloc en haut, pas un fond recadré derrière le texte. */
   .home__bg {
-    position: relative;
-    inset: auto;
+    position: absolute;
+    inset: 0;
     display: block;
-    flex: 0 0 auto;
     width: 100%;
-    height: clamp(240px, 38svh, 340px);
+    height: 100%;
     overflow: hidden;
   }
 
   .home__bg img {
-    object-position: 70% 20%;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 53% center;
   }
 
-  /* Fondu discret au bas de l'image ; la copie reste dans son propre panneau. */
   .home__scrim {
-    inset: 104px 0 auto;
-    height: clamp(240px, 38svh, 340px);
-    background: linear-gradient(180deg, rgba(14, 9, 8, 0.28) 0%, rgba(14, 9, 8, 0) 48%, rgba(14, 9, 8, 0.62) 100%);
+    inset: 0;
+    height: auto;
+    background:
+      linear-gradient(180deg, rgba(5, 4, 5, 0.30) 0%, rgba(5, 4, 5, 0.02) 35%, rgba(5, 4, 5, 0.84) 100%),
+      linear-gradient(90deg, rgba(5, 4, 5, 0.38), transparent 72%);
   }
 
   .home--hero .home__hero {
-    flex: 1 0 auto;
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: flex-end;
     width: 100%;
-    padding: 22px 20px 34px;
-    background: #0e0908;
+    min-height: max(720px, calc(100svh - 64px));
+    padding: 340px 20px 34px;
+    background: transparent;
     text-align: left;
   }
 
@@ -180,7 +183,6 @@
 }
 
 @media (max-width: 900px) {
-  /* Le plein cadre garde une copie alignée à gauche et un bouton pleine largeur. */
   .home--hero .home__copy {
     text-align: left;
   }
