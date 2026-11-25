@@ -5,7 +5,7 @@ une sélection Personnalisée, l'invité ouvre le lien dans un autre navigateur,
 jouent la même séquence dans le même ordre.
 
 Rien n'est simulé : le front compilé parle à une vraie base PostgreSQL par un vrai PostgREST,
-avec les migrations du dépôt. Ni la production, ni `main` ne sont touchées.
+avec les migrations du dépôt, jusqu'au catalogue V2 et au correctif QCM. Ni la production, ni `main` ne sont touchées.
 
 ## Lancer
 
