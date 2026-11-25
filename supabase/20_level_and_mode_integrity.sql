@@ -90,7 +90,7 @@ language plpgsql
 stable
 security definer
 set search_path = public, extensions, pg_temp
-as $$
+as $qspicy$
 declare
   v_level integer;
 begin
