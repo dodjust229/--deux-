@@ -62,7 +62,7 @@ BEGIN
   v_snapshot := public.get_duo_snapshot(v_duo_room_id,token_a);
   IF v_snapshot->'interaction_options' IS DISTINCT FROM
      (SELECT options FROM public.catalog WHERE id='p03') THEN
-    RAISE EXCEPTION 'Le snapshot DUOS ne renvoie pas les options QCM canoniques';
+    RAISE EXCEPTION 'Le snapshot DUOS ne renvoie pas les options QCM canoniques : %', v_snapshot;
   END IF;
 
   DELETE FROM public.rooms WHERE id=v_duo_room_id;
