@@ -36,6 +36,26 @@ begin
   if (select count(*) from public.players where room_id=p_room_id and status='active') <> 2 then
     raise exception 'E_STATE: Les deux partenaires doivent être présents.';
   end if;
+  if not exists (
+    select 1
+      from public.rooms rr
+     where rr.id=p_room_id
+       and (
+         select count(*) from public.answers a
+         join public.players p on p.id=a.player_id
+          where a.room_id=rr.id
+            and a.interaction_id=rr.interaction_ids[rr.current_index+1]
+            and p.status='active'
+            and p.last_seen > now()-interval '120 seconds'
+       ) >= (
+         select count(*) from public.players p
+          where p.room_id=rr.id
+            and p.status='active'
+            and p.last_seen > now()-interval '120 seconds'
+       )
+  ) then
+    raise exception 'E_STATE: La révélation des deux réponses est nécessaire avant l''échange.';
+  end if;
   if char_length(v_body) not between 1 and 2000 then
     raise exception 'E_MESSAGE: Le commentaire doit contenir entre 1 et 2000 caractères.';
   end if;
