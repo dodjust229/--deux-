@@ -16,6 +16,44 @@
 
 begin;
 
+-- Le sélecteur peut être absent sur des bases dont les migrations historiques
+-- ont été appliquées via les versions intermédiaires du tableau de bord.
+-- On le restaure ici explicitement pour rendre cette correction autonome.
+create or replace function public._pick_catalog_deck(
+  p_categories text[],
+  p_level integer,
+  p_excluded text[]
+)
+returns text[]
+language sql
+volatile
+security definer
+set search_path = public, extensions, pg_temp
+as $pick$
+  with priority as (
+    select c.id
+      from public.catalog c
+     where 'audacieux' = any(coalesce(p_categories, '{}'::text[]))
+       and c.category = 'audacieux'
+       and c.level = p_level
+       and not (c.id = any(coalesce(p_excluded, '{}'::text[])))
+     order by random()
+     limit 8
+  ),
+  rest as (
+    select c.id
+      from public.catalog c
+     where c.category = any(coalesce(p_categories, '{}'::text[]))
+       and c.level = p_level
+       and not (c.id = any(coalesce(p_excluded, '{}'::text[])))
+       and not exists (select 1 from priority p where p.id = c.id)
+     order by random()
+     limit greatest(0, 24 - (select count(*) from priority))
+  )
+  select array_agg(deck.id order by random())
+    from (select id from priority union all select id from rest) deck
+$pick$;
+
 do $preflight$
 begin
   if to_regprocedure('public._pick_catalog_deck(text[],integer,text[])') is null then
@@ -288,6 +326,9 @@ begin
   return true;
 end
 $$;
+
+-- Le helper interne n'est jamais exposé via le Data API.
+revoke execute on function public._pick_catalog_deck(text[],integer,text[]) from public, anon, authenticated;
 
 -- CREATE OR REPLACE conserve les privilèges existants des deux RPC publics.
 -- Aucun GRANT/REVOKE n'est ajouté ici afin de ne pas modifier le contrat ACL.
