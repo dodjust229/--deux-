@@ -94,6 +94,7 @@ async function mockRoomApi(page) {
 
 test("Audacieux choisi par les deux joueurs démarre au premier palier disponible", async ({ page }) => {
   const api = await mockRoomApi(page);
+  await page.addInitScript(() => localStorage.setItem("qspicy.prefs.v1", JSON.stringify({ intensity: "audacious" })));
   await page.goto("/?apercu=zone2-lobby");
 
   await page.getByRole("radio", { name: /Audacieux/ }).click();
