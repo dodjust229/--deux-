@@ -194,8 +194,8 @@ après la migration 20.
 
 ## Correctif QCM — options canoniques du serveur
 
-Appliquer ensuite `24_qcm_options_from_server.sql`, après la migration 21 et après les
-migrations catalogue éventuelles. Le snapshot Couple renvoie désormais
+Appliquer ensuite `23_qcm_options_from_server.sql`, après la migration 21 et après les
+migrations catalogue éventuelles. Les snapshots À Deux, Personnalisé et DUOS renvoient désormais
 `interaction_options` directement depuis `public.catalog`. Pour les questions de type
 `secret`, le navigateur utilise cette liste serveur au lieu de sa copie locale de
 `src/catalog.json`.
