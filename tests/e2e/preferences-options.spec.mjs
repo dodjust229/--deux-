@@ -53,14 +53,14 @@ test("les trois ambiances filtrent correctement les catégories dans À Deux et 
     }
   ];
 
-  for (const mode of ["couple", "duos"]) {
+  for (const mode of ["couple", "custom", "duos"]) {
     for (const preset of presets) {
       const context = await browser.newContext();
       await context.addInitScript((intensity) => {
         localStorage.setItem("qspicy.prefs.v1", JSON.stringify({ intensity }));
       }, preset.intensity);
       const page = await context.newPage();
-      await page.goto(mode === "duos" ? "/?apercu=duo-lobby" : "/?apercu=zone2-lobby");
+      await page.goto(mode === "duos" ? "/?apercu=duo-lobby" : mode === "custom" ? "/?apercu=zone2-lobby&mode=custom" : "/?apercu=zone2-lobby");
 
       for (const category of preset.visible) {
         await expect(page.getByRole("radio", { name: new RegExp(category, "i") })).toBeVisible();
