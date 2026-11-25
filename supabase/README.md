@@ -188,3 +188,11 @@ après la migration 20.
 ## Catalogue maître V2 — mise à jour à appliquer
 
 Sur une base existante, exécuter `22_catalogue_maitre_v2.sql` **après** `21_explicit_content_floor.sql`. Cette migration est idempotente, ajoute `catalog.intensity` (1–5), synchronise les 220 cartes et supprime les anciennes cartes absentes du master. Elle doit être exécutée par le propriétaire du projet Supabase avant le déploiement du nouveau frontend. Ne pas appliquer cette migration à la production sans sauvegarde préalable.
+
+## Migration 24 — options QCM canoniques côté serveur
+
+Après les migrations précédentes, appliquer `24_qcm_options_from_server.sql`, **après la migration 22 du catalogue maître V2**. Les snapshots À Deux, Personnalisé et DUOS renvoient désormais `interaction_options` directement depuis `public.catalog`. Pour les questions de type `secret`, le navigateur utilise cette liste serveur au lieu de sa copie locale de `src/catalog.json`.
+
+Cela évite qu'une différence de version entre le catalogue livré au navigateur et celui de Supabase affiche des choix que `submit_answer` rejetterait ensuite avec « Option invalide ». La validation serveur reste stricte : chaque réponse doit toujours correspondre exactement à une option canonique de la carte active.
+
+Recette dédiée : `supabase/tests/qcm_options_from_server.sql`. Elle vérifie que le snapshot renvoie les quatre options de la carte QCM `p03` du catalogue V2 et que chacune est acceptée par `submit_answer`. Aucune donnée de production n'est modifiée par cette migration.
