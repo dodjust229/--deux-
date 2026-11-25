@@ -35,7 +35,7 @@ export function PartnerChat({ messages, myPlayerId, partnerName, busy, paused, o
           <h3 id="partner-chat-title">{en ? "Keep the conversation going" : "Prolongez l'échange à deux"}</h3>
           <p>{en ? "Comment on your answers or send a quick reaction." : "Commentez vos réponses ou envoyez une réaction rapide."}</p>
         </div>
-        <Icon name="message-circle" size={20} />
+        <Icon name="quote" size={20} />
       </header>
 
       <div className="partner-chat__messages" role="log" aria-live="polite" aria-relevant="additions text">
