@@ -76,7 +76,7 @@ export function Home({ lang, onEnter, onInvite, onChooseSalon }: HomeProps) {
                 className={`home__salon home__salon--${salon.id}`}
                 type="button"
                 disabled={!salon.available}
-                onClick={onEnter}
+                onClick={() => salon.available && onChooseSalon(salon.id === "custom" ? "custom" : salon.id === "duos" ? "duos" : "couple")}
                 data-testid={`home-salon-${salon.id}`}
               >
                 <span className="home__salon-index">0{index + 1}</span>
