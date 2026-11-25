@@ -190,3 +190,21 @@ les règles de la 17 (hôte seul, union des centres d'intérêt, consentement 18
 
 Recette : `supabase/tests/level_and_mode_integrity.sql`, exécutée par `run_postgres.sh`
 après la migration 20.
+
+
+## Correctif QCM — options canoniques du serveur
+
+Appliquer ensuite `24_qcm_options_from_server.sql`, après la migration 21 et après les
+migrations catalogue éventuelles. Le snapshot Couple renvoie désormais
+`interaction_options` directement depuis `public.catalog`. Pour les questions de type
+`secret`, le navigateur utilise cette liste serveur au lieu de sa copie locale de
+`src/catalog.json`.
+
+Cela évite qu'une différence de version entre le catalogue livré au navigateur et celui de
+Supabase affiche des choix que `submit_answer` rejetterait ensuite avec « Option invalide ».
+La validation serveur reste stricte : chaque réponse doit toujours correspondre exactement
+à une option canonique de la carte active.
+
+Recette dédiée : `supabase/tests/qcm_options_from_server.sql`. Elle vérifie que le snapshot
+renvoie les quatre options de la carte QCM de palier 3 et que chacune est acceptée par
+`submit_answer`. Aucune donnée de production n'est modifiée par la migration.
