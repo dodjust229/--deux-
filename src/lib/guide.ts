@@ -213,7 +213,7 @@ const TIPS_FR: Record<TipId, { title: string; body: string }> = {
   lobby: { title: "Salle d'attente", body: "La partie démarre quand tout le monde est là, qu'une catégorie est commune et que les accords 18+ nécessaires sont donnés." },
   safe: { title: "SAFE", body: "Pause pour les deux, sortie immédiate ou sortie avec blocage mémorisé sur cet appareil." },
   levels: { title: "Paliers de jeu", body: "Choisis directement le palier que tu veux jouer : aucun déblocage des précédents n’est nécessaire. Aux paliers 3–4, toutes les catégories non exclues sont proposées par défaut. Ces paliers exigent l’accord 18+ de tous les joueurs." },
-  custom: { title: "Votre sélection", body: "QSPICY tire 5 à 24 cartes existantes du catalogue. Vous ne rédigez pas les questions. Après chaque révélation, vous pouvez commenter et réagir dans votre échange privé. Pas de palier 18+ ici." },
+  custom: { title: "Votre sélection", body: "QSPICY tire 5 à 24 cartes existantes du catalogue. Vous ne rédigez pas les questions. Après chaque révélation, vous pouvez commenter et réagir dans votre échange privé. Les cartes 18+ restent soumises à l'accord des deux joueurs." },
   duos: { title: "Salon DUOS", body: "Quatre joueurs, deux duos. Chaque réponse choisit qui la voit ; le salon commun n'ouvre que si les quatre l'autorisent." }
 };
 
@@ -226,7 +226,7 @@ const TIPS_EN: Record<TipId, { title: string; body: string }> = {
   lobby: { title: "Waiting room", body: "The game starts when everyone is here, one category is shared and the required 18+ consents are given." },
   safe: { title: "SAFE", body: "Pause for both, leave immediately, or leave with a block remembered on this device." },
   levels: { title: "Game levels", body: "Choose the exact level you want to play; previous levels do not need to be unlocked. At levels 3–4, all non-excluded categories are offered by default. These levels require 18+ consent from everyone." },
-  custom: { title: "Your selection", body: "QSPICY draws 5 to 24 existing catalogue cards. You do not write the questions. After each reveal, you can comment and react in your private exchange. No 18+ tier here." },
+  custom: { title: "Your selection", body: "QSPICY draws 5 to 24 existing catalogue cards. You do not write the questions. After each reveal, you can comment and react in your private exchange. Adult cards still require both players' 18+ agreement." },
   duos: { title: "DUOS room", body: "Four players, two duos. Each answer chooses who sees it; the shared room opens only if all four allow it." }
 };
 
