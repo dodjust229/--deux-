@@ -27,7 +27,7 @@ begin
   me := public._player_for(p_room_id,p_player_token);
   select * into r from public.rooms where id=p_room_id for update;
 
-  if r.mode <> 'couple' or r.room_kind <> 'custom' then
+  if r.mode is distinct from 'couple' or r.room_kind is distinct from 'custom' then
     raise exception 'E_MODE: La messagerie partenaire est réservée au salon Personnalisé.';
   end if;
   if r.status <> 'playing' then
