@@ -6,6 +6,7 @@ interface HomeProps {
   lang: Lang;
   onEnter: () => void;
   onInvite: () => void;
+  onChooseSalon: (mode: "couple" | "custom" | "duos") => void;
 }
 
 const salons = [
@@ -15,7 +16,7 @@ const salons = [
   { id: "anonymous", title: "Anonyme", description: "Ce salon arrive bientôt.", icon: "lock" as const, available: false }
 ];
 
-export function Home({ lang, onEnter, onInvite }: HomeProps) {
+export function Home({ lang, onEnter, onInvite, onChooseSalon }: HomeProps) {
   const t = translator(lang);
   return (
     <main className="home home--hero home--after-dark">
