@@ -114,27 +114,42 @@
 @media (max-width: 699px) {
   .home--hero {
     flex-direction: column;
-    justify-content: flex-end;
+    justify-content: flex-start;
     align-items: stretch;
     margin-top: -64px;
     padding-top: 64px;
-    min-height: max(680px, calc(100svh - 64px));
+    min-height: max(620px, calc(100svh - 64px));
+    overflow: visible;
+    background: #0e0908;
   }
 
-  /* Composition portrait dédiée : le couple reste dans le cadre sur téléphone. */
+  /* L'image portrait est un vrai bloc en haut, pas un fond recadré derrière le texte. */
+  .home__bg {
+    position: relative;
+    inset: auto;
+    display: block;
+    flex: 0 0 auto;
+    width: 100%;
+    height: clamp(280px, 54svh, 440px);
+    overflow: hidden;
+  }
+
   .home__bg img {
     object-position: 70% center;
   }
 
-  /* Le texte repose dans une zone sombre en bas, sans passer sur les visages. */
+  /* Fondu discret au bas de l'image ; la copie reste dans son propre panneau. */
   .home__scrim {
-    background:
-      linear-gradient(180deg, rgba(14, 9, 8, 0.22) 0%, rgba(14, 9, 8, 0.08) 28%, rgba(14, 9, 8, 0.62) 44%, rgba(14, 9, 8, 0.96) 59%, #0e0908 72%);
+    inset: 64px 0 auto;
+    height: clamp(280px, 54svh, 440px);
+    background: linear-gradient(180deg, rgba(14, 9, 8, 0.28) 0%, rgba(14, 9, 8, 0) 48%, rgba(14, 9, 8, 0.62) 100%);
   }
 
   .home--hero .home__hero {
+    flex: 1 0 auto;
     width: 100%;
-    padding: 0 20px 28px;
+    padding: 22px 20px 34px;
+    background: #0e0908;
     text-align: left;
   }
 
