@@ -2,11 +2,11 @@ import type { Interaction } from "./types";
 import catalog from "./catalog.json";
 
 /** Source unique du contenu : src/catalog.json (parsé en JSON, pas de regex).
- *  `npm run catalog:sync` régénère supabase/02_catalog.sql ; `npm run catalog:check` vérifie la cohérence. */
+ *  `npm run catalog:sync` régénère les SQL initiaux et la migration 22 ; `npm run catalog:check` vérifie la cohérence. */
 export const interactions = catalog as Interaction[];
 
 export const categoryLabels: Record<string, string> = {
-  decouverte: "Découverte", complicite: "Complicité", profondeur: "Profondeur",
+  decouverte: "Découverte", complicite: "Complicité", profondeur: "Confidence",
   seduction: "Séduction", audacieux: "Audacieux · 18+"
 };
 
@@ -16,6 +16,14 @@ export const categoryDescriptions: Record<string, string> = {
   profondeur: "Confidences et valeurs.",
   seduction: "Regards, tension, attirance.",
   audacieux: "Défis osés, toujours facultatifs."
+};
+
+export const intensityLabels: Record<number, string> = {
+  1: "Doux · 1",
+  2: "Taquin · 2",
+  3: "Chaud · 3",
+  4: "Très chaud · 4",
+  5: "Extrême · 5"
 };
 
 export const levelLabels: Record<number, string> = {

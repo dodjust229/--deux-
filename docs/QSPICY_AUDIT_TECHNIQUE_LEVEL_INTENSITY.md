@@ -1,8 +1,7 @@
-# QSPICY — audit technique du champ level et de la future intensity
+# QSPICY — audit technique des champs level et intensity
 
 Date : 24 novembre 2026  
-Branche de travail : `docs/qspicy-catalogue-hot-direction`  
-Code audité : branche `main`, sans modification.
+Branche d'intégration : `integrate/qspicy-master-catalogue-v2` (PR #33).
 
 ## 1. Dépendances confirmées
 
@@ -10,36 +9,35 @@ Le champ actuel `level` est un champ technique de bout en bout, pas une simple �
 
 | Fichier / zone | Usage observé |
 |---|---|
-| `src/catalog.json` | Chaque carte possède un `level` compris entre 1 et 4. |
-| `src/types.ts` | Le type `Interaction.level` est limité à `1 | 2 | 3 | 4`. Les niveaux de salle et de session utilisent également cette plage. |
+| `src/catalog.json` | Chaque carte possède un `level` technique 1–4 et une `intensity` éditoriale 1–5. |
+| `src/types.ts` | `Interaction.level` reste limité à 1–4 ; `Interaction.intensity` vaut 1–5. Les niveaux de salle et de session restent techniques. |
 | `src/content.ts` | Le JSON du catalogue est importé comme source de contenu et typé en `Interaction[]`. |
 | `src/api.ts` | Le démarrage d'une partie transmet le niveau sélectionné aux RPC Supabase. |
-| `src/screens/Game.tsx` | Le niveau pilote les étiquettes, la présentation de la carte et les attributs visuels. |
+| `src/screens/Game.tsx` | L'intensité éditoriale pilote désormais l'étiquette affichée sur la carte ; le rideau de transition conserve le niveau technique. |
 | `src/components/LevelCurtain.tsx` | Le niveau 1–4 pilote la transition visuelle entre paliers. |
-| `supabase/02_catalog.sql` | Le catalogue SQL persiste le champ `level`. Le fichier est généré, ne doit pas être modifié à la main. |
+| `supabase/02_catalog.sql` | Le catalogue initial persiste `level` et `intensity`. Le fichier est généré, ne doit pas être modifié à la main. |
 | `supabase/11_game_levels.sql`, `12_level_consent_guard.sql` | Les RPC filtrent les cartes en fonction du niveau technique. |
 | `supabase/20_level_and_mode_integrity.sql` | Le moteur de session s'appuie sur `level` pour l'ordre et la sélection des cartes. |
 | `supabase/21_explicit_content_floor.sql` | Le niveau sert aussi au calcul du plancher de contenu explicite et aux contrôles de session. |
-| `scripts/sync-catalog.mjs` | Le script vérifie les niveaux 1–4, exige exactement 48 cartes par niveau et génère le SQL du catalogue. |
+| `scripts/sync-catalog.mjs` | Le script vérifie `level` 1–4 et `intensity` 1–5, sans imposer 48 cartes par niveau ; il génère le SQL initial et la migration 22. |
 
-## 2. Conséquence
+## 2. Décision d'architecture appliquée
 
-**Il ne faut surtout pas remplacer, renommer ou convertir `level` en 1–5.** Cela casserait les types, les RPC, les règles de sélection, les tests et la synchronisation SQL.
+`level` reste le niveau technique 1–4 utilisé par les RPC et la progression. Il n'a pas été renommé ni converti.
 
-La classification demandée doit rester un champ éditorial distinct, par exemple `intensity: 1 | 2 | 3 | 4 | 5`.
+`intensity: 1 | 2 | 3 | 4 | 5` est un champ distinct, désormais persisté dans le catalogue SQL. Les cinq intensités sont affichées sur les cartes. Les contrôles 18+ du mode Personnalisé se basent sur cette intensité. La classification 3–5 correspond aux cartes techniques de niveau 3–4 dans le master V2.
 
-À ce stade, ajouter `intensity` dans un document JSON de brouillon est sans effet sur le jeu. L'ajouter uniquement à `src/catalog.json` ne suffirait pas à la rendre disponible en base : le script actuel ne génère que les colonnes `id, category, kind, options, level`, et la table SQL n'a pas encore été étendue pour ce champ.
+La contrainte artificielle de 48 cartes par niveau a été retirée ; les nouvelles répartitions sont vérifiées explicitement dans la recette PostgreSQL.
 
-## 3. Travaux nécessaires avant un usage dans l'application
+## 3. Travaux d'intégration réalisés dans la PR #33
 
-Si la classification éditoriale doit ensuite piloter les filtres du jeu, il faudra préparer une PR applicative distincte avec :
-1. une migration SQL additive pour ajouter et contraindre `intensity` sans toucher à `level` ;
-2. une mise à jour du script `catalog:sync` et du SQL généré ;
-3. une mise à jour des types TypeScript et des interfaces de lecture ;
-4. une décision explicite sur la différence entre le niveau technique de progression et l'intensité éditoriale ;
-5. des tests de compatibilité des RPC, du tirage, des niveaux explicites, des salons À Deux, DUOS et Personnalisé ;
-6. une migration et un déploiement seulement après revue et autorisation.
+- Migration SQL additive pour ajouter et contraindre `intensity` sans toucher à `level`.
+- Mise à jour du générateur `catalog:sync` et des deux fichiers SQL générés.
+- Mise à jour des types TypeScript et des interfaces de contenu.
+- Affichage des cinq intensités en Couple, DUOS et Personnalisé.
+- Mise à jour des contrôles 18+ du mode Personnalisé.
+- Mise à jour de la recette PostgreSQL pour vérifier les 220 cartes, les répartitions et la cohérence de `explicit_rank`.
 
-## 4. Décision actuelle
+## 4. État actuel
 
-Le travail en cours reste éditorial et documentaire. Aucun champ n'est ajouté à la base, aucune migration n'est créée, aucune RPC n'est modifiée et aucun déploiement n'est effectué. Le catalogue actif reste inchangé.
+L'intégration est proposée dans la PR #33. La CI doit confirmer le typecheck, les tests, le build et la recette PostgreSQL. La migration 22 reste à exécuter dans Supabase par le propriétaire avant déploiement. Aucune base de production n'a été modifiée et aucun déploiement n'a été effectué.

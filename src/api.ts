@@ -1,6 +1,7 @@
 import { supabase } from "./supabase";
 import type { Snapshot, Category, DuoSnapshot } from "./types";
 import { interactions } from "./content";
+import { applyServerOptions } from "./lib/snapshot-options";
 
 function client() { if (!supabase) throw new Error("Le serveur n'est pas encore configuré. Consulte INSTALLATION.md."); return supabase; }
 async function rpc<T>(name: string, args: Record<string, unknown>): Promise<T> {
@@ -16,7 +17,7 @@ export const setRoomKind = (r: string, t: string, kind: "couple" | "custom" | "d
   rpc<boolean>("set_room_kind", { p_room_id: r, p_player_token: t, p_room_kind: kind });
 export async function getSnapshot(roomId: string, token: string): Promise<Snapshot> {
   const raw = await rpc<Omit<Snapshot, "interaction">>("get_room_snapshot", { p_room_id: roomId, p_player_token: token });
-  return { ...raw, interaction: interactions.find(i => i.id === raw.interaction_id) ?? null };
+  return { ...raw, interaction: applyServerOptions(interactions.find(i => i.id === raw.interaction_id) ?? null, raw.interaction_options) };
 }
 export const setAdultConsent = (r: string, t: string, v: boolean) => rpc<boolean>("set_adult_consent", { p_room_id: r, p_player_token: t, p_value: v });
 export const setPlayerCategories = (r: string, t: string, categories: Category[]) => rpc<boolean>("set_player_categories", { p_room_id: r, p_player_token: t, p_categories: categories });
@@ -34,7 +35,7 @@ export const createDuoRoom = (nickname: string, avatar: string) => rpc<Joined>("
 export async function getDuoSnapshot(roomId: string, token: string): Promise<DuoSnapshot> {
   const raw = await rpc<any>("get_duo_snapshot", { p_room_id: roomId, p_player_token: token });
   const partner = raw.players?.find((p: any) => p.duo_no === raw.my_duo_no && p.id !== raw.my_player_id);
-  return { ...raw, interaction: interactions.find(i => i.id === raw.interaction_id) ?? null,
+  return { ...raw, interaction: applyServerOptions(interactions.find(i => i.id === raw.interaction_id) ?? null, raw.interaction_options),
     other_categories: partner?.selected_categories ?? [],
     other_submitted: (raw.answers ?? []).some((a: any) => a.player_id !== raw.my_player_id),
     first_answer: null, first_player_present: false, summary: null } as DuoSnapshot;

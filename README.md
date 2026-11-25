@@ -6,7 +6,7 @@ réfléchissent et prennent la parole.
 
 En ligne : https://dodjust229.github.io/--deux-/ (version finale vérifiée) et
 https://a-deux-jeu.onrender.com (service Render, déploiement palier 2 live). Identité officielle QSPICY
-(logo et illustration du propriétaire), 192 cartes avec niveau, formats variés et audience,
+(logo et illustration du propriétaire), 220 cartes réparties sur cinq intensités éditoriales, formats variés et audiences,
 confidences privées.
 
 Réservé aux adultes de 18 ans et plus. Gratuit, sans compte, sans installation pour les joueurs.

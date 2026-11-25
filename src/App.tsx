@@ -29,7 +29,7 @@ import {
 import { extractRoomId, getSelectedInterests, parseError, sessionFingerprint } from "./lib/protocol";
 import { deriveScene } from "./lib/scene";
 import { clearPrivateAnswers } from "./lib/media";
-import { applyPreferences, categoriesForIntensity, readPreferences, writePreferences, type Preferences } from "./lib/prefs";
+import { ALL_CATEGORIES, applyPreferences, categoriesForIntensity, readPreferences, writePreferences, type Preferences } from "./lib/prefs";
 import { previewDuoSnapshot, previewSnapshot } from "./lib/preview";
 import { playSound, stopAmbience } from "./lib/sound";
 import type { Category, Player, Snapshot } from "./types";
@@ -110,7 +110,7 @@ export default function App() {
   const previewDuo = Boolean(previewMode?.startsWith("duo-"));
   const [identity, setIdentity] = useState<Identity | null>(() =>
     previewMode && previewMode !== "home"
-      ? { roomId: "demo", token: "demo", nickname: "Tao", avatar: "masculin", gameMode: previewDuo ? "duos" : "couple" }
+      ? { roomId: "demo", token: "demo", nickname: "Tao", avatar: "masculin", gameMode: previewDuo ? "duos" : new URLSearchParams(location.search).get("mode") === "custom" ? "custom" : "couple" }
       : readIdentity()
   );
   const [snapshot, setSnapshot] = useState<Snapshot | null>(() =>
@@ -126,7 +126,7 @@ export default function App() {
   const [stage, setStage] = useState<FlowStage>(() =>
     new URLSearchParams(location.search).get("room") ? "enter" : "home"
   );
-  const [selected, setSelected] = useState<Category[]>(() => categoriesForIntensity(prefs.gameLevel >= 3 ? "veryHot" : prefs.intensity, prefs.exclusions));
+  const [selected, setSelected] = useState<Category[]>(() => categoriesForIntensity(prefs.intensity, prefs.exclusions));
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [partnerLeft, setPartnerLeft] = useState<string | null>(null);
@@ -534,7 +534,7 @@ export default function App() {
       ) && (
         <header className={`topbar${!identity && stage === "home" ? " topbar--over" : ""}`}>
           <button className="topbar__brand" type="button" onClick={() => { if (!identity) { setEntry(null); setError(""); } }}>
-            <Wordmark size={!identity && stage === "home" ? 54 : 38} />
+            <Wordmark size={!identity && stage === "home" ? 112 : 38} />
           </button>
           <div className="topbar__right">
             <span className="topbar__private">
@@ -619,7 +619,7 @@ export default function App() {
             prefs={prefs}
             onChange={setPrefs}
             onContinue={() => {
-              setSelected(categoriesForIntensity(prefs.gameLevel >= 3 ? "veryHot" : prefs.intensity, prefs.exclusions));
+              setSelected(categoriesForIntensity(prefs.intensity, prefs.exclusions));
               setEntry({ mode: "create", code: "", gameMode: flowMode });
               setError("");
               setStage("enter");
@@ -656,6 +656,7 @@ export default function App() {
             onCopy={copyInvite}
             selected={selected}
             shared={shared}
+            allowedCategories={categoriesForIntensity(prefs.intensity)}
             onToggleCategory={toggleCategory}
             onToggleConsent={(value) => identity && void run(() => setAdultConsent(identity.roomId, identity.token, value))}
             onPermissions={(permissions) => identity && void run(() => setDuoPermissions(identity.roomId, identity.token, permissions))}
@@ -677,6 +678,7 @@ export default function App() {
             onCopy={copyInvite}
             selected={selected}
             shared={shared}
+            excluded={ALL_CATEGORIES.filter((category) => !categoriesForIntensity(prefs.intensity).includes(category))}
             onToggleCategory={toggleCategory}
             myConsent={snapshot.my_consent}
             otherConsent={Boolean(otherPlayer?.adult_consent)}

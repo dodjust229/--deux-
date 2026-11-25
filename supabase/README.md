@@ -6,7 +6,7 @@ dans l'éditeur SQL du projet `xqvxorvvjmwzpcqmqnqv` ou via `psql`.
 | Fichier | Contenu | Remarque |
 |---|---|---|
 | `01_schema.sql` | mode deux joueurs : tables, RLS, RPC, droits | à exécuter en premier |
-| `02_catalog.sql` | catalogue des 192 interactions (48 par palier) | TRUNCATE puis insert |
+| `02_catalog.sql` | catalogue initial V2 (220 cartes, intensité 1–5) | généré, UPSERT + retrait des anciennes cartes |
 | `03_reconnexion_securisee.sql` | reprise de place par jeton uniquement | remplace `join_room` |
 | `04_duo_consent_default_off.sql` | correctif historique DUOS | **obsolète** : voir ci-dessous |
 | `05_duo_rpc_anon_only.sql` | correctif historique des droits | **obsolète** : repris par `06` |
@@ -79,19 +79,12 @@ La migration est additive et ne supprime aucune donnée. La recette locale couvr
 deux sessions successives sans recouvrement, puis la remise à zéro du cycle après
 épuisement du pool, dans les deux modes.
 
-Le catalogue compte maintenant 48 cartes par palier. Avec une sélection couvrant tout
-le pool du palier, deux sessions complètes de 24 questions peuvent être jouées sans
-répétition. Si les catégories communes ne couvrent qu'une partie du pool, le nombre
-de sessions inédites dépend du nombre de cartes restantes dans ces catégories.
+Le catalogue historique comptait 48 cartes par palier. Le master V2 remplace cette répartition par 220 cartes et conserve les niveaux techniques 1–4, avec un champ éditorial distinct `intensity` de 1 à 5.
 
 
 ### Extension du catalogue — 48 cartes par palier
 
-Appliquer ensuite `15_expand_session_catalog.sql`. Le catalogue passe à 192 cartes
-(48 par palier). Une session de 24 questions peut ainsi être suivie d'une deuxième
-session complète sans aucune répétition, tant que les joueurs conservent un ensemble
-de catégories qui couvre le pool correspondant. La migration 15 est un UPSERT non
-destructif ; les textes, titres et formulations complets sont dans `src/catalog.json`.
+La migration historique `15_expand_session_catalog.sql` amène l'ancien catalogue à 192 cartes. Après les migrations 20 et 21, appliquer `22_catalogue_maitre_v2.sql` : elle ajoute `intensity`, remplace le catalogue par les 220 cartes du master V2 et retire les identifiants obsolètes. Elle ne supprime ni les salles ni les réponses. Les textes complets restent dans `src/catalog.json`.
 
 
 ## Palier 3 — moteur Personnalisé adossé au catalogue
@@ -156,7 +149,7 @@ reproductible sur une base neuve et corrige quatre écarts :
 - **`get_custom_deck` renvoie la séquence réelle.** Pour les salons Personnalisés créés par le
   moteur catalogue (migration 16), `rooms.custom_deck` n'est plus rempli : la séquence vit dans
   `rooms.interaction_ids`. La fonction renvoie désormais cette séquence (les énoncés ne sont pas
-  en base : `public.catalog` ne porte que `id/category/kind/options/level`, le texte vit dans
+  en base : `public.catalog` porte les métadonnées `id/category/kind/options/level/intensity`, le texte vit dans
   `src/content.ts`).
 - **Le type du salon est porté par la salle** (`rooms.room_kind` : `couple`, `custom`, `duos`).
   Un lien d'invitation tronqué (sans `&mode=custom`) ou un favori enregistré ne fait plus
@@ -190,3 +183,33 @@ les règles de la 17 (hôte seul, union des centres d'intérêt, consentement 18
 
 Recette : `supabase/tests/level_and_mode_integrity.sql`, exécutée par `run_postgres.sh`
 après la migration 20.
+
+
+## Catalogue maître V2 — mise à jour à appliquer
+
+Sur une base existante, exécuter `22_catalogue_maitre_v2.sql` **après** `21_explicit_content_floor.sql`. Cette migration est idempotente, ajoute `catalog.intensity` (1–5), synchronise les 220 cartes et supprime les anciennes cartes absentes du master. Elle doit être exécutée par le propriétaire du projet Supabase avant le déploiement du nouveau frontend. Ne pas appliquer cette migration à la production sans sauvegarde préalable.
+
+## Migration 24 — options QCM canoniques côté serveur
+
+Après les migrations précédentes, appliquer `24_qcm_options_from_server.sql`, **après la migration 22 du catalogue maître V2**. Les snapshots À Deux, Personnalisé et DUOS renvoient désormais `interaction_options` directement depuis `public.catalog`. Pour les questions de type `secret`, le navigateur utilise cette liste serveur au lieu de sa copie locale de `src/catalog.json`.
+
+Cela évite qu'une différence de version entre le catalogue livré au navigateur et celui de Supabase affiche des choix que `submit_answer` rejetterait ensuite avec « Option invalide ». La validation serveur reste stricte : chaque réponse doit toujours correspondre exactement à une option canonique de la carte active.
+
+Recette dédiée : `supabase/tests/qcm_options_from_server.sql`. Elle vérifie que le snapshot renvoie les quatre options de la carte QCM `p03` du catalogue V2 et que chacune est acceptée par `submit_answer`. Aucune donnée de production n'est modifiée par cette migration.
+
+
+## Migration 25 — restauration du lancement Audacieux
+
+Après 24_qcm_options_from_server.sql, appliquer 25_audacieux_floor_and_deck.sql.
+
+La migration 21 avait remplacé la fonction _effective_level de la migration 20 sans conserver la règle qui relève à 3 le niveau technique lorsqu'un joueur choisit audacieux. Elle avait aussi remplacé le sélecteur qui réservait jusqu'à huit cartes Audacieux dans les paquets combinés.
+
+La migration 25 restaure ces deux comportements sans supprimer le plancher explicite de salle introduit par la migration 21. Les lancements Couple et DUOS réutilisent le helper de sélection de la migration 20 ; les validations de consentement et les privilèges RPC existants sont conservés.
+
+Recette dédiée : supabase/tests/audit_regressions.sql. Elle est exécutée automatiquement par supabase/tests/run_postgres.sh après les migrations 21, 22, 24 et 25. La recette vérifie les lancements Couple et DUOS, le minimum de cartes Audacieux dans les paquets combinés, le plancher explicite et les règles de consentement au redémarrage.
+
+### Limite catalogue à traiter séparément
+
+Le catalogue V2 ne contient que **2 cartes Découverte au niveau technique 2**. Comme les lancements automatiques sélectionnent actuellement un niveau technique exact, deux joueurs qui choisissent tous les deux Découverte peuvent obtenir une session de deux questions.
+
+Cette limite n'est pas modifiée par la migration 25 : remplir le paquet en mélangeant les niveaux doit être conçu avec la règle explicit_floor, afin de ne pas contourner le consentement ou la progression explicite. Elle nécessite une correction dédiée et des tests de volume pour les cinq catégories.

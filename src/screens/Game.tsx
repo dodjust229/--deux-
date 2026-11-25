@@ -12,7 +12,7 @@ import { decodePrediction } from "../lib/protocol";
 import { getRoundMoments } from "../lib/round-moments";
 import { getRoundEvent } from "../lib/round-events";
 import { PRIVATE_STORAGE_PREFIX, parseContent } from "../lib/media";
-import { audienceLabels, categoryLabels, kindLabels, levelLabels } from "../content";
+import { audienceLabels, categoryLabels, kindLabels, intensityLabels } from "../content";
 import type { Lang } from "../lib/i18n";
 import type { Answer, Interaction, Snapshot } from "../types";
 
@@ -178,7 +178,7 @@ export function Game({
           <span className={`tag tag--${interaction.category}`}>{categoryLabels[interaction.category]}</span>
           <span className="tag tag--ghost">{kindLabels[interaction.kind]}</span>
           <span className="tag tag--level">
-            {levelLabels[interaction.level]} <InfoTip tip="levels" lang={lang} />
+            {intensityLabels[interaction.intensity]} <InfoTip tip="levels" lang={lang} />
           </span>
         </div>
         <h1 id="prompt-title">{interaction.title}</h1>

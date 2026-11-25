@@ -13,23 +13,11 @@ export function Home({ lang, onEnter, onInvite }: HomeProps) {
   return (
     <main className="home home--hero">
       <picture className="home__bg">
-        <source
-          media="(max-width: 699px)"
-          srcSet={asset("brand/Étreinte passionnée dans une chambre burgundy.png")}
-          width={1080}
-          height={1440}
-        />
-        <source
-          media="(max-width: 1099px)"
-          srcSet={asset("brand/Étreinte passionnée dans une chambre burgundy.png")}
-          width={1280}
-          height={960}
-        />
         <img
-          src={asset("brand/Étreinte passionnée dans une chambre burgundy.png")}
+          src={asset("brand/accueil-qspicy.webp")}
           alt=""
-          width={1600}
-          height={900}
+          width={1152}
+          height={1536}
           decoding="async"
           fetchPriority="high"
         />
