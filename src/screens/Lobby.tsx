@@ -138,7 +138,7 @@ export function Lobby({
                 <span className="muted small">Sélection combinée : {shared.map((category) => categoryLabels[category]).join(" · ") || "en attente des choix"}</span>
               </div>
               <div className="chips" role="radiogroup" aria-label="Ton centre d'intérêt">
-                {CATEGORIES.map((category) => {
+                {CATEGORIES.filter((category) => !excluded.includes(category)).map((category) => {
                   const on = selected.includes(category);
                   const refused = excluded.includes(category);
                   return (
@@ -183,7 +183,7 @@ export function Lobby({
               </span>
             </div>
             <div className="chips" role="radiogroup" aria-label={lang === "en" ? "Your one interest" : "Ton centre d'intérêt"}>
-              {CATEGORIES.map((category) => {
+              {CATEGORIES.filter((category) => !excluded.includes(category)).map((category) => {
                 const on = selected.includes(category);
                 const refused = excluded.includes(category);
                 return (
