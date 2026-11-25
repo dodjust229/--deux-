@@ -39,5 +39,15 @@ test("infobulles : mêmes clés dans les deux langues", () => {
 test("guide : les modes indisponibles sont annoncés comme tels", () => {
   const text = GUIDE.fr.map((section) => section.body.join(" ")).join(" ").toLowerCase();
   assert.ok(text.includes("verrouillés") || text.includes("fermé"));
-  assert.ok(text.includes("relances n'existent pas"));
+});
+
+test("Personnalisé : le guide ne demande jamais aux joueurs de rédiger les questions", () => {
+  const section = GUIDE.fr.find((item) => item.id === "personnalisation");
+  assert.ok(section);
+  const text = section.body.join(" ").toLowerCase();
+  assert.ok(text.includes("vous ne rédigez pas les questions"));
+  assert.ok(text.includes("échange privé"));
+  assert.ok(!text.includes("tu écris"));
+  assert.ok(TIPS.fr.custom.body.includes("Vous ne rédigez pas les questions"));
+  assert.ok(TIPS.en.custom.body.includes("You do not write the questions"));
 });
