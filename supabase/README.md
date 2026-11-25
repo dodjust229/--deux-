@@ -196,3 +196,20 @@ Après les migrations précédentes, appliquer `24_qcm_options_from_server.sql`,
 Cela évite qu'une différence de version entre le catalogue livré au navigateur et celui de Supabase affiche des choix que `submit_answer` rejetterait ensuite avec « Option invalide ». La validation serveur reste stricte : chaque réponse doit toujours correspondre exactement à une option canonique de la carte active.
 
 Recette dédiée : `supabase/tests/qcm_options_from_server.sql`. Elle vérifie que le snapshot renvoie les quatre options de la carte QCM `p03` du catalogue V2 et que chacune est acceptée par `submit_answer`. Aucune donnée de production n'est modifiée par cette migration.
+
+
+## Migration 25 — restauration du lancement Audacieux
+
+Après 24_qcm_options_from_server.sql, appliquer 25_audacieux_floor_and_deck.sql.
+
+La migration 21 avait remplacé la fonction _effective_level de la migration 20 sans conserver la règle qui relève à 3 le niveau technique lorsqu'un joueur choisit audacieux. Elle avait aussi remplacé le sélecteur qui réservait jusqu'à huit cartes Audacieux dans les paquets combinés.
+
+La migration 25 restaure ces deux comportements sans supprimer le plancher explicite de salle introduit par la migration 21. Les lancements Couple et DUOS réutilisent le helper de sélection de la migration 20 ; les validations de consentement et les privilèges RPC existants sont conservés.
+
+Recette dédiée : supabase/tests/audit_regressions.sql. Elle est exécutée automatiquement par supabase/tests/run_postgres.sh après les migrations 21, 22, 24 et 25. La recette vérifie les lancements Couple et DUOS, le minimum de cartes Audacieux dans les paquets combinés, le plancher explicite et les règles de consentement au redémarrage.
+
+### Limite catalogue à traiter séparément
+
+Le catalogue V2 ne contient que **2 cartes Découverte au niveau technique 2**. Comme les lancements automatiques sélectionnent actuellement un niveau technique exact, deux joueurs qui choisissent tous les deux Découverte peuvent obtenir une session de deux questions.
+
+Cette limite n'est pas modifiée par la migration 25 : remplir le paquet en mélangeant les niveaux doit être conçu avec la règle explicit_floor, afin de ne pas contourner le consentement ou la progression explicite. Elle nécessite une correction dédiée et des tests de volume pour les cinq catégories.
