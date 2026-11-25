@@ -4,6 +4,7 @@ import { Icon } from "../components/Icon";
 import { Stage } from "../components/Stage";
 import type { StagePlayer } from "../components/Stage";
 import { Composer } from "../components/Composer";
+import { PartnerChat } from "../components/PartnerChat";
 import { InfoTip } from "../components/InfoTip";
 import { LevelCurtain } from "../components/LevelCurtain";
 import { MediaView } from "../components/MediaContent";
@@ -33,6 +34,8 @@ interface GameProps {
   onResume: () => void;
   onSafe: () => void;
   onOpenGuide: () => void;
+  customMode?: boolean;
+  onSendPartnerMessage?: (body: string) => void;
   lang: Lang;
 }
 
@@ -105,6 +108,8 @@ export function Game({
   onResume,
   onSafe,
   onOpenGuide,
+  customMode = false,
+  onSendPartnerMessage,
   lang
 }: GameProps) {
   const [curtain, setCurtain] = useState<1 | 2 | 3 | 4 | null>(null);
@@ -259,6 +264,17 @@ export function Game({
               </div>
             )}
           </section>
+          {customMode && onSendPartnerMessage && (
+            <PartnerChat
+              messages={snap.partner_messages ?? []}
+              myPlayerId={snap.my_player_id}
+              partnerName={other?.nickname ?? (lang === "en" ? "Partner" : "Partenaire")}
+              busy={busy}
+              paused={paused}
+              onSend={onSendPartnerMessage}
+              lang={lang}
+            />
+          )}
           <button className="primary full" type="button" data-testid="next" onClick={onNext} disabled={busy || snap.i_acked}>
             {snap.i_acked ? "En attente de l'autre…" : isLast ? "Terminer la partie" : "Question suivante"}
             {!snap.i_acked && <Icon name="arrow" />}
