@@ -80,11 +80,10 @@ create trigger trg_rooms_current_level
   for each row execute function public._sync_current_level();
 
 -- ===== 3. Le palier effectif sert réellement le mode choisi =====
--- On ne relève le palier que si celui demandé ne produit AUCUNE carte pour les
--- catégories choisies. C'est le cas d'Audacieux, qui n'existe qu'aux paliers
--- 3–4 : le choisir au palier 1 ou 2 relève donc à 3 au lieu de renvoyer
--- « aucune option disponible ». Un palier qui a des cartes n'est jamais relevé,
--- et le palier ne descend jamais.
+-- Audacieux n'existe qu'aux paliers 3–4 : si l'un des joueurs le choisit,
+-- le palier demandé est relevé à 3 au minimum, même si l'autre catégorie
+-- possède déjà des cartes à un palier inférieur. Pour les autres choix, on
+-- conserve le premier palier supérieur disponible si nécessaire.
 create or replace function public._effective_level(p_categories text[], p_level integer)
 returns integer
 language plpgsql
@@ -118,7 +117,7 @@ begin
   end if;
 
   return v_level;
-end $;
+end $qspicy$;
 
 -- Un choix Audacieux doit réellement apparaître dans le paquet combiné,
 -- même si l'autre joueur a choisi une catégorie disponible à un palier plus bas.
@@ -135,7 +134,7 @@ language sql
 volatile
 security definer
 set search_path = public, extensions, pg_temp
-as $
+as $qspicy$
   with priority as (
     select c.id
       from public.catalog c
@@ -158,7 +157,7 @@ as $
   )
   select array_agg(deck.id order by random())
     from (select id from priority union all select id from rest) deck
-$;
+$qspicy$;
 
 -- ===== 4. Couple : palier effectif, règles de la migration 17 conservées =====
 create or replace function public.start_game_by_level(
