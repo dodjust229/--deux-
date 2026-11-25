@@ -19,7 +19,7 @@ for (const viewport of viewports) {
       return img instanceof HTMLImageElement && img.complete && img.naturalWidth > 0;
     });
 
-    const currentSrc = await image.evaluate((img) => (img as HTMLImageElement).currentSrc);
+    const currentSrc = await image.evaluate((img) => img.currentSrc);
     expect(currentSrc).toContain(viewport.image);
 
     const layout = await page.evaluate(() => {
