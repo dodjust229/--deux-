@@ -116,9 +116,9 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items: stretch;
-    margin-top: -64px;
-    padding-top: 64px;
-    min-height: max(620px, calc(100svh - 64px));
+    margin-top: -76px;
+    padding-top: 76px;
+    min-height: max(620px, calc(100svh - 76px));
     overflow: visible;
     background: #0e0908;
   }
@@ -130,7 +130,7 @@
     display: block;
     flex: 0 0 auto;
     width: 100%;
-    height: clamp(260px, 45svh, 380px);
+    height: clamp(190px, 33svh, 260px);
     overflow: hidden;
   }
 
@@ -140,15 +140,15 @@
 
   /* Fondu discret au bas de l'image ; la copie reste dans son propre panneau. */
   .home__scrim {
-    inset: 64px 0 auto;
-    height: clamp(260px, 45svh, 380px);
+    inset: 76px 0 auto;
+    height: clamp(190px, 33svh, 260px);
     background: linear-gradient(180deg, rgba(14, 9, 8, 0.28) 0%, rgba(14, 9, 8, 0) 48%, rgba(14, 9, 8, 0.62) 100%);
   }
 
   .home--hero .home__hero {
     flex: 1 0 auto;
     width: 100%;
-    padding: 22px 20px 34px;
+    padding: 16px 18px 24px;
     background: #0e0908;
     text-align: left;
   }
@@ -162,6 +162,24 @@
   .home--hero .home__lead {
     margin: 0;
     font-size: 15px;
+  }
+
+  .home--hero .home__tagline {
+    margin: 8px 0 10px;
+    font-size: clamp(28px, 7.5vw, 34px);
+  }
+
+  .home--hero .home__actions {
+    margin-top: 16px;
+  }
+
+  .home--hero .link-button {
+    margin-top: 8px;
+    padding: 4px 0;
+  }
+
+  .home--hero .home__age {
+    margin-top: 10px;
   }
 
   .home--hero .home__actions,
