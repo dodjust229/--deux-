@@ -70,7 +70,7 @@ const FR: GuideSection[] = [
     body: [
       "Une réponse est enregistrée immédiatement mais reste cachée jusqu'à ce que les personnes requises aient répondu. La révélation est simultanée.",
       "Une confidence privée ne quitte jamais ton appareil : l'autre voit seulement qu'elle a été gardée.",
-      "Les relances n'existent pas encore. Aucune carte ne te relancera automatiquement."
+      "Après la révélation, prenez le temps de commenter les réponses et de réagir ensemble avant de passer à la question suivante."
     ]
   },
   {
@@ -78,8 +78,8 @@ const FR: GuideSection[] = [
     title: "Utiliser les options de personnalisation",
     body: [
       "Préférences : ambiances proposées, palier de jeu, exclusions, langue, thème, sons et animations, enregistrés sur ton appareil.",
-      "Salon Personnalisé : tu écris entre 5 et 24 questions, elles se jouent dans l'ordre de ta liste, avec les mêmes réponses cachées, la même révélation et le même bouton Passer.",
-      "Ce salon n'ouvre jamais le palier 18+ : une question libre ne peut pas être retirée en cours de partie si un accord change, le 18+ reste donc au catalogue."
+      "Salon Personnalisé : QSPICY tire 5 à 24 cartes existantes du catalogue. Vous ne rédigez pas les questions. Elles se jouent dans l'ordre affiché ; après chaque révélation, vous pouvez commenter et réagir dans votre échange privé à deux.",
+      "Les cartes des paliers 3–4 restent protégées par l'accord 18+ des deux joueurs, comme dans les autres salons."
     ]
   },
   {
