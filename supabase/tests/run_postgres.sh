@@ -198,6 +198,12 @@ echo "Applying QCM options snapshot fix"
 echo "Running QCM options synchronization recipe"
 "${PSQL[@]}" -d "$DB" -f "supabase/tests/qcm_options_from_server.sql"
 
+echo "Applying custom partner exchange migration"
+"${PSQL[@]}" -d "$DB" -f "supabase/25_custom_partner_exchange.sql"
+
+echo "Running custom partner exchange recipe"
+"${PSQL[@]}" -d "$DB" -f "supabase/tests/custom_partner_exchange.sql"
+
 # Re-run the multi-interest custom flow after migration 21, which replaces start_custom_game.
 "${PSQL[@]}" -d "$DB" -c "TRUNCATE public.rate_events"
 echo "Rechecking Couple, DUOS and custom union-of-interests after all migrations"
