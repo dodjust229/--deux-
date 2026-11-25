@@ -5,7 +5,7 @@ une sélection Personnalisée, l'invité ouvre le lien dans un autre navigateur,
 jouent la même séquence dans le même ordre.
 
 Rien n'est simulé : le front compilé parle à une vraie base PostgreSQL par un vrai PostgREST,
-avec les migrations du dépôt, jusqu'au catalogue V2 et au correctif QCM. Ni la production, ni `main` ne sont touchées.
+avec les migrations du dépôt. Ni la production, ni `main` ne sont touchées.
 
 ## Lancer
 
@@ -13,13 +13,12 @@ avec les migrations du dépôt, jusqu'au catalogue V2 et au correctif QCM. Ni la
 bash supabase/tests/invite_e2e/run.sh
 ```
 
-Prérequis : PostgreSQL 16 local, node/npm, `google-chrome`, `curl`, `python3`.
+Prérequis : PostgreSQL 16 local (ou service local via `PGHOST`), node/npm, Chrome/Chromium (`CHROME_PATH`), `curl`, `python3`.
 
 Le script, à chaque exécution :
 
 1. télécharge PostgREST 16.6 dans `/tmp/qspicy-invite-e2e` (une fois) ;
-2. recrée la base jetable `qspicy_invite_e2e` et applique les migrations dans l'ordre de
-   `supabase/tests/run_postgres.sh` : migrations 01 → 22, puis 24 ;
+2. recrée la base jetable `qspicy_invite_e2e` et applique les migrations du dépôt dans l'ordre, jusqu'au catalogue V2 et au correctif QCM (01 → 22, puis 24) ;
 3. démarre PostgREST puis le front compilé, tous deux sur `127.0.0.1` ;
 4. joue les recettes dans des navigateurs isolés et affiche `n/n vérifications réussies`.
 
@@ -27,7 +26,9 @@ Aucun adaptateur de test n'est appliqué : `join_room_any` est versionné par
 `19_invitation_finalisation.sql`, donc la base de recette est exactement celle que produirait
 le dépôt seul.
 
-Variables utiles : `TEST_DB`, `PGRST_PORT` (3199), `APP_PORT` (5299), `CHROME_PATH`.
+Variables utiles : `TEST_DB`, `PGHOST`, `PGPORT`, `PGUSER`, `PGPASSWORD`, `PGRST_PORT` (3199), `APP_PORT` (5299), `CHROME_PATH`.
+
+La base de recette intègre le catalogue maître V2 (220 cartes) et la migration QCM 24. La CI exécute désormais cette recette après la suite PostgreSQL : elle utilise le service PostgreSQL 16 local, installe Chromium et joue les 19 vérifications navigateur (13 Personnalisé + 6 DUOS/lien tronqué). Le script refuse toujours toute cible PostgreSQL distante ou tout profil `PGSERVICE`.
 
 ## Ce qui est vérifié
 
