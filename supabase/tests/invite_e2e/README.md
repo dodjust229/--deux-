@@ -13,7 +13,7 @@ avec les migrations du dépôt. Ni la production, ni `main` ne sont touchées.
 bash supabase/tests/invite_e2e/run.sh
 ```
 
-Prérequis : PostgreSQL 16 local, node/npm, `google-chrome`, `curl`, `python3`.
+Prérequis : PostgreSQL 16 local (ou service local via `PGHOST`), node/npm, Chrome/Chromium (`CHROME_PATH`), `curl`, `python3`.
 
 Le script, à chaque exécution :
 
@@ -27,7 +27,9 @@ Aucun adaptateur de test n'est appliqué : `join_room_any` est versionné par
 `19_invitation_finalisation.sql`, donc la base de recette est exactement celle que produirait
 le dépôt seul.
 
-Variables utiles : `TEST_DB`, `PGRST_PORT` (3199), `APP_PORT` (5299), `CHROME_PATH`.
+Variables utiles : `TEST_DB`, `PGHOST`, `PGPORT`, `PGUSER`, `PGPASSWORD`, `PGRST_PORT` (3199), `APP_PORT` (5299), `CHROME_PATH`.
+
+La CI exécute désormais cette recette après la suite PostgreSQL : elle utilise le service PostgreSQL 16 local, installe Chromium et joue les 19 vérifications navigateur (13 Personnalisé + 6 DUOS/lien tronqué). Le script refuse toujours toute cible PostgreSQL distante ou tout profil `PGSERVICE`.
 
 ## Ce qui est vérifié
 
