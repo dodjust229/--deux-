@@ -11,6 +11,7 @@ const secret: Interaction = {
   prompt: "Choisis une option 🔥",
   options: ["Ancienne option A", "Ancienne option B"],
   level: 3,
+  intensity: 3,
   audience: "partner",
   visibility: "partagee"
 };
@@ -23,9 +24,19 @@ test("les options QCM du serveur remplacent la copie locale", () => {
   assert.equal(result?.prompt, secret.prompt);
 });
 
-test("une réponse QCM sans options serveur n'affiche pas de faux choix locaux", () => {
+test("un champ options serveur explicitement nul ne réutilise pas les choix locaux", () => {
   const result = applyServerOptions(secret, null);
   assert.deepEqual(result?.options, []);
+});
+
+test("un ancien snapshot sans champ options ne réutilise pas les choix locaux", () => {
+  const result = applyServerOptions(secret, undefined);
+  assert.deepEqual(result?.options, []);
+});
+
+test("les options serveur mal formées ne laissent pas fuiter les options locales", () => {
+  const result = applyServerOptions(secret, ["Option valide", 42, null]);
+  assert.deepEqual(result?.options, ["Option valide"]);
 });
 
 test("les autres types de cartes conservent leur interaction locale", () => {
