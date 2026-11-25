@@ -2,7 +2,7 @@
 -- que submit_answer utilise pour valider la réponse.
 DO $qcm$
 DECLARE
-  room_id uuid;
+  v_room_id uuid;
   token_a text := repeat('q',64);
   v_option text;
   v_snapshot jsonb;
@@ -14,12 +14,12 @@ BEGIN
 
   INSERT INTO public.rooms(mode,status,current_index,interaction_ids,selected_level)
   VALUES ('couple','playing',0,ARRAY['p03'],3)
-  RETURNING id INTO room_id;
+  RETURNING id INTO v_room_id;
 
-  INSERT INTO public.players(room_id,seat,nickname,avatar,token_hash,adult_consent,selected_categories)
-  VALUES (room_id,1,'QCM test','masculin',encode(extensions.digest(token_a,'sha256'),'hex'),true,ARRAY['profondeur']);
+  INSERT INTO public.players(v_room_id,seat,nickname,avatar,token_hash,adult_consent,selected_categories)
+  VALUES (v_room_id,1,'QCM test','masculin',encode(extensions.digest(token_a,'sha256'),'hex'),true,ARRAY['profondeur']);
 
-  v_snapshot := public.get_room_snapshot(room_id,token_a);
+  v_snapshot := public.get_room_snapshot(v_room_id,token_a);
   IF v_snapshot->'interaction_options' IS DISTINCT FROM
      (SELECT options FROM public.catalog WHERE id='p03') THEN
     RAISE EXCEPTION 'Le snapshot ne renvoie pas les options QCM canoniques de public.catalog';
@@ -28,8 +28,8 @@ BEGIN
   FOR v_option IN
     SELECT jsonb_array_elements_text(options) FROM public.catalog WHERE id='p03'
   LOOP
-    PERFORM public.submit_answer(room_id,token_a,v_option,false);
-    DELETE FROM public.answers WHERE room_id=room_id;
+    PERFORM public.submit_answer(v_room_id,token_a,v_option,false);
+    DELETE FROM public.answers WHERE v_room_id=v_room_id;
     v_count := v_count + 1;
   END LOOP;
 
@@ -37,7 +37,7 @@ BEGIN
     RAISE EXCEPTION 'Quatre options QCM devaient être acceptées, seulement % testées', v_count;
   END IF;
 
-  DELETE FROM public.rooms WHERE id=room_id;
+  DELETE FROM public.rooms WHERE id=v_room_id;
   RAISE NOTICE 'QCM OPTIONS FROM SERVER OK';
 END
 $qcm$;
