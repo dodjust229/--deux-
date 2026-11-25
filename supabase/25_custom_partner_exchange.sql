@@ -41,6 +41,12 @@ begin
       from public.rooms rr
      where rr.id=p_room_id
        and (
+         select count(*) from public.players p
+          where p.room_id=rr.id
+            and p.status='active'
+            and p.last_seen > now()-interval '120 seconds'
+       ) = 2
+       and (
          select count(*) from public.answers a
          join public.players p on p.id=a.player_id
           where a.room_id=rr.id
