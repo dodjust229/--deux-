@@ -740,6 +740,8 @@ export default function App() {
             onResume={() => identity && void run(() => setPause(identity.roomId, identity.token, false))}
             onSafe={() => setSafeOpen(true)}
             onOpenGuide={() => setGuideOpen(true)}
+            customMode={identity.gameMode === "custom"}
+            onSendPartnerMessage={(body) => identity && void run(() => sendCustomPartnerMessage(identity.roomId, identity.token, body))}
             lang={prefs.language}
           />
         )
