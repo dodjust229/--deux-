@@ -48,6 +48,9 @@ export const nextDuoInteraction = (r: string, t: string) => rpc<{ advanced: bool
 export const submitDuoAnswer = (r: string, t: string, i: string, a: string, pass: boolean, visibility: "private" | "duo" | "group") => rpc<boolean>("submit_duo_answer", { p_room_id: r, p_player_token: t, p_interaction_id: i, p_answer: a, p_pass: pass, p_visibility: visibility });
 export const setDuoPermissions = (r: string, t: string, p: { cross_participation: boolean; receive_media: boolean; share_answers: boolean }) => rpc<boolean>("set_duo_permissions", { p_room_id: r, p_player_token: t, p_cross_participation: p.cross_participation, p_receive_media: p.receive_media, p_share_answers: p.share_answers });
 export const sendDuoMessage = (r: string, t: string, space: "group" | "duo_a" | "duo_b", body: string) => rpc<string>("send_duo_message", { p_room_id: r, p_player_token: t, p_space: space, p_message_type: "text", p_body: body });
+/** Messagerie privée du salon Personnalisé à deux. */
+export const sendCustomPartnerMessage = (r: string, t: string, body: string) =>
+  rpc<string>("send_custom_partner_message", { p_room_id: r, p_player_token: t, p_body: body });
 export const restartDuoGame = (r: string, t: string) => rpc<{ restarted: boolean; votes: number; needed: number }>("restart_duo_game", { p_room_id: r, p_player_token: t });
 
 /* Mode Personnalisé : la liste appartient à la salle (voir supabase/10_custom_room.sql). */
