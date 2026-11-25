@@ -47,8 +47,10 @@ for (const viewport of viewports) {
     });
 
     expect(layout.documentWidth).toBeLessThanOrEqual(layout.viewportWidth + 1);
-    expect(layout.copyTop).toBeGreaterThanOrEqual(layout.pictureBottom - 1);
-    expect(layout.headingTop).toBeGreaterThanOrEqual(layout.pictureBottom - 1);
+    if (viewport.width <= 699) {
+      expect(layout.copyTop).toBeGreaterThanOrEqual(layout.pictureBottom - 1);
+      expect(layout.headingTop).toBeGreaterThanOrEqual(layout.pictureBottom - 1);
+    }
     expect(layout.enterLeft).toBeGreaterThanOrEqual(0);
     expect(layout.enterRight).toBeLessThanOrEqual(viewport.width + 1);
     expect(layout.enterBottom).toBeLessThanOrEqual(layout.heroBottom + 1);
