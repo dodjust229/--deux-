@@ -20,6 +20,7 @@ import {
   submitDuoAnswer,
   setDuoPermissions,
   sendDuoMessage,
+  sendCustomPartnerMessage,
   restartDuoGame,
   setRoomMediaPermission,
   setRoomKind,
